@@ -33,8 +33,13 @@
   "resolutions": {
     "@types/react": "^18",
     "react-devtools-core": "4.14.0"
-    
   },
+  "overrides": {
+    "react-native": {
+      "react-devtools-core": "4.14.0"
+    }
+  },
+
   "jest": {
     "preset": "react-native",
     "moduleFileExtensions": [
