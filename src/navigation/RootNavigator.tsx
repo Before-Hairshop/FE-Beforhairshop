@@ -8,7 +8,7 @@ const mainStack = createNativeStackNavigator();
 
 export const RootNavigator = () => {
   return (
-    <mainStack.Navigator>
+    <mainStack.Navigator screenOptions={{headerShown: false}}>
       <mainStack.Screen name="Main" component={Main} />
       <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />
     </mainStack.Navigator>
