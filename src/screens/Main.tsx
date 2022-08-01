@@ -1,10 +1,18 @@
-import { StyleSheet, Text, View, Platform, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Platform,
+  Image,
+  ScrollView,
+} from "react-native";
 import { TouchableOpacity } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Avatar } from "@rneui/themed";
 import Swiper from "react-native-swiper";
 import AdBanner from "../components/AdBanner";
 import MainNavigateButton from "../components/MainNavigateButton";
+import PopularHairstyle from "../components/PopularHairstyle";
 
 export default function Main(props) {
   const [slideTime, setSlideTime] = useState(1);
@@ -90,7 +98,22 @@ export default function Main(props) {
       </View>
 
       <View style={{ flex: 3 }}>
+        <View
+          style={{
+            backgroundColor: "#333333",
+            height: 1,
+            marginVertical: 20,
+          }}></View>
         <Text style={styles.Title}>인기 헤어스타일</Text>
+        <ScrollView horizontal style={{ marginTop: 20 }}>
+          <PopularHairstyle></PopularHairstyle>
+
+          <PopularHairstyle></PopularHairstyle>
+
+          <PopularHairstyle></PopularHairstyle>
+
+          <PopularHairstyle></PopularHairstyle>
+        </ScrollView>
       </View>
     </View>
   );
