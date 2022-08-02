@@ -13,6 +13,7 @@ import Swiper from "react-native-swiper";
 import AdBanner from "../components/AdBanner";
 import MainNavigateButton from "../components/MainNavigateButton";
 import PopularHairstyle from "../components/PopularHairstyle";
+import Header from "../components/Header";
 
 export default function Main(props) {
   const [slideTime, setSlideTime] = useState(1);
@@ -30,26 +31,8 @@ export default function Main(props) {
   return (
     <View style={styles.mainView}>
       <View style={{ flex: 5 }}>
-        <View style={styles.header}>
-          <Text style={styles.Title}>BEFORE HAIRSHOP</Text>
-          <Avatar
-            activeOpacity={0.2}
-            avatarStyle={{}}
-            containerStyle={{ backgroundColor: "#BDBDBD" }}
-            icon={{}}
-            iconStyle={{}}
-            imageProps={{}}
-            onLongPress={() => alert("onLongPress")}
-            onPress={() => alert("onPress")}
-            overlayContainerStyle={{}}
-            placeholderStyle={{}}
-            rounded
-            title="P"
-            titleStyle={{}}
-          />
-        </View>
-
-        <View style={{ flex: 1, paddingTop: 15 }}>
+        <Header></Header>
+        <View style={{ flex: 1 }}>
           <View style={{ flex: 6 }}>
             <Swiper
               // onIndexChanged={index => setSwiperIndex(index)}
@@ -74,7 +57,8 @@ export default function Main(props) {
                 mainColor="#e4dcca"
                 subColor="#c5b593"
                 text={["AI 분석으로", "나에게 맞는 헤어스타일", "알아보기"]}
-                textBold={[true, true, false]}></AdBanner>
+                textBold={[true, true, false]}
+                thumbnail={require("../Assets/Images/MainBanner1.png")}></AdBanner>
               <AdBanner
                 mainColor="#fcf1f0"
                 subColor="#db4544"
@@ -83,15 +67,20 @@ export default function Main(props) {
                   "상담을 통해 추천 받는",
                   "맞춤형 헤어스타일",
                 ]}
-                textBold={[false, false, true]}></AdBanner>
+                textBold={[false, false, true]}
+                thumbnail={require("../Assets/Images/MainBanner2.png")}></AdBanner>
             </Swiper>
           </View>
           <View style={{ flex: 8 }}>
             <View style={{ flex: 1 }}>
-              <MainNavigateButton></MainNavigateButton>
+              <MainNavigateButton
+                text={["나에게 어울리는 스타일을 찾아", "헤어스타일 체험"]}
+                icon={require(`../Assets/Images/VirtualStylingIcon.png`)}></MainNavigateButton>
             </View>
             <View style={{ flex: 1 }}>
-              <MainNavigateButton></MainNavigateButton>
+              <MainNavigateButton
+                text={["맞춤형 서비스를 위한", "헤어 디자이너"]}
+                icon={require(`../Assets/Images/HairDesignerIcon.png`)}></MainNavigateButton>
             </View>
           </View>
         </View>
@@ -106,13 +95,18 @@ export default function Main(props) {
           }}></View>
         <Text style={styles.Title}>인기 헤어스타일</Text>
         <ScrollView horizontal style={{ marginTop: 20 }}>
-          <PopularHairstyle></PopularHairstyle>
-
-          <PopularHairstyle></PopularHairstyle>
-
-          <PopularHairstyle></PopularHairstyle>
-
-          <PopularHairstyle></PopularHairstyle>
+          <PopularHairstyle
+            styleName="히피펌"
+            thumbnail={require("../Assets/Images/popular_thumbnail.jpeg")}></PopularHairstyle>
+          <PopularHairstyle
+            styleName="가일컷"
+            thumbnail={require("../Assets/Images/popular_thumbnail2.png")}></PopularHairstyle>
+          <PopularHairstyle
+            styleName="히피펌"
+            thumbnail={require("../Assets/Images/popular_thumbnail.jpeg")}></PopularHairstyle>
+          <PopularHairstyle
+            styleName="가일컷"
+            thumbnail={require("../Assets/Images/popular_thumbnail2.png")}></PopularHairstyle>
         </ScrollView>
       </View>
     </View>
@@ -122,8 +116,7 @@ export default function Main(props) {
 const styles = StyleSheet.create({
   mainView: {
     flex: 1,
-    padding: 20,
-    paddingTop: 32,
+    paddingHorizontal: 20,
 
     backgroundColor: "#191919",
   },

@@ -2,8 +2,11 @@ import { StyleSheet, Text, View, Image } from "react-native";
 import React from "react";
 import { Button } from "@rneui/themed";
 import Icon from "react-native-vector-icons/Ionicons";
+import { scale, verticalScale, moderateScale } from "../Utils/scale";
+import { useNavigation } from "@react-navigation/native";
 
-export default function MainNavigateButton() {
+export default function MainNavigateButton(props) {
+  const navigation = useNavigation();
   return (
     <View
       style={{
@@ -12,10 +15,12 @@ export default function MainNavigateButton() {
         // justifyContent: "center",
       }}>
       <Button
-        title={<ButtonContents></ButtonContents>}
+        title={
+          <ButtonContents text={props.text} icon={props.icon}></ButtonContents>
+        }
         buttonStyle={{
           backgroundColor: "#0c0c0c",
-          height: 100,
+          height: verticalScale(100),
         }}
         containerStyle={{
           marginTop: 20,
@@ -26,12 +31,15 @@ export default function MainNavigateButton() {
 
           borderColor: "rgba(255, 255, 255, 0)",
         }}
+        onPress={() => navigation.navigate("ProfileSelection")}
       />
     </View>
   );
 }
 
-const ButtonContents = () => {
+const ButtonContents = props => {
+  console.log("props in button contents is: ");
+  console.log(props.icon);
   return (
     <View style={{ flexDirection: "row" }}>
       <View
@@ -41,8 +49,7 @@ const ButtonContents = () => {
           justifyContent: "center",
           alignItems: "center",
         }}>
-        <Image
-          source={require(`../Assets/Images/VirtualStylingIcon.png`)}></Image>
+        <Image source={props.icon}></Image>
       </View>
       <View style={{ flex: 4, justifyContent: "center" }}>
         <Text
@@ -56,7 +63,7 @@ const ButtonContents = () => {
             textAlignVertical: "center",
             color: "rgba(255, 255, 255, 0.5)",
           }}>
-          나에게 어울리는 스타일을 찾아
+          {props.text[0]}
         </Text>
         <Text
           style={{
@@ -70,7 +77,7 @@ const ButtonContents = () => {
             textAlignVertical: "center",
             color: "#ffffff",
           }}>
-          헤어스타일 체험
+          {props.text[1]}
         </Text>
       </View>
       <View style={{ flex: 1, justifyContent: "center" }}>
