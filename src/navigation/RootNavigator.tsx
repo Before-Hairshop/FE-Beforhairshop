@@ -14,7 +14,8 @@ export const RootNavigator = () => {
   return (
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="DesignerProfile">
+      initialRouteName="ProfileSelection
+      ">
       <mainStack.Screen name="Main" component={Main} />
       <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />
       <mainStack.Screen name="DesignerProfile" component={DesignerProfile} />

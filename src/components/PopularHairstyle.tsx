@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   image: {
-    width: scale(155),
+    width: scale(160),
     height: scale(imageSize),
     margin: 0,
     padding: 0,
