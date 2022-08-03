@@ -12,21 +12,23 @@ import { Avatar } from "@rneui/themed";
 import { Button } from "@rneui/themed";
 import { verticalScale } from "../Utils/scale";
 import Header from "../components/Header";
+import Icon from "react-native-vector-icons/Ionicons";
+
+const HeaderContents = () => (
+  <>
+    <Icon
+      name="chevron-back-outline"
+      color="#ffffff"
+      size={verticalScale(40)}></Icon>
+
+    <Button title="편집" type="clear" color="secondary" />
+  </>
+);
 
 export default function ProfileSelection(props) {
-  const ButtonContents = props => {
-    return (
-      <ImageBackground
-        source={props.thumbnail}
-        resizeMode="cover"
-        style={styles.image}
-        imageStyle={{ borderRadius: 15 }}></ImageBackground>
-    );
-  };
-
   return (
     <View style={styles.mainView}>
-      <Header></Header>
+      <Header contents={<HeaderContents></HeaderContents>}></Header>
       <View style={{ flex: 1 }}>
         <View style={{ flex: 1, paddingTop: 15 }}>
           <View style={{ flex: 6 }}>
@@ -63,69 +65,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
 
     backgroundColor: "#191919",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  Title: {
-    width: 164,
-
-    height: 21,
-
-    fontFamily: "Pretendard-Bold",
-
-    fontSize: 18,
-
-    fontWeight: "bold",
-
-    fontStyle: "normal",
-
-    letterSpacing: 0.07,
-
-    textAlign: "left",
-
-    color: "#ffffff",
-  },
-
-  wrapper: {},
-
-  slide: {
-    flex: 1,
-    justifyContent: "center",
-    backgroundColor: "transparent",
-  },
-
-  slide1: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-
-    borderRadius: 15,
-
-    backgroundColor: "#e4dcca",
-  },
-
-  slide2: {
-    flex: 1,
-    borderRadius: 15,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fcf1f0",
-  },
-
-  slide3: {
-    flex: 1,
-    borderRadius: 15,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#92BBD9",
-  },
-
-  text: {
-    color: "#fff",
-    fontSize: 30,
-    fontWeight: "bold",
   },
 });

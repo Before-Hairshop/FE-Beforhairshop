@@ -84,7 +84,7 @@ const ButtonContents = props => {
         <Icon
           name="chevron-forward-outline"
           color="rgba(255, 255, 255, 0.5)"
-          style={{ fontSize: 35 }}
+          style={{ fontSize: verticalScale(35) }}
         />
       </View>
     </View>

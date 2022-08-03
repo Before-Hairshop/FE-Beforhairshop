@@ -14,6 +14,7 @@ import AdBanner from "../components/AdBanner";
 import MainNavigateButton from "../components/MainNavigateButton";
 import PopularHairstyle from "../components/PopularHairstyle";
 import Header from "../components/Header";
+import { scale, verticalScale } from "../Utils/scale";
 
 export default function Main(props) {
   const [slideTime, setSlideTime] = useState(1);
@@ -28,10 +29,44 @@ export default function Main(props) {
   }, []);
   const themeColor = ["#c5b593", "#db4544"];
 
+  const HeaderContents = () => (
+    <>
+      <Text
+        style={{
+          width: scale(164),
+          height: verticalScale(21),
+          fontFamily: "Pretendard-Bold",
+          fontSize: verticalScale(18),
+          fontWeight: "bold",
+          fontStyle: "normal",
+          letterSpacing: 0.07,
+          textAlign: "left",
+          color: "#ffffff",
+        }}>
+        BEFORE HAIRSHOP
+      </Text>
+      <Avatar
+        activeOpacity={0.2}
+        avatarStyle={{}}
+        containerStyle={{ backgroundColor: "#BDBDBD" }}
+        icon={{}}
+        iconStyle={{}}
+        imageProps={{}}
+        onLongPress={() => alert("onLongPress")}
+        onPress={() => alert("onPress")}
+        overlayContainerStyle={{}}
+        placeholderStyle={{}}
+        rounded
+        title="P"
+        titleStyle={{}}
+      />
+    </>
+  );
+
   return (
     <View style={styles.mainView}>
       <View style={{ flex: 5 }}>
-        <Header></Header>
+        <Header contents={<HeaderContents></HeaderContents>}></Header>
         <View style={{ flex: 1 }}>
           <View style={{ flex: 6 }}>
             <Swiper
