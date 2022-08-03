@@ -9,6 +9,10 @@ import {
 import React from "react";
 import DefaultDesigner from "../assets/images/default_designer_profile.png";
 import { verticalScale } from "../utils/scale";
+import Icon from "react-native-vector-icons/Ionicons";
+
+import { Dimensions } from "react-native";
+const { width, height } = Dimensions.get("window");
 
 export default function Loading() {
   return (
@@ -17,6 +21,7 @@ export default function Loading() {
         <Image source={DefaultDesigner} style={styles.designer_img} />
         <View style={styles.info_header}>
           <Text>헤어 디자이너</Text>
+          {/* <ion-icon name="chevron-back-outline"></ion-icon> */}
         </View>
       </View>
       <View>
@@ -41,7 +46,7 @@ export default function Loading() {
 
 const styles = StyleSheet.create({
   profile: {
-    width: "100pt",
+    width: width,
     backgroundColor: "#191919",
     shadowColor: "rgba(0, 0, 0, 0.25)",
     shadowOffset: {
