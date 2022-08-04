@@ -17,30 +17,92 @@ import Icon from "react-native-vector-icons/Ionicons";
 import ProfileImage from "../components/ProfileImage";
 import { useNavigation } from "@react-navigation/native";
 
-const HeaderContents = () => {
-  const navigation = useNavigation();
-  return (
-    <>
-      <Icon
-        name="chevron-back-outline"
-        color="#ffffff"
-        size={verticalScale(40)}
-        onPress={() => navigation.navigate("Main")}></Icon>
-
-      <Button
-        title="편집"
-        type="clear"
-        titleStyle={{
-          fontFamily: "Pretendard-Bold",
-          fontSize: verticalScale(16),
-          color: "#fc2a5b",
-        }}
-      />
-    </>
-  );
-};
+import { getSelectedImage } from "../store/actions/profile_actions";
+import { useDispatch } from "react-redux";
 
 export default function ProfileSelection(props) {
+  const dispatch = useDispatch();
+
+  // const profile = useSelector(store => store.Profile);
+  let [imageInfo, setImageInfo] = useState([
+    { id: "bd7acbeafasd3abb28ba", title: "1 Item", status: "base" },
+    {
+      id: "3ac68afc-c605-48d3-aafsdfasdf4f8-fbd91aa97f63",
+      title: "2 Item",
+      status: "base",
+    },
+    {
+      id: "58694a0f-3da1-471f-asdfasdfbd96-145571e29d72",
+      title: "3 Item",
+      status: "base",
+    },
+    {
+      id: "58694a0f-3da1-471f-bd9sadfadsf6-145571e29d72",
+      title: "4 Item",
+      status: "base",
+    },
+    {
+      id: "58694a0ffasdfdasf71f-bd96-145571e29d72",
+      title: "5 Item",
+      status: "base",
+    },
+    {
+      id: "58694a0f-3daasdfas1-471f-bd9sd6-145571e29d72",
+      title: "6 Item",
+      status: "base",
+    },
+    {
+      id: "58694a0f-3daasdfsdfasdas1-471f-bd9sd6-145571e29d72",
+      title: "7 Ifsdaftem",
+      status: "base",
+    },
+  ]);
+
+  let [imageSelectionInfo, setImageSelectionInfo] = useState([
+    "base",
+    "base",
+    "base",
+    "base",
+    "base",
+    "base",
+    "base",
+  ]);
+
+  const handleSelection = id => {
+    imageInfo.forEach((item, index) => {
+      imageInfo[index].status = "base";
+
+      if (item.id == id) {
+        // let newObj = imageInfo[index];
+        // newObj.status = "selected";
+        // imageInfo[index] = newObj;
+        imageInfo[index].status = "selected";
+
+        let newArray = [...imageSelectionInfo];
+        newArray[index] = "selected";
+
+        setImageSelectionInfo(newArray);
+        console.log(imageInfo[index].id);
+        console.log(props);
+        // dispatch(getSelectedImage(id));
+      }
+    });
+  };
+
+  const Item = ({ title }) => (
+    <View style={styles.item}>
+      <Text style={styles.title}>{title}</Text>
+    </View>
+  );
+
+  const renderItem = ({ item }) => (
+    <ProfileImage
+      thumbnail={require("../assets/images/popular_thumbnail.jpeg")}
+      status={item.status}
+      id={item.id}
+      onPressImage={() => handleSelection(item.id)}
+    />
+  );
   return (
     <View style={styles.mainView}>
       <Header contents={<HeaderContents></HeaderContents>}></Header>
@@ -75,47 +137,14 @@ export default function ProfileSelection(props) {
                 해주세요.
               </Text>
             </Text>
-
-            {/* <View
-              style={{
-                flexDirection: "row",
-              }}>
-              <View
-                style={{
-                  borderColor: "#191919",
-                  borderBottomColor: "#8a2139",
-                  borderWidth: 3,
-
-                  alignSelf: "flex-start",
-                }}>
-                <Text
-                  style={{
-                    fontFamily: "Pretendard-Bold",
-                    fontSize: verticalScale(22),
-                    color: "white",
-                  }}>
-                  프로필을 선택
-                </Text>
-              </View>
-
-              <View>
-                <Text
-                  style={{
-                    fontFamily: "Pretendard-Regular",
-                    fontSize: verticalScale(22),
-                    color: "white",
-                  }}>
-                  해주세요.
-                </Text>
-              </View>
-            </View> */}
           </View>
         </View>
       </View>
 
       <View style={{ flex: 5 }}>
         <FlatList
-          data={DATA}
+          data={imageInfo}
+          extraData={Object.values(imageInfo)}
           renderItem={renderItem}
           keyExtractor={item => item.id}
           numColumns={2}
@@ -123,112 +152,33 @@ export default function ProfileSelection(props) {
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
         />
-
-        {/* <ProfileImage></ProfileImage>
-        <ProfileImage></ProfileImage> */}
       </View>
     </View>
   );
 }
 
-const DATA = [
-  {
-    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-    title: "First Item",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-    title: "Second Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0ff71f-bd96-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd9sd6-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96fas-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-    title: "First Item",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-    title: "Second Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0ff71f-bd96-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd9sd6-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96fas-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-    title: "First Item",
-  },
-  {
-    id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-    title: "Second Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0ff71f-bd96-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd9sd6-145571e29d72",
-    title: "Third Item",
-  },
-  {
-    id: "58694a0f-3da1-471f-bd96fas-145571e29d72",
-    title: "Third Item",
-  },
-];
+const HeaderContents = () => {
+  const navigation = useNavigation();
+  return (
+    <>
+      <Icon
+        name="chevron-back-outline"
+        color="#ffffff"
+        size={verticalScale(40)}
+        onPress={() => navigation.navigate("Main")}></Icon>
 
-const Item = ({ title }) => (
-  <View style={styles.item}>
-    <Text style={styles.title}>{title}</Text>
-  </View>
-);
-
-const renderItem = ({ item }) => (
-  <ProfileImage
-    thumbnail={require("../assets/images/popular_thumbnail.jpeg")}
-  />
-);
+      <Button
+        title="편집"
+        type="clear"
+        titleStyle={{
+          fontFamily: "Pretendard-Bold",
+          fontSize: verticalScale(16),
+          color: "#fc2a5b",
+        }}
+      />
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   mainView: {
