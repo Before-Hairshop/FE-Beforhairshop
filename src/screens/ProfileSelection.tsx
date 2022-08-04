@@ -18,82 +18,163 @@ import ProfileImage from "../components/ProfileImage";
 import { useNavigation } from "@react-navigation/native";
 
 import { getSelectedImage } from "../store/actions/profile_actions";
-import { useDispatch } from "react-redux";
+import { useDispatch, useStore } from "react-redux";
+
+const BASE = "base";
+const EDIT = "edit";
+const SELECTED = "selected";
 
 export default function ProfileSelection(props) {
   const dispatch = useDispatch();
+  const store = useStore();
+  const navigation = useNavigation();
 
   // const profile = useSelector(store => store.Profile);
   let [imageInfo, setImageInfo] = useState([
-    { id: "bd7acbeafasd3abb28ba", title: "1 Item", status: "base" },
+    { id: "bd7acbeafasd3abb28ba", title: "1 Item", status: BASE },
     {
       id: "3ac68afc-c605-48d3-aafsdfasdf4f8-fbd91aa97f63",
       title: "2 Item",
-      status: "base",
+      status: BASE,
     },
     {
       id: "58694a0f-3da1-471f-asdfasdfbd96-145571e29d72",
       title: "3 Item",
-      status: "base",
+      status: BASE,
     },
     {
       id: "58694a0f-3da1-471f-bd9sadfadsf6-145571e29d72",
       title: "4 Item",
-      status: "base",
+      status: BASE,
     },
     {
       id: "58694a0ffasdfdasf71f-bd96-145571e29d72",
       title: "5 Item",
-      status: "base",
+      status: BASE,
     },
     {
       id: "58694a0f-3daasdfas1-471f-bd9sd6-145571e29d72",
       title: "6 Item",
-      status: "base",
+      status: BASE,
     },
     {
       id: "58694a0f-3daasdfsdfasdas1-471f-bd9sd6-145571e29d72",
       title: "7 Ifsdaftem",
-      status: "base",
+      status: BASE,
     },
   ]);
 
-  let [imageSelectionInfo, setImageSelectionInfo] = useState([
-    "base",
-    "base",
-    "base",
-    "base",
-    "base",
-    "base",
-    "base",
-  ]);
+  let [screenStatus, setScreenStatus] = useState(BASE);
 
-  const handleSelection = id => {
-    imageInfo.forEach((item, index) => {
-      imageInfo[index].status = "base";
+  const startEdit = () => {
+    setScreenStatus(EDIT);
+    let newArray = [...imageInfo];
 
-      if (item.id == id) {
-        // let newObj = imageInfo[index];
-        // newObj.status = "selected";
-        // imageInfo[index] = newObj;
-        imageInfo[index].status = "selected";
-
-        let newArray = [...imageSelectionInfo];
-        newArray[index] = "selected";
-
-        setImageSelectionInfo(newArray);
-        console.log(imageInfo[index].id);
-        console.log(props);
-        // dispatch(getSelectedImage(id));
-      }
-    });
+    let arrayLength = newArray.length;
+    for (let i = 0; i < arrayLength; i++) {
+      newArray[i].status = EDIT;
+    }
+    console.log("edit start");
+    setImageInfo(newArray);
   };
 
-  const Item = ({ title }) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
-    </View>
-  );
+  const finishEdit = () => {
+    setScreenStatus(BASE);
+    let newArray = [...imageInfo];
+
+    let arrayLength = newArray.length;
+    for (let i = 0; i < arrayLength; i++) {
+      newArray[i].status = BASE;
+    }
+    console.log("edit finished");
+    setImageInfo(newArray);
+  };
+
+  const handleSelection = id => {
+    if (screenStatus == EDIT) {
+      let newArray = [...imageInfo];
+
+      let arrayLength = newArray.length;
+      for (let i = 0; i < arrayLength; i++) {
+        newArray[i].status = EDIT;
+      }
+      console.log("edit start");
+      setImageInfo(newArray);
+    } else {
+      console.log("edit finished");
+      imageInfo.forEach((item, index) => {
+        if (item.id != id) {
+          //reset image selection
+          imageInfo[index].status = BASE;
+        } else if (
+          item.id == id &&
+          item.id != store.getState().Profile.selectedImage
+        ) {
+          //when user choose new image
+          let newArray = [...imageInfo];
+          newArray[index].status = SELECTED;
+          setImageInfo(newArray);
+
+          setScreenStatus(SELECTED);
+          dispatch(getSelectedImage(id));
+        } else {
+          //when user choose already selected image
+          let newArray = [...imageInfo];
+          imageInfo[index].status = BASE;
+          setImageInfo(newArray);
+
+          setScreenStatus(BASE);
+          dispatch(getSelectedImage(""));
+        }
+      });
+    }
+  };
+  const HeaderButton = () => {
+    if (screenStatus == SELECTED) {
+      return (
+        <Button
+          title="다음"
+          type="clear"
+          titleStyle={styles.headerRightButton}
+          onPress={() => navigation.navigate("VirtualStyling")}
+        />
+      );
+    } else if (screenStatus == BASE) {
+      return (
+        <Button
+          title="편집"
+          type="clear"
+          titleStyle={styles.headerRightButton}
+          onPress={startEdit}
+        />
+      );
+    } else {
+      return (
+        <Button
+          title="완료"
+          type="clear"
+          titleStyle={styles.headerRightButton}
+          onPress={finishEdit}
+        />
+      );
+    }
+  };
+
+  const HeaderContents = () => {
+    const navigation = useNavigation();
+
+    return (
+      <>
+        <Icon
+          name="chevron-back-outline"
+          color="#ffffff"
+          size={verticalScale(40)}
+          onPress={() => navigation.navigate("Main")}></Icon>
+
+        <HeaderButton />
+      </>
+    );
+  };
 
   const renderItem = ({ item }) => (
     <ProfileImage
@@ -157,29 +238,6 @@ export default function ProfileSelection(props) {
   );
 }
 
-const HeaderContents = () => {
-  const navigation = useNavigation();
-  return (
-    <>
-      <Icon
-        name="chevron-back-outline"
-        color="#ffffff"
-        size={verticalScale(40)}
-        onPress={() => navigation.navigate("Main")}></Icon>
-
-      <Button
-        title="편집"
-        type="clear"
-        titleStyle={{
-          fontFamily: "Pretendard-Bold",
-          fontSize: verticalScale(16),
-          color: "#fc2a5b",
-        }}
-      />
-    </>
-  );
-};
-
 const styles = StyleSheet.create({
   mainView: {
     flex: 1,
@@ -187,13 +245,13 @@ const styles = StyleSheet.create({
 
     backgroundColor: "#191919",
   },
-  item: {
-    backgroundColor: "#f9c2ff",
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-  },
+
   title: {
     fontSize: 32,
+  },
+  headerRightButton: {
+    fontFamily: "Pretendard-Bold",
+    fontSize: verticalScale(16),
+    color: "#fc2a5b",
   },
 });
