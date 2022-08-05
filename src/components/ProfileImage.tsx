@@ -5,6 +5,7 @@ import {
   ImageBackground,
   Dimensions,
   Image,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import LinearGradient from "react-native-linear-gradient";
@@ -14,22 +15,17 @@ import { scale, moderateScale, verticalScale } from "../utils/scale";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const imageSize = 160;
+const imageSize = 155;
 const borderSize = 7;
 
-export default function PopularHairstyle(props) {
-  let [imageType, setImageType] = useState("base");
-  //base, edit, selected
-  const selectImage = () => {
-    if (imageType == "base") {
-      setImageType("selected");
-    } else {
-      setImageType("base");
-    }
-  };
+const BASE = "base";
+const EDIT = "edit";
+const SELECTED = "selected";
+const ADD = "add";
 
+export default function PopularHairstyle(props) {
   const ImageBackgroundContents = () => {
-    if (props.status == "base") {
+    if (props.status == BASE || props.status == ADD) {
       return (
         <View
           style={{
@@ -43,7 +39,7 @@ export default function PopularHairstyle(props) {
           <Text></Text>
         </View>
       );
-    } else if (props.status == "selected") {
+    } else if (props.status == SELECTED) {
       return (
         <View
           style={{
@@ -78,17 +74,40 @@ export default function PopularHairstyle(props) {
     }
   };
 
+  const buttonColor = () => {
+    if (props.status == ADD) {
+      return "#000000";
+    } else if (props.status == BASE || props.status == EDIT) {
+      return "#222222";
+    } else {
+      return "#FC2A5B";
+    }
+  };
+
   return (
     <Button
+      //
       title={
         <View>
-          <ImageBackground
-            source={props.thumbnail}
-            resizeMode="cover"
-            style={[styles.image]}
-            imageStyle={{ borderRadius: 15 }}>
-            <ImageBackgroundContents></ImageBackgroundContents>
-          </ImageBackground>
+          {props.status == ADD ? (
+            <View style={{}}>
+              <Image
+                source={require("../assets/images/plus.png")}
+                style={{ width: verticalScale(62), height: verticalScale(62) }}
+              />
+            </View>
+          ) : (
+            <ImageBackground
+              source={{ uri: props.thumbnail }}
+              // source={{
+              //   uri: "https://s3-alpha-sig.figma.com/img/2368/2f7c/bf359d92bfd88117fafe2b252fec1f12?Expires=1660521600&Signature=aV7VDi9kBJtisfIq1hv5QYqJ1XJ1WXNcytOI3PWXyMWO10V~HHUji47cNADyU-u-5jTFToo9RJzVGq3c-pJItMj-bBZLNrYsa4I1x6YFT47GNbz16zxXDnaIBuv8z7p2G5btSqZwPIWWbNu7TNLKg51sxBvuPJ7V4LE-GP49DqzSzEfNhqAkfM1TiZXYZt0MHmoMR1gi8MfuAzsIg381es98-DbO3hfj5f~xT52gHy5GhZzVzsw6~NnQlclRINBv4fuqO5Q-hq1I6FZwaFXSIaT4HrzQMsbqO2QBuQpueg3qlTWVaS4lazH8J1OHYneuxoalbM0j2TWA0~xW6kY4YA__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+              // }}
+              resizeMode="cover"
+              style={[styles.image]}
+              imageStyle={{ borderRadius: 15 }}>
+              <ImageBackgroundContents></ImageBackgroundContents>
+            </ImageBackground>
+          )}
         </View>
       }
       buttonStyle={{
@@ -98,31 +117,21 @@ export default function PopularHairstyle(props) {
         justifyContent: "center",
         borderRadius: 15,
         width: scale(imageSize + borderSize),
+        borderColor: "#000000",
 
-        // imageType == "selected"
-        //   ? scale(imageSize + borderSize)
-        //   : scale(imageSize),
         height: scale(imageSize + borderSize),
-        // imageType == "selected"
-        //   ? scale(imageSize + borderSize)
-        //   : scale(imageSize),
+        marginBottom: verticalScale(15),
       }}
       containerStyle={{
         borderRadius: 15,
-        marginBottom: verticalScale(20),
+        marginBottom: verticalScale(15),
         padding: 0,
         margin: 0,
         width: scale(imageSize + borderSize),
 
-        // imageType == "selected"
-        //   ? scale(imageSize + borderSize)
-        //   : scale(imageSize),
         height: scale(imageSize + borderSize),
-        // imageType == "selected"
-        //   ? scale(imageSize + borderSize)
-        //   : scale(imageSize),
       }}
-      color={props.status == "selected" ? "#FC2A5B" : "#191919"}
+      color={buttonColor()}
       useForeground
       onPress={props.onPressImage}
     />
