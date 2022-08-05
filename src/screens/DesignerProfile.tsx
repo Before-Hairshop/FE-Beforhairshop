@@ -5,7 +5,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Button,
 } from "react-native";
 import React from "react";
 import DefaultDesigner from "../assets/images/default_designer_profile.png";
@@ -33,7 +32,7 @@ export default function Loading() {
         <View
           style={{
             width: "100%",
-            backgroundColor: "blue",
+            backgroundColor: "#191919",
             height: verticalScale(30),
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
@@ -47,35 +46,133 @@ export default function Loading() {
             paddingRight: "8%",
             width: "100%",
           }}>
-          <View>
-            <Text>헤어 디자이너</Text>
+          <Text>헤어 디자이너</Text>
+          <Text>이안</Text>
+        </View>
+        <View style={{ width: "100%", alignItems: "center" }}>
+          <View
+            style={{
+              width: "89%",
+              height: verticalScale(1),
+              backgroundColor: "#333333",
+            }}
+          />
+        </View>
+        <View
+          style={{
+            padding: "8%",
+            width: "100%",
+          }}>
+          <Text>자기소개</Text>
+          <Text>
+            lovable lucid florence flutter you destiny seraphic purity
+            adolescence fabulous girlish requiem lucid fabulous miracle miracle
+            droplet girlish lucid droplet purity droplet flutter adolescence
+            kitten fascinating.
+          </Text>
+        </View>
+      </View>
+      <View style={styles.button_container}>
+        <TouchableOpacity style={styles.tab_button}>
+          <Text style={styles.tab_button_text}>가격</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tab_button}>
+          <Text style={styles.tab_button_text}>위치</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tab_button}>
+          <Text style={styles.tab_button_text}>근무시간</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tab_button}>
+          <Text style={styles.tab_button_text}>리뷰</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ width: "100%", padding: "8%" }}>
+        <Text>가격</Text>
+        <View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Text>컷</Text>
+            <View>
+              <Text>여자컷트 30000원</Text>
+              <Text>남성컷트 30000원</Text>
+              <Text>앞머리컷 30000원</Text>
+            </View>
           </View>
-          <View>
-            <Text>자기소개</Text>
-            <Text>
-              lovable lucid florence flutter you destiny seraphic purity
-              adolescence fabulous girlish requiem lucid fabulous miracle
-              miracle droplet girlish lucid droplet purity droplet flutter
-              adolescence kitten fascinating.
-            </Text>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Text>일반펌</Text>
+            <View>
+              <Text>일반펌 / 남자 30000원</Text>
+              <Text>일반펌 / 여자 30000원</Text>
+            </View>
+          </View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Text>열펌</Text>
+            <View>
+              <Text>볼륨매직 30000원</Text>
+              <Text>매직셋팅 30000원</Text>
+            </View>
+          </View>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Text>염색</Text>
+            <View>
+              <Text>염색 30000원</Text>
+              <Text>탈색 30000원</Text>
+            </View>
           </View>
         </View>
       </View>
-      <View>
-        <View style={styles.button_container}>
-          <TouchableOpacity style={styles.tab_button}>
-            <Text style={styles.tab_button_text}>가격</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tab_button}>
-            <Text style={styles.tab_button_text}>위치</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tab_button}>
-            <Text style={styles.tab_button_text}>근무시간</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.tab_button}>
-            <Text style={styles.tab_button_text}>리뷰</Text>
-          </TouchableOpacity>
+      <View
+        style={{
+          width: "100%",
+          height: verticalScale(10),
+          backgroundColor: "#232323",
+        }}
+      />
+      <View style={{ width: "100%", padding: "8%" }}>
+        <Text>위치</Text>
+      </View>
+      <View
+        style={{
+          width: "100%",
+          height: verticalScale(10),
+          backgroundColor: "#232323",
+        }}
+      />
+      <View style={{ width: "100%", padding: "8%" }}>
+        <Text>근무시간</Text>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text>월요일</Text>
+          <Text>PM 17:00 - PM 21:00</Text>
         </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text>화요일</Text>
+          <Text>PM 17:00 - PM 21:00</Text>
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text>수요일</Text>
+          <Text>PM 17:00 - PM 21:00</Text>
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text>목요일</Text>
+          <Text>PM 17:00 - PM 21:00</Text>
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text>금ㆍ토ㆍ일</Text>
+          <Text>PM 17:00 - PM 21:00</Text>
+        </View>
+      </View>
+      <View
+        style={{
+          width: "100%",
+          height: verticalScale(10),
+          backgroundColor: "#232323",
+        }}
+      />
+      <View style={{ width: "100%", padding: "8%" }}>
+        <Text>디자이너 리뷰</Text>
       </View>
     </ScrollView>
   );
