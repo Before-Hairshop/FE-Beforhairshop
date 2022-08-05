@@ -5,23 +5,60 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Button,
 } from "react-native";
 import React from "react";
 import DefaultDesigner from "../assets/images/default_designer_profile.png";
 import { verticalScale } from "../utils/scale";
-import Icon from "react-native-vector-icons/Ionicons";
 
 import { Dimensions } from "react-native";
+import Header from "../components/Header";
 const { width, height } = Dimensions.get("window");
+import GoBackIcon from "../assets/icons/goBack";
+import MeatballIcon from "../assets/icons/meatball";
+
+const HeaderContents = () => (
+  <>
+    <GoBackIcon />
+    <MeatballIcon />
+  </>
+);
 
 export default function Loading() {
   return (
     <ScrollView style={styles.profile}>
-      <View>
+      <Header contents={<HeaderContents />} />
+      <View style={{ width: "100%" }}>
         <Image source={DefaultDesigner} style={styles.designer_img} />
-        <View style={styles.info_header}>
-          <Text>헤어 디자이너</Text>
-          {/* <ion-icon name="chevron-back-outline"></ion-icon> */}
+        <View
+          style={{
+            width: "100%",
+            backgroundColor: "blue",
+            height: verticalScale(30),
+            borderTopLeftRadius: 30,
+            borderTopRightRadius: 30,
+            position: "absolute",
+            top: verticalScale(345),
+          }}
+        />
+        <View
+          style={{
+            paddingLeft: "8%",
+            paddingRight: "8%",
+            width: "100%",
+          }}>
+          <View>
+            <Text>헤어 디자이너</Text>
+          </View>
+          <View>
+            <Text>자기소개</Text>
+            <Text>
+              lovable lucid florence flutter you destiny seraphic purity
+              adolescence fabulous girlish requiem lucid fabulous miracle
+              miracle droplet girlish lucid droplet purity droplet flutter
+              adolescence kitten fascinating.
+            </Text>
+          </View>
         </View>
       </View>
       <View>
@@ -59,12 +96,7 @@ const styles = StyleSheet.create({
   designer_img: {
     width: "100%",
     height: verticalScale(375),
-  },
-  info_header: {
-    width: "100%",
-    height: 144.6,
-    backgroundColor: "#191919",
-    borderRadius: 30,
+    position: "relative",
   },
   button_container: {
     width: "100%",
