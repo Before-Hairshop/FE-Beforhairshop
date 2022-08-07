@@ -5,7 +5,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Button,
 } from "react-native";
 import React from "react";
 import DefaultDesigner from "../assets/images/default_designer_profile.png";
@@ -14,13 +13,14 @@ import { verticalScale } from "../utils/scale";
 import { Dimensions } from "react-native";
 import Header from "../components/Header";
 const { width, height } = Dimensions.get("window");
-import GoBackIcon from "../assets/icons/goBack";
-import MeatballIcon from "../assets/icons/meatball";
-import StarIcon from "../assets/icons/star";
-import CallIcon from "../assets/icons/call";
-import LoveIcon from "../assets/icons/love";
-import WriteIcon from "../assets/icons/write";
+import GoBackIcon from "../assets/icons/goBack.svg";
+import MeatballIcon from "../assets/icons/meatball.svg";
+import StarIcon from "../assets/icons/star.svg";
+import CallIcon from "../assets/icons/call.svg";
+import LoveIcon from "../assets/icons/love.svg";
+import WriteIcon from "../assets/icons/write.svg";
 import DefaultMap from "../assets/images/default_map.png";
+import HighlightText from "react-native-highlight-underline-text";
 
 const HeaderContents = () => (
   <>
@@ -32,9 +32,11 @@ const HeaderContents = () => (
 export default function Loading() {
   return (
     <ScrollView style={styles.profile}>
-      <Header contents={<HeaderContents />} />
       <View style={{ width: "100%" }}>
         <Image source={DefaultDesigner} style={styles.designer_img} />
+        <View style={{ width: "100%", position: "absolute" }}>
+          <Header contents={<HeaderContents />} />
+        </View>
         <View
           style={{
             width: "100%",
@@ -51,6 +53,7 @@ export default function Loading() {
             width: "100%",
             paddingLeft: "8%",
             paddingRight: "8%",
+            paddingBottom: "8%",
             flexDirection: "row",
             justifyContent: "space-between",
           }}>
@@ -87,46 +90,82 @@ export default function Loading() {
               <StarIcon />
             </View>
           </View>
-          <View>
-            <CallIcon />
-            <Text
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View
               style={{
-                fontFamily: "Pretendard",
-                fontSize: 12,
-                fontWeight: "500",
-                fontStyle: "normal",
-                letterSpacing: 0,
-                textAlign: "left",
-                color: "#ffffff",
+                width: verticalScale(42),
+                display: "flex",
+                alignItems: "center",
               }}>
-              전화걸기
-            </Text>
-            <LoveIcon />
-            <Text
+              <View style={{ padding: "22.7%" }}>
+                <CallIcon
+                  width={verticalScale(19.1)}
+                  height={verticalScale(19.1)}
+                />
+              </View>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: 12,
+                  fontWeight: "500",
+                  fontStyle: "normal",
+                  letterSpacing: 0,
+                  textAlign: "left",
+                  color: "#ffffff",
+                }}>
+                전화걸기
+              </Text>
+            </View>
+            <View
               style={{
-                fontFamily: "Pretendard",
-                fontSize: 12,
-                fontWeight: "500",
-                fontStyle: "normal",
-                letterSpacing: 0,
-                textAlign: "left",
-                color: "#ffffff",
+                width: verticalScale(42),
+                display: "flex",
+                alignItems: "center",
               }}>
-              찜하기
-            </Text>
-            <WriteIcon />
-            <Text
+              <View style={{ padding: "22.7%" }}>
+                <LoveIcon
+                  width={verticalScale(19.1)}
+                  height={verticalScale(19.1)}
+                />
+              </View>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: 12,
+                  fontWeight: "500",
+                  fontStyle: "normal",
+                  letterSpacing: 0,
+                  textAlign: "left",
+                  color: "#ffffff",
+                }}>
+                찜하기
+              </Text>
+            </View>
+            <View
               style={{
-                fontFamily: "Pretendard",
-                fontSize: 12,
-                fontWeight: "500",
-                fontStyle: "normal",
-                letterSpacing: 0,
-                textAlign: "left",
-                color: "#ffffff",
+                width: verticalScale(42),
+                display: "flex",
+                alignItems: "center",
               }}>
-              리뷰작성
-            </Text>
+              <View style={{ padding: "22.7%" }}>
+                <WriteIcon
+                  width={verticalScale(19.1)}
+                  height={verticalScale(19.1)}
+                />
+              </View>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: 12,
+                  fontWeight: "500",
+                  fontStyle: "normal",
+                  letterSpacing: 0,
+                  textAlign: "left",
+                  color: "#ffffff",
+                }}>
+                리뷰작성
+              </Text>
+            </View>
           </View>
         </View>
         <View style={{ width: "100%", alignItems: "center" }}>
@@ -152,6 +191,7 @@ export default function Loading() {
               letterSpacing: 0,
               textAlign: "left",
               color: "#ffffff",
+              marginBottom: verticalScale(10),
             }}>
             자기소개
           </Text>
@@ -165,6 +205,7 @@ export default function Loading() {
               letterSpacing: 0,
               textAlign: "left",
               color: "rgba(255, 255, 255, 0.7)",
+              marginBottom: verticalScale(10.5),
             }}>
             lovable lucid florence flutter you destiny seraphic purity
             adolescence fabulous girlish requiem lucid fabulous miracle miracle
@@ -179,6 +220,8 @@ export default function Loading() {
                 height: verticalScale(22),
                 borderRadius: 100,
                 backgroundColor: "#fc2a5b",
+                alignItems: "center",
+                justifyContent: "center",
               }}>
               <Text
                 style={{
@@ -199,6 +242,8 @@ export default function Loading() {
                 height: verticalScale(22),
                 borderRadius: 100,
                 backgroundColor: "#fc2a5b",
+                alignItems: "center",
+                justifyContent: "center",
               }}>
               <Text
                 style={{
@@ -219,6 +264,8 @@ export default function Loading() {
                 height: verticalScale(22),
                 borderRadius: 100,
                 backgroundColor: "#fc2a5b",
+                alignItems: "center",
+                justifyContent: "center",
               }}>
               <Text
                 style={{
@@ -239,6 +286,8 @@ export default function Loading() {
                 height: verticalScale(22),
                 borderRadius: 100,
                 backgroundColor: "#fc2a5b",
+                alignItems: "center",
+                justifyContent: "center",
               }}>
               <Text
                 style={{
@@ -259,6 +308,8 @@ export default function Loading() {
                 height: verticalScale(22),
                 borderRadius: 100,
                 backgroundColor: "#fc2a5b",
+                alignItems: "center",
+                justifyContent: "center",
               }}>
               <Text
                 style={{
@@ -279,6 +330,8 @@ export default function Loading() {
                 height: verticalScale(22),
                 borderRadius: 100,
                 backgroundColor: "#fc2a5b",
+                alignItems: "center",
+                justifyContent: "center",
               }}>
               <Text
                 style={{
@@ -299,6 +352,8 @@ export default function Loading() {
                 height: verticalScale(22),
                 borderRadius: 100,
                 backgroundColor: "#fc2a5b",
+                alignItems: "center",
+                justifyContent: "center",
               }}>
               <Text
                 style={{
@@ -319,6 +374,8 @@ export default function Loading() {
                 height: verticalScale(22),
                 borderRadius: 100,
                 backgroundColor: "#fc2a5b",
+                alignItems: "center",
+                justifyContent: "center",
               }}>
               <Text
                 style={{
@@ -339,6 +396,8 @@ export default function Loading() {
                 height: verticalScale(22),
                 borderRadius: 100,
                 backgroundColor: "#fc2a5b",
+                alignItems: "center",
+                justifyContent: "center",
               }}>
               <Text
                 style={{
@@ -371,8 +430,11 @@ export default function Loading() {
         </TouchableOpacity>
       </View>
       <View style={{ width: "100%", padding: "8%" }}>
-        <Text
-          style={{
+        <HighlightText
+          isFixed={false}
+          ratio={0.26}
+          underlineColor="rgba(252, 42, 91, 0.5)"
+          textStyle={{
             fontFamily: "Pretendard",
             fontSize: 20,
             fontWeight: "bold",
@@ -380,9 +442,9 @@ export default function Loading() {
             letterSpacing: 0,
             textAlign: "left",
             color: "#ffffff",
-          }}>
-          가격
-        </Text>
+          }}
+          text="가격"
+        />
         <View>
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -427,8 +489,11 @@ export default function Loading() {
         }}
       />
       <View style={{ width: "100%", padding: "8%" }}>
-        <Text
-          style={{
+        <HighlightText
+          isFixed={false}
+          ratio={0.26}
+          underlineColor="rgba(252, 42, 91, 0.5)"
+          textStyle={{
             fontFamily: "Pretendard",
             fontSize: 20,
             fontWeight: "bold",
@@ -436,9 +501,9 @@ export default function Loading() {
             letterSpacing: 0,
             textAlign: "left",
             color: "#ffffff",
-          }}>
-          위치
-        </Text>
+          }}
+          text="위치"
+        />
         <Image
           source={DefaultMap}
           style={{
@@ -482,8 +547,11 @@ export default function Loading() {
         }}
       />
       <View style={{ width: "100%", padding: "8%" }}>
-        <Text
-          style={{
+        <HighlightText
+          isFixed={false}
+          ratio={0.26}
+          underlineColor="rgba(252, 42, 91, 0.5)"
+          textStyle={{
             fontFamily: "Pretendard",
             fontSize: 20,
             fontWeight: "bold",
@@ -491,9 +559,9 @@ export default function Loading() {
             letterSpacing: 0,
             textAlign: "left",
             color: "#ffffff",
-          }}>
-          근무시간
-        </Text>
+          }}
+          text="근무시간"
+        />
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text
             style={{
@@ -633,8 +701,11 @@ export default function Loading() {
         }}
       />
       <View style={{ width: "100%", padding: "8%" }}>
-        <Text
-          style={{
+        <HighlightText
+          isFixed={false}
+          ratio={0.26}
+          underlineColor="rgba(252, 42, 91, 0.5)"
+          textStyle={{
             fontFamily: "Pretendard",
             fontSize: 20,
             fontWeight: "bold",
@@ -642,12 +713,38 @@ export default function Loading() {
             letterSpacing: 0,
             textAlign: "left",
             color: "#ffffff",
+          }}
+          text="디자이너 리뷰"
+        />
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontSize: 11,
+              fontWeight: "normal",
+              fontStyle: "normal",
+              lineHeight: 12,
+              letterSpacing: 0,
+              textAlign: "left",
+              color: "#999999",
+            }}>
+            22.07.15
+          </Text>
+          <MeatballIcon />
+        </View>
+        <Text
+          style={{
+            fontFamily: "Pretendard",
+            fontSize: 14,
+            fontWeight: "bold",
+            fontStyle: "normal",
+            lineHeight: 24,
+            letterSpacing: 0,
+            textAlign: "left",
+            color: "#ffffff",
           }}>
-          디자이너 리뷰
+          겁나 빠른 황소
         </Text>
-        <Text>22.07.15</Text>
-        <MeatballIcon />
-        <Text>겁나 빠른 황소</Text>
         <View style={{ flexDirection: "row" }}>
           <StarIcon />
           <StarIcon />
@@ -655,9 +752,41 @@ export default function Loading() {
           <StarIcon />
           <StarIcon />
         </View>
-        <Text>스타일 좋음</Text>
-        <Text>서비스 보통</Text>
-        <Text>
+        <Text
+          style={{
+            fontFamily: "Pretendard",
+            fontSize: 12,
+            fontWeight: "bold",
+            fontStyle: "normal",
+            letterSpacing: 0,
+            textAlign: "left",
+            color: "#888888",
+          }}>
+          스타일 좋음
+        </Text>
+        <Text
+          style={{
+            fontFamily: "Pretendard",
+            fontSize: 12,
+            fontWeight: "bold",
+            fontStyle: "normal",
+            letterSpacing: 0,
+            textAlign: "left",
+            color: "#888888",
+          }}>
+          서비스 보통
+        </Text>
+        <Text
+          style={{
+            fontFamily: "Pretendard",
+            fontSize: 13,
+            fontWeight: "300",
+            fontStyle: "normal",
+            lineHeight: 18,
+            letterSpacing: 0,
+            textAlign: "left",
+            color: "rgba(255, 255, 255, 0.8)",
+          }}>
           진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~
           강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘
           짤라줘요~ 강추!{" "}
@@ -693,6 +822,9 @@ const styles = StyleSheet.create({
     width: "25%",
     paddingTop: verticalScale(17),
     paddingBottom: verticalScale(17),
+    borderBottomColor: "blue",
+    // borderBottomHeight: 1,
+    borderBottomWidth: 0.5,
   },
   tab_button_text: {
     fontFamily: "Pretendard",
