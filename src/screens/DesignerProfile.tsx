@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import React from "react";
 import DefaultDesigner from "../assets/images/default_designer_profile.png";
-import { verticalScale } from "../utils/scale";
+import { scale, verticalScale } from "../utils/scale";
 
 import { Dimensions } from "react-native";
 import Header from "../components/Header";
@@ -21,6 +21,7 @@ import LoveIcon from "../assets/icons/love.svg";
 import WriteIcon from "../assets/icons/write.svg";
 import DefaultMap from "../assets/images/default_map.png";
 import HighlightText from "react-native-highlight-underline-text";
+import DashedLine from "react-native-dashed-line";
 
 const HeaderContents = () => (
   <>
@@ -28,6 +29,44 @@ const HeaderContents = () => (
     <MeatballIcon />
   </>
 );
+
+const DashedLineContent = () => (
+  <View
+    style={{
+      flex: 1,
+      paddingLeft: scale(10),
+      paddingRight: scale(10),
+    }}>
+    <DashedLine
+      dashLength={verticalScale(1)}
+      dashThickness={scale(1)}
+      dashGap={scale(1)}
+      dashColor="#4e4e4e"
+    />
+  </View>
+);
+
+const UnderLineContent = (props: { value: string }) => (
+  <HighlightText
+    isFixed={false}
+    ratio={0.26}
+    underlineColor="rgba(252, 42, 91, 0.5)"
+    textStyle={{
+      fontFamily: "Pretendard",
+      fontSize: 20,
+      fontWeight: "bold",
+      fontStyle: "normal",
+      letterSpacing: 0,
+      textAlign: "left",
+      color: "#ffffff",
+    }}
+    text={props.value}
+  />
+);
+
+function numberWithCommas(x: number) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 export default function Loading() {
   return (
@@ -55,33 +94,10 @@ export default function Loading() {
             paddingRight: "8%",
             paddingBottom: "8%",
             flexDirection: "row",
-            justifyContent: "space-between",
           }}>
-          <View>
-            <Text
-              style={{
-                fontFamily: "Pretendard",
-                fontSize: 12,
-                fontWeight: "500",
-                fontStyle: "normal",
-                letterSpacing: 0,
-                textAlign: "left",
-                color: "#999999",
-              }}>
-              헤어 디자이너
-            </Text>
-            <Text
-              style={{
-                fontFamily: "Pretendard",
-                fontSize: 30,
-                fontWeight: "bold",
-                fontStyle: "normal",
-                letterSpacing: 0,
-                textAlign: "left",
-                color: "#ffffff",
-              }}>
-              이안
-            </Text>
+          <View style={{ width: "44%" }}>
+            <Text style={styles.designer}>헤어 디자이너</Text>
+            <Text style={styles.designer_name}>이안</Text>
             <View style={{ flexDirection: "row" }}>
               <StarIcon />
               <StarIcon />
@@ -90,81 +106,69 @@ export default function Loading() {
               <StarIcon />
             </View>
           </View>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <View
-              style={{
-                width: verticalScale(42),
-                display: "flex",
-                alignItems: "center",
-              }}>
-              <View style={{ padding: "22.7%" }}>
-                <CallIcon
-                  width={verticalScale(19.1)}
-                  height={verticalScale(19.1)}
-                />
+          <View
+            style={{
+              width: "56%",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}>
+            <View>
+              <View style={styles.action_icon}>
+                <CallIcon width={scale(19.1)} height={verticalScale(19.1)} />
               </View>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: 0,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                전화걸기
-              </Text>
+              <View style={{ alignItems: "center" }}>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: 12,
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    letterSpacing: 0,
+                    textAlign: "left",
+                    color: "#ffffff",
+                  }}>
+                  전화걸기
+                </Text>
+              </View>
             </View>
-            <View
-              style={{
-                width: verticalScale(42),
-                display: "flex",
-                alignItems: "center",
-              }}>
-              <View style={{ padding: "22.7%" }}>
-                <LoveIcon
-                  width={verticalScale(19.1)}
-                  height={verticalScale(19.1)}
-                />
+            <View>
+              <View style={styles.action_icon}>
+                <LoveIcon width={scale(19.1)} height={verticalScale(19.1)} />
               </View>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: 0,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                찜하기
-              </Text>
+              <View style={{ alignItems: "center" }}>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: 12,
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    letterSpacing: 0,
+                    textAlign: "left",
+                    color: "#ffffff",
+                  }}>
+                  찜하기
+                </Text>
+              </View>
             </View>
-            <View
-              style={{
-                width: verticalScale(42),
-                display: "flex",
-                alignItems: "center",
-              }}>
-              <View style={{ padding: "22.7%" }}>
-                <WriteIcon
-                  width={verticalScale(19.1)}
-                  height={verticalScale(19.1)}
-                />
+            <View>
+              <View style={styles.action_icon}>
+                <WriteIcon width={scale(19.1)} height={verticalScale(19.1)} />
               </View>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: 0,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                리뷰작성
-              </Text>
+              <View style={{ alignItems: "center" }}>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: 12,
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    letterSpacing: 0,
+                    textAlign: "left",
+                    color: "#ffffff",
+                  }}>
+                  리뷰작성
+                </Text>
+              </View>
             </View>
           </View>
         </View>
@@ -182,31 +186,8 @@ export default function Loading() {
             padding: "8%",
             width: "100%",
           }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 20,
-              fontWeight: "bold",
-              fontStyle: "normal",
-              letterSpacing: 0,
-              textAlign: "left",
-              color: "#ffffff",
-              marginBottom: verticalScale(10),
-            }}>
-            자기소개
-          </Text>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 15,
-              fontWeight: "300",
-              fontStyle: "normal",
-              lineHeight: 25,
-              letterSpacing: 0,
-              textAlign: "left",
-              color: "rgba(255, 255, 255, 0.7)",
-              marginBottom: verticalScale(10.5),
-            }}>
+          <Text style={styles.introduction}>자기소개</Text>
+          <Text style={styles.introduction_contents}>
             lovable lucid florence flutter you destiny seraphic purity
             adolescence fabulous girlish requiem lucid fabulous miracle miracle
             droplet girlish lucid droplet purity droplet flutter adolescence
@@ -214,209 +195,45 @@ export default function Loading() {
           </Text>
           <View
             style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
-            <TouchableOpacity
-              style={{
-                width: verticalScale(54),
-                height: verticalScale(22),
-                borderRadius: 100,
-                backgroundColor: "#fc2a5b",
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                # 포마드
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                width: verticalScale(54),
-                height: verticalScale(22),
-                borderRadius: 100,
-                backgroundColor: "#fc2a5b",
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                # 바버샵
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                width: verticalScale(54),
-                height: verticalScale(22),
-                borderRadius: 100,
-                backgroundColor: "#fc2a5b",
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                # 포마드
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                width: verticalScale(54),
-                height: verticalScale(22),
-                borderRadius: 100,
-                backgroundColor: "#fc2a5b",
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                # 포마드
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                width: verticalScale(54),
-                height: verticalScale(22),
-                borderRadius: 100,
-                backgroundColor: "#fc2a5b",
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                # 포마드
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                width: verticalScale(54),
-                height: verticalScale(22),
-                borderRadius: 100,
-                backgroundColor: "#fc2a5b",
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                # 포마드
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                width: verticalScale(54),
-                height: verticalScale(22),
-                borderRadius: 100,
-                backgroundColor: "#fc2a5b",
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                # 포마드
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                width: verticalScale(54),
-                height: verticalScale(22),
-                borderRadius: 100,
-                backgroundColor: "#fc2a5b",
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                # 포마드
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                width: verticalScale(54),
-                height: verticalScale(22),
-                borderRadius: 100,
-                backgroundColor: "#fc2a5b",
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                # 포마드
-              </Text>
-            </TouchableOpacity>
+            <View style={styles.introduction_tag}>
+              <Text style={styles.introduction_tag_text}># 포마드</Text>
+            </View>
+            <View style={styles.introduction_tag}>
+              <Text style={styles.introduction_tag_text}># 바버샵</Text>
+            </View>
+            <View style={styles.introduction_tag}>
+              <Text style={styles.introduction_tag_text}># 포마드</Text>
+            </View>
+            <View style={styles.introduction_tag}>
+              <Text style={styles.introduction_tag_text}># 포마드</Text>
+            </View>
+            <View style={styles.introduction_tag}>
+              <Text style={styles.introduction_tag_text}># 포마드</Text>
+            </View>
+            <View style={styles.introduction_tag}>
+              <Text style={styles.introduction_tag_text}># 포마드</Text>
+            </View>
+            <View style={styles.introduction_tag}>
+              <Text style={styles.introduction_tag_text}># 포마드</Text>
+            </View>
+            <View style={styles.introduction_tag}>
+              <Text style={styles.introduction_tag_text}># 포마드</Text>
+            </View>
+            <View style={styles.introduction_tag}>
+              <Text style={styles.introduction_tag_text}># 포마드</Text>
+            </View>
           </View>
         </View>
       </View>
       <View style={styles.button_container}>
-        <TouchableOpacity style={styles.tab_button}>
+        <TouchableOpacity
+          style={{
+            width: "25%",
+            paddingTop: verticalScale(17),
+            paddingBottom: verticalScale(17),
+            borderBottomColor: "#ffffff",
+            borderBottomWidth: verticalScale(2),
+          }}>
           <Text style={styles.tab_button_text}>가격</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tab_button}>
@@ -429,54 +246,91 @@ export default function Loading() {
           <Text style={styles.tab_button_text}>리뷰</Text>
         </TouchableOpacity>
       </View>
-      <View style={{ width: "100%", padding: "8%" }}>
-        <HighlightText
-          isFixed={false}
-          ratio={0.26}
-          underlineColor="rgba(252, 42, 91, 0.5)"
-          textStyle={{
-            fontFamily: "Pretendard",
-            fontSize: 20,
-            fontWeight: "bold",
-            fontStyle: "normal",
-            letterSpacing: 0,
-            textAlign: "left",
-            color: "#ffffff",
-          }}
-          text="가격"
-        />
-        <View>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Text style={styles.hair_category}>컷</Text>
-            <View>
-              <Text>여자컷트 30000원</Text>
-              <Text>남성컷트 30000원</Text>
-              <Text>앞머리컷 30000원</Text>
+      <View
+        style={{
+          width: "100%",
+          paddingTop: verticalScale(30),
+          paddingLeft: scale(30),
+          paddingRight: scale(30),
+          paddingBottom: verticalScale(40),
+        }}>
+        <View style={styles.underline_content_container}>
+          <UnderLineContent value="가격" />
+        </View>
+        <View style={styles.hair_category}>
+          <Text style={styles.hair_category_text}>컷</Text>
+          <View style={{ width: "80%" }}>
+            <View style={styles.hair_price_element}>
+              <Text style={styles.hair_name}>여자컷트</Text>
+              <DashedLineContent />
+              <Text style={styles.hair_price}>{numberWithCommas(30000)}원</Text>
+            </View>
+            <View style={styles.hair_price_element}>
+              <Text style={styles.hair_name}>남성컷트</Text>
+              <DashedLineContent />
+              <Text style={styles.hair_price}>{numberWithCommas(30000)}원</Text>
+            </View>
+            <View style={styles.hair_price_element_last}>
+              <Text style={styles.hair_name}>앞머리컷</Text>
+              <DashedLineContent />
+              <Text style={styles.hair_price}>{numberWithCommas(30000)}원</Text>
             </View>
           </View>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Text style={styles.hair_category}>일반펌</Text>
-            <View>
-              <Text>일반펌 / 남자 30000원</Text>
-              <Text>일반펌 / 여자 30000원</Text>
+        </View>
+        <View style={styles.hair_category}>
+          <Text style={styles.hair_category_text}>일반펌</Text>
+          <View style={{ width: "80%" }}>
+            <View style={styles.hair_price_element}>
+              <Text style={styles.hair_name}>일반펌 / 남자</Text>
+              <DashedLineContent />
+              <Text style={styles.hair_price}>{numberWithCommas(10000)}원</Text>
+            </View>
+            <View style={styles.hair_price_element_last}>
+              <Text style={styles.hair_name}>일반펌 / 여자</Text>
+              <DashedLineContent />
+              <Text style={styles.hair_price}>{numberWithCommas(5000)}원</Text>
             </View>
           </View>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Text style={styles.hair_category}>열펌</Text>
-            <View>
-              <Text>볼륨매직 30000원</Text>
-              <Text>매직셋팅 30000원</Text>
+        </View>
+        <View style={styles.hair_category}>
+          <Text style={styles.hair_category_text}>열펌</Text>
+          <View style={{ width: "80%" }}>
+            <View style={styles.hair_price_element}>
+              <Text style={styles.hair_name}>셋팅펌</Text>
+              <DashedLineContent />
+              <Text style={styles.hair_price}>{numberWithCommas(70000)}원</Text>
+            </View>
+            <View style={styles.hair_price_element}>
+              <Text style={styles.hair_name}>매직</Text>
+              <DashedLineContent />
+              <Text style={styles.hair_price}>{numberWithCommas(70000)}원</Text>
+            </View>
+            <View style={styles.hair_price_element}>
+              <Text style={styles.hair_name}>볼륨매직</Text>
+              <DashedLineContent />
+              <Text style={styles.hair_price}>{numberWithCommas(80000)}원</Text>
+            </View>
+            <View style={styles.hair_price_element_last}>
+              <Text style={styles.hair_name}>매직셋팅</Text>
+              <DashedLineContent />
+              <Text style={styles.hair_price}>
+                {numberWithCommas(130000)}원
+              </Text>
             </View>
           </View>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Text style={styles.hair_category}>염색</Text>
-            <View>
-              <Text>염색 30000원</Text>
-              <Text>탈색 30000원</Text>
+        </View>
+        <View style={styles.hair_category_last}>
+          <Text style={styles.hair_category_text}>염색</Text>
+          <View style={{ width: "80%" }}>
+            <View style={styles.hair_price_element}>
+              <Text style={styles.hair_name}>염색</Text>
+              <DashedLineContent />
+              <Text style={styles.hair_price}>{numberWithCommas(60000)}원</Text>
+            </View>
+            <View style={styles.hair_price_element_last}>
+              <Text style={styles.hair_name}>탈색</Text>
+              <DashedLineContent />
+              <Text style={styles.hair_price}>{numberWithCommas(60000)}원</Text>
             </View>
           </View>
         </View>
@@ -489,27 +343,16 @@ export default function Loading() {
         }}
       />
       <View style={{ width: "100%", padding: "8%" }}>
-        <HighlightText
-          isFixed={false}
-          ratio={0.26}
-          underlineColor="rgba(252, 42, 91, 0.5)"
-          textStyle={{
-            fontFamily: "Pretendard",
-            fontSize: 20,
-            fontWeight: "bold",
-            fontStyle: "normal",
-            letterSpacing: 0,
-            textAlign: "left",
-            color: "#ffffff",
-          }}
-          text="위치"
-        />
+        <View style={styles.underline_content_container}>
+          <UnderLineContent value="위치" />
+        </View>
         <Image
           source={DefaultMap}
           style={{
-            width: verticalScale(334),
+            width: "100%",
             height: verticalScale(200),
             borderRadius: 10,
+            marginBottom: verticalScale(20),
           }}
         />
         <Text
@@ -547,150 +390,28 @@ export default function Loading() {
         }}
       />
       <View style={{ width: "100%", padding: "8%" }}>
-        <HighlightText
-          isFixed={false}
-          ratio={0.26}
-          underlineColor="rgba(252, 42, 91, 0.5)"
-          textStyle={{
-            fontFamily: "Pretendard",
-            fontSize: 20,
-            fontWeight: "bold",
-            fontStyle: "normal",
-            letterSpacing: 0,
-            textAlign: "left",
-            color: "#ffffff",
-          }}
-          text="근무시간"
-        />
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 15,
-              fontWeight: "bold",
-              fontStyle: "normal",
-              letterSpacing: 0,
-              textAlign: "left",
-              color: "#ffffff",
-            }}>
-            월요일
-          </Text>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 15,
-              fontWeight: "normal",
-              fontStyle: "normal",
-              letterSpacing: 0,
-              textAlign: "right",
-              color: "#ffffff",
-            }}>
-            PM 17:00 - PM 21:00
-          </Text>
+        <View style={styles.underline_content_container}>
+          <UnderLineContent value="근무시간" />
         </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 15,
-              fontWeight: "bold",
-              fontStyle: "normal",
-              letterSpacing: 0,
-              textAlign: "left",
-              color: "#ffffff",
-            }}>
-            화요일
-          </Text>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 15,
-              fontWeight: "normal",
-              fontStyle: "normal",
-              letterSpacing: 0,
-              textAlign: "right",
-              color: "#ffffff",
-            }}>
-            PM 17:00 - PM 21:00
-          </Text>
+        <View style={styles.office_hours}>
+          <Text style={styles.working_day}>월요일</Text>
+          <Text style={styles.working_time}>PM 17:00 - PM 21:00</Text>
         </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 15,
-              fontWeight: "bold",
-              fontStyle: "normal",
-              letterSpacing: 0,
-              textAlign: "left",
-              color: "#ffffff",
-            }}>
-            수요일
-          </Text>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 15,
-              fontWeight: "normal",
-              fontStyle: "normal",
-              letterSpacing: 0,
-              textAlign: "right",
-              color: "#ffffff",
-            }}>
-            PM 17:00 - PM 21:00
-          </Text>
+        <View style={styles.office_hours}>
+          <Text style={styles.working_day}>화요일</Text>
+          <Text style={styles.working_time}>PM 17:00 - PM 21:00</Text>
         </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 15,
-              fontWeight: "bold",
-              fontStyle: "normal",
-              letterSpacing: 0,
-              textAlign: "left",
-              color: "#ffffff",
-            }}>
-            목요일
-          </Text>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 15,
-              fontWeight: "normal",
-              fontStyle: "normal",
-              letterSpacing: 0,
-              textAlign: "right",
-              color: "#ffffff",
-            }}>
-            PM 17:00 - PM 21:00
-          </Text>
+        <View style={styles.office_hours}>
+          <Text style={styles.working_day}>수요일</Text>
+          <Text style={styles.working_time}>PM 17:00 - PM 21:00</Text>
         </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 15,
-              fontWeight: "bold",
-              fontStyle: "normal",
-              letterSpacing: 0,
-              textAlign: "left",
-              color: "#ffffff",
-            }}>
-            금ㆍ토ㆍ일
-          </Text>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 15,
-              fontWeight: "normal",
-              fontStyle: "normal",
-              letterSpacing: 0,
-              textAlign: "right",
-              color: "#ffffff",
-            }}>
-            휴무
-          </Text>
+        <View style={styles.office_hours}>
+          <Text style={styles.working_day}>목요일</Text>
+          <Text style={styles.working_time}>PM 17:00 - PM 21:00</Text>
+        </View>
+        <View style={styles.office_hours}>
+          <Text style={styles.working_day}>금ㆍ토ㆍ일</Text>
+          <Text style={styles.working_time}>휴무</Text>
         </View>
       </View>
       <View
@@ -701,21 +422,9 @@ export default function Loading() {
         }}
       />
       <View style={{ width: "100%", padding: "8%" }}>
-        <HighlightText
-          isFixed={false}
-          ratio={0.26}
-          underlineColor="rgba(252, 42, 91, 0.5)"
-          textStyle={{
-            fontFamily: "Pretendard",
-            fontSize: 20,
-            fontWeight: "bold",
-            fontStyle: "normal",
-            letterSpacing: 0,
-            textAlign: "left",
-            color: "#ffffff",
-          }}
-          text="디자이너 리뷰"
-        />
+        <View style={styles.underline_content_container}>
+          <UnderLineContent value="디자이너 리뷰" />
+        </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text
             style={{
@@ -791,6 +500,14 @@ export default function Loading() {
           강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘
           짤라줘요~ 강추!{" "}
         </Text>
+        <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
+          <View style={styles.review_tag}>
+            <Text style={styles.review_tag_text}>#다움펌</Text>
+          </View>
+          <View style={styles.review_tag}>
+            <Text style={styles.review_tag_text}>#남성컷</Text>
+          </View>
+        </View>
       </View>
     </ScrollView>
   );
@@ -813,6 +530,70 @@ const styles = StyleSheet.create({
     height: verticalScale(375),
     position: "relative",
   },
+  designer: {
+    fontFamily: "Pretendard",
+    fontSize: 12,
+    fontWeight: "500",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "#999999",
+  },
+  designer_name: {
+    fontFamily: "Pretendard",
+    fontSize: 30,
+    fontWeight: "bold",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "#ffffff",
+  },
+  action_icon: {
+    padding: verticalScale(11),
+  },
+  introduction: {
+    fontFamily: "Pretendard",
+    fontSize: 20,
+    fontWeight: "bold",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "#ffffff",
+    marginBottom: verticalScale(10),
+  },
+  introduction_contents: {
+    fontFamily: "Pretendard",
+    fontSize: 15,
+    fontWeight: "300",
+    fontStyle: "normal",
+    lineHeight: 25,
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "rgba(255, 255, 255, 0.7)",
+    marginBottom: verticalScale(10.5),
+  },
+  introduction_tag: {
+    width: verticalScale(54),
+    height: verticalScale(22),
+    borderRadius: 100,
+    backgroundColor: "#fc2a5b",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: verticalScale(8),
+    marginBottom: verticalScale(8),
+  },
+  introduction_tag_text: {
+    fontFamily: "Pretendard",
+    fontSize: 12,
+    fontWeight: "500",
+    fontStyle: "normal",
+    letterSpacing: -0.5,
+    textAlign: "left",
+    color: "#ffffff",
+  },
+  underline_content_container: {
+    marginBottom: verticalScale(21),
+  },
   button_container: {
     width: "100%",
     display: "flex",
@@ -822,9 +603,8 @@ const styles = StyleSheet.create({
     width: "25%",
     paddingTop: verticalScale(17),
     paddingBottom: verticalScale(17),
-    borderBottomColor: "blue",
-    // borderBottomHeight: 1,
-    borderBottomWidth: 0.5,
+    borderBottomColor: "#333333",
+    borderBottomWidth: verticalScale(1),
   },
   tab_button_text: {
     fontFamily: "Pretendard",
@@ -836,6 +616,16 @@ const styles = StyleSheet.create({
     color: "#ffffff",
   },
   hair_category: {
+    width: "100%",
+    flexDirection: "row",
+    marginBottom: verticalScale(30),
+  },
+  hair_category_last: {
+    width: "100%",
+    flexDirection: "row",
+  },
+  hair_category_text: {
+    width: "20%",
     fontFamily: "Pretendard",
     fontSize: 15,
     fontWeight: "bold",
@@ -843,5 +633,81 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
     textAlign: "left",
     color: "#ffffff",
+  },
+  hair_price_element: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: verticalScale(8),
+  },
+  hair_price_element_last: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  hair_name: {
+    fontFamily: "Pretendard",
+    fontSize: 15,
+    fontWeight: "300",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "rgba(255, 255, 255, 0.6)",
+  },
+  hair_price: {
+    fontFamily: "Pretendard",
+    fontSize: 15,
+    fontWeight: "500",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "right",
+    color: "#ffffff",
+  },
+  office_hours: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: verticalScale(8),
+  },
+  working_day: {
+    fontFamily: "Pretendard",
+    fontSize: 15,
+    fontWeight: "bold",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "#ffffff",
+  },
+  working_time: {
+    fontFamily: "Pretendard",
+    fontSize: 15,
+    fontWeight: "normal",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "right",
+    color: "#ffffff",
+  },
+  review_tag: {
+    width: verticalScale(47),
+    height: verticalScale(18),
+    borderRadius: 100,
+    backgroundColor: "rgba(252, 42, 91, 0)",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#fc2a5b",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: verticalScale(5.4),
+    marginBottom: verticalScale(5.4),
+  },
+  review_tag_text: {
+    fontFamily: "Pretendard",
+    fontSize: 10,
+    fontWeight: "500",
+    fontStyle: "normal",
+    letterSpacing: -0.5,
+    textAlign: "left",
+    color: "#fc2a5b",
   },
 });
