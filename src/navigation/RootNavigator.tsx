@@ -5,7 +5,6 @@ import Main from "../screens/Main";
 import VirtualStyling from "../screens/VirtualStyling";
 import ProfileSelection from "../screens/ProfileSelection";
 import DesignerProfile from "../screens/DesignerProfile";
-import ScrollTest from "../screens/ScrollTest";
 
 const mainStack = createNativeStackNavigator();
 
@@ -18,7 +17,6 @@ export const RootNavigator = () => {
       <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />
       <mainStack.Screen name="DesignerProfile" component={DesignerProfile} />
       <mainStack.Screen name="ProfileSelection" component={ProfileSelection} />
-      <mainStack.Screen name="ScrollTest" component={ScrollTest} />
     </mainStack.Navigator>
   );
 };
