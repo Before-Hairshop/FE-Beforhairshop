@@ -5,8 +5,9 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Linking,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import DefaultDesigner from "../assets/images/default_designer_profile.png";
 import { scale, verticalScale } from "../utils/scale";
 
@@ -64,56 +65,281 @@ const UnderLineContent = (props: { value: string }) => (
   />
 );
 
+const YellowStar = () => (
+  <View style={styles.star}>
+    <StarIcon fill="#ffce00" />
+  </View>
+);
+
+const GreyStar = () => (
+  <View style={styles.star}>
+    <StarIcon fill="#383838" />
+  </View>
+);
+
+const DivisionSpace = () => (
+  <View
+    style={{
+      width: "100%",
+      height: verticalScale(10),
+      backgroundColor: "#232323",
+    }}
+  />
+);
+
+const ReviewPhoto = () => (
+  <ScrollView
+    horizontal={true}
+    style={{
+      marginBottom: verticalScale(20),
+      flexDirection: "row",
+    }}>
+    <View
+      style={{
+        width: 120,
+        height: 120,
+        opacity: 0.15,
+        borderRadius: 10,
+        backgroundColor: "#d9d9d9",
+      }}
+    />
+    <View style={{ justifyContent: "flex-end" }}>
+      <View
+        style={{
+          width: 87.8,
+          height: 78.9,
+          opacity: 0.15,
+          borderRadius: 10,
+          backgroundColor: "#d9d9d9",
+        }}
+      />
+    </View>
+    <View style={{ justifyContent: "flex-end" }}>
+      <View
+        style={{
+          width: 87.8,
+          height: 78.9,
+          opacity: 0.15,
+          borderRadius: 10,
+          backgroundColor: "#d9d9d9",
+        }}
+      />
+    </View>
+    <View style={{ justifyContent: "flex-end" }}>
+      <View
+        style={{
+          width: 87.8,
+          height: 78.9,
+          opacity: 0.15,
+          borderRadius: 10,
+          backgroundColor: "#d9d9d9",
+        }}
+      />
+    </View>
+  </ScrollView>
+);
+
 function numberWithCommas(x: number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export default function Loading() {
+  const phoneNumber = "010-1234-1234";
+
+  const [ref, setRef] = useState(null);
+
+  const [priceViewY, setPriceViewY] = useState();
+  const [locationViewY, setLocationViewY] = useState();
+  const [officeHoursViewY, setOfficeHoursViewY] = useState();
+  const [reviewViewY, setReviewViewY] = useState();
+
+  const [currentTab, setCurrentTab] = useState("price");
+
+  const TabMenu = () => (
+    <View style={styles.button_container}>
+      <TouchableOpacity
+        style={
+          currentTab == "price" ? styles.tab_button_on : styles.tab_button_off
+        }
+        onPress={() => {
+          ref.scrollTo({
+            x: 0,
+            y: priceViewY,
+            animated: true,
+          });
+        }}>
+        <Text style={styles.tab_button_text}>가격</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={
+          currentTab == "location"
+            ? styles.tab_button_on
+            : styles.tab_button_off
+        }
+        onPress={() => {
+          ref.scrollTo({
+            x: 0,
+            y: locationViewY,
+            animated: true,
+          });
+        }}>
+        <Text style={styles.tab_button_text}>위치</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={
+          currentTab == "office_hours"
+            ? styles.tab_button_on
+            : styles.tab_button_off
+        }
+        onPress={() => {
+          ref.scrollTo({
+            x: 0,
+            y: officeHoursViewY,
+            animated: true,
+          });
+        }}>
+        <Text style={styles.tab_button_text}>근무시간</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={
+          currentTab == "review" ? styles.tab_button_on : styles.tab_button_off
+        }
+        onPress={() => {
+          ref.scrollTo({
+            x: 0,
+            y: reviewViewY,
+            animated: true,
+          });
+        }}>
+        <Text style={styles.tab_button_text}>리뷰</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const ReviewItem = () => (
+    <View>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}>
+        <Text
+          style={{
+            fontFamily: "Pretendard",
+            fontSize: 11,
+            fontWeight: "normal",
+            fontStyle: "normal",
+            lineHeight: 12,
+            letterSpacing: 0,
+            textAlign: "left",
+            color: "#999999",
+          }}>
+          22.07.15
+        </Text>
+        <MeatballIcon />
+      </View>
+      <Text style={styles.user_name}>겁나 빠른 황소</Text>
+      <View style={styles.review_star_container}>
+        <YellowStar />
+        <YellowStar />
+        <YellowStar />
+        <YellowStar />
+        <GreyStar />
+      </View>
+      <View style={styles.review_preference_container}>
+        <View style={styles.review_preference_element}>
+          <Text style={styles.review_preference}>스타일</Text>
+          <Text style={styles.review_preference_contents}>좋음</Text>
+        </View>
+        <View style={styles.review_preference_element}>
+          <Text style={styles.review_preference}>서비스</Text>
+          <Text style={styles.review_preference_contents}>보통</Text>
+        </View>
+      </View>
+      <ReviewPhoto />
+      <Text style={styles.review_contents}>
+        진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추!
+        진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추!{" "}
+      </Text>
+      <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
+        <View style={styles.review_tag}>
+          <Text style={styles.review_tag_text}>#다움펌</Text>
+        </View>
+        <View style={styles.review_tag}>
+          <Text style={styles.review_tag_text}>#남성컷</Text>
+        </View>
+      </View>
+    </View>
+  );
+
   return (
-    <ScrollView style={styles.profile}>
-      <View style={{ width: "100%" }}>
-        <Image source={DefaultDesigner} style={styles.designer_img} />
-        <View style={{ width: "100%", position: "absolute" }}>
-          <Header contents={<HeaderContents />} />
+    <ScrollView
+      style={styles.profile}
+      ref={ref => {
+        setRef(ref);
+      }}
+      onScroll={event => {
+        const scroll = event.nativeEvent.contentOffset.y;
+        if (scroll < locationViewY) {
+          setCurrentTab("price");
+        } else if (scroll >= locationViewY && scroll < officeHoursViewY) {
+          setCurrentTab("location");
+        } else if (scroll >= officeHoursViewY && scroll < reviewViewY) {
+          setCurrentTab("office_hours");
+        } else if (scroll >= reviewViewY) {
+          setCurrentTab("review");
+        }
+      }}
+      stickyHeaderIndices={[6]}>
+      <Image source={DefaultDesigner} style={styles.designer_img} />
+      <View style={{ width: "100%", position: "absolute" }}>
+        <Header contents={<HeaderContents />} />
+      </View>
+      <View
+        style={{
+          width: "100%",
+          backgroundColor: "#191919",
+          height: verticalScale(30),
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          position: "absolute",
+          top: verticalScale(345),
+        }}
+      />
+      <View
+        style={{
+          width: "100%",
+          paddingLeft: scale(30),
+          paddingRight: scale(30),
+          paddingBottom: scale(30),
+          flexDirection: "row",
+        }}>
+        <View style={{ width: "44%" }}>
+          <Text style={styles.designer}>헤어 디자이너</Text>
+          <Text style={styles.designer_name}>이안</Text>
+          <View style={styles.designer_star_container}>
+            <YellowStar />
+            <YellowStar />
+            <YellowStar />
+            <YellowStar />
+            <GreyStar />
+          </View>
         </View>
         <View
           style={{
-            width: "100%",
-            backgroundColor: "#191919",
-            height: verticalScale(30),
-            borderTopLeftRadius: 30,
-            borderTopRightRadius: 30,
-            position: "absolute",
-            top: verticalScale(345),
-          }}
-        />
-        <View
-          style={{
-            width: "100%",
-            paddingLeft: "8%",
-            paddingRight: "8%",
-            paddingBottom: "8%",
+            width: "56%",
             flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}>
-          <View style={{ width: "44%" }}>
-            <Text style={styles.designer}>헤어 디자이너</Text>
-            <Text style={styles.designer_name}>이안</Text>
-            <View style={{ flexDirection: "row" }}>
-              <StarIcon />
-              <StarIcon />
-              <StarIcon />
-              <StarIcon />
-              <StarIcon />
-            </View>
-          </View>
-          <View
-            style={{
-              width: "56%",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}>
-            <View>
+          <View>
+            <TouchableOpacity
+              onPress={() => {
+                Linking.openURL(`tel:${phoneNumber}`).catch(err =>
+                  console.error("An error occurred", err),
+                );
+              }}>
               <View style={styles.action_icon}>
                 <CallIcon width={scale(19.1)} height={verticalScale(19.1)} />
               </View>
@@ -131,121 +357,100 @@ export default function Loading() {
                   전화걸기
                 </Text>
               </View>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <View style={styles.action_icon}>
+              <LoveIcon width={scale(19.1)} height={verticalScale(19.1)} />
             </View>
-            <View>
-              <View style={styles.action_icon}>
-                <LoveIcon width={scale(19.1)} height={verticalScale(19.1)} />
-              </View>
-              <View style={{ alignItems: "center" }}>
-                <Text
-                  style={{
-                    fontFamily: "Pretendard",
-                    fontSize: 12,
-                    fontWeight: "500",
-                    fontStyle: "normal",
-                    letterSpacing: 0,
-                    textAlign: "left",
-                    color: "#ffffff",
-                  }}>
-                  찜하기
-                </Text>
-              </View>
+            <View style={{ alignItems: "center" }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: 12,
+                  fontWeight: "500",
+                  fontStyle: "normal",
+                  letterSpacing: 0,
+                  textAlign: "left",
+                  color: "#ffffff",
+                }}>
+                찜하기
+              </Text>
             </View>
-            <View>
-              <View style={styles.action_icon}>
-                <WriteIcon width={scale(19.1)} height={verticalScale(19.1)} />
-              </View>
-              <View style={{ alignItems: "center" }}>
-                <Text
-                  style={{
-                    fontFamily: "Pretendard",
-                    fontSize: 12,
-                    fontWeight: "500",
-                    fontStyle: "normal",
-                    letterSpacing: 0,
-                    textAlign: "left",
-                    color: "#ffffff",
-                  }}>
-                  리뷰작성
-                </Text>
-              </View>
+          </View>
+          <View>
+            <View style={styles.action_icon}>
+              <WriteIcon width={scale(19.1)} height={verticalScale(19.1)} />
+            </View>
+            <View style={{ alignItems: "center" }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: 12,
+                  fontWeight: "500",
+                  fontStyle: "normal",
+                  letterSpacing: 0,
+                  textAlign: "left",
+                  color: "#ffffff",
+                }}>
+                리뷰작성
+              </Text>
             </View>
           </View>
         </View>
-        <View style={{ width: "100%", alignItems: "center" }}>
-          <View
-            style={{
-              width: "89%",
-              height: verticalScale(1),
-              backgroundColor: "#333333",
-            }}
-          />
-        </View>
+      </View>
+      <View style={{ width: "100%", alignItems: "center" }}>
         <View
           style={{
-            padding: "8%",
-            width: "100%",
-          }}>
-          <Text style={styles.introduction}>자기소개</Text>
-          <Text style={styles.introduction_contents}>
-            lovable lucid florence flutter you destiny seraphic purity
-            adolescence fabulous girlish requiem lucid fabulous miracle miracle
-            droplet girlish lucid droplet purity droplet flutter adolescence
-            kitten fascinating.
-          </Text>
-          <View
-            style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 바버샵</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
+            width: "89%",
+            height: verticalScale(1),
+            backgroundColor: "#333333",
+          }}
+        />
+      </View>
+      <View
+        style={{
+          padding: "8%",
+          width: "100%",
+        }}>
+        <Text style={styles.introduction}>자기소개</Text>
+        <Text style={styles.introduction_contents}>
+          lovable lucid florence flutter you destiny seraphic purity adolescence
+          fabulous girlish requiem lucid fabulous miracle miracle droplet
+          girlish lucid droplet purity droplet flutter adolescence kitten
+          fascinating.
+        </Text>
+        <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
+          <View style={styles.introduction_tag}>
+            <Text style={styles.introduction_tag_text}># 포마드</Text>
+          </View>
+          <View style={styles.introduction_tag}>
+            <Text style={styles.introduction_tag_text}># 바버샵</Text>
+          </View>
+          <View style={styles.introduction_tag}>
+            <Text style={styles.introduction_tag_text}># 포마드</Text>
+          </View>
+          <View style={styles.introduction_tag}>
+            <Text style={styles.introduction_tag_text}># 포마드</Text>
+          </View>
+          <View style={styles.introduction_tag}>
+            <Text style={styles.introduction_tag_text}># 포마드</Text>
+          </View>
+          <View style={styles.introduction_tag}>
+            <Text style={styles.introduction_tag_text}># 포마드</Text>
+          </View>
+          <View style={styles.introduction_tag}>
+            <Text style={styles.introduction_tag_text}># 포마드</Text>
+          </View>
+          <View style={styles.introduction_tag}>
+            <Text style={styles.introduction_tag_text}># 포마드</Text>
+          </View>
+          <View style={styles.introduction_tag}>
+            <Text style={styles.introduction_tag_text}># 포마드</Text>
           </View>
         </View>
       </View>
-      <View style={styles.button_container}>
-        <TouchableOpacity
-          style={{
-            width: "25%",
-            paddingTop: verticalScale(17),
-            paddingBottom: verticalScale(17),
-            borderBottomColor: "#ffffff",
-            borderBottomWidth: verticalScale(2),
-          }}>
-          <Text style={styles.tab_button_text}>가격</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tab_button}>
-          <Text style={styles.tab_button_text}>위치</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tab_button}>
-          <Text style={styles.tab_button_text}>근무시간</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tab_button}>
-          <Text style={styles.tab_button_text}>리뷰</Text>
-        </TouchableOpacity>
-      </View>
+      <TabMenu />
       <View
         style={{
           width: "100%",
@@ -253,6 +458,11 @@ export default function Loading() {
           paddingLeft: scale(30),
           paddingRight: scale(30),
           paddingBottom: verticalScale(40),
+        }}
+        onLayout={event => {
+          const { layout } = event.nativeEvent;
+          console.log(layout);
+          setPriceViewY(layout.y);
         }}>
         <View style={styles.underline_content_container}>
           <UnderLineContent value="가격" />
@@ -335,14 +545,20 @@ export default function Loading() {
           </View>
         </View>
       </View>
+      <DivisionSpace />
       <View
         style={{
           width: "100%",
-          height: verticalScale(10),
-          backgroundColor: "#232323",
+          paddingTop: verticalScale(40),
+          paddingLeft: scale(30),
+          paddingRight: scale(30),
+          paddingBottom: verticalScale(40),
         }}
-      />
-      <View style={{ width: "100%", padding: "8%" }}>
+        onLayout={event => {
+          const { layout } = event.nativeEvent;
+          console.log(layout);
+          setLocationViewY(layout.y);
+        }}>
         <View style={styles.underline_content_container}>
           <UnderLineContent value="위치" />
         </View>
@@ -382,14 +598,20 @@ export default function Loading() {
           울산 남구 수암로 148 홈플러스 울산남구점 옥상층(5층)
         </Text>
       </View>
+      <DivisionSpace />
       <View
         style={{
           width: "100%",
-          height: verticalScale(10),
-          backgroundColor: "#232323",
+          paddingTop: verticalScale(40),
+          paddingLeft: scale(30),
+          paddingRight: scale(30),
+          paddingBottom: verticalScale(40),
         }}
-      />
-      <View style={{ width: "100%", padding: "8%" }}>
+        onLayout={event => {
+          const { layout } = event.nativeEvent;
+          console.log(layout);
+          setOfficeHoursViewY(layout.y);
+        }}>
         <View style={styles.underline_content_container}>
           <UnderLineContent value="근무시간" />
         </View>
@@ -409,104 +631,44 @@ export default function Loading() {
           <Text style={styles.working_day}>목요일</Text>
           <Text style={styles.working_time}>PM 17:00 - PM 21:00</Text>
         </View>
-        <View style={styles.office_hours}>
+        <View style={styles.office_hours_last}>
           <Text style={styles.working_day}>금ㆍ토ㆍ일</Text>
           <Text style={styles.working_time}>휴무</Text>
         </View>
       </View>
+      <DivisionSpace />
       <View
-        style={{
-          width: "100%",
-          height: verticalScale(10),
-          backgroundColor: "#232323",
-        }}
-      />
-      <View style={{ width: "100%", padding: "8%" }}>
+        style={styles.designer_review}
+        onLayout={event => {
+          const { layout } = event.nativeEvent;
+          console.log(layout);
+          setReviewViewY(layout.y);
+        }}>
         <View style={styles.underline_content_container}>
           <UnderLineContent value="디자이너 리뷰" />
         </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 11,
-              fontWeight: "normal",
-              fontStyle: "normal",
-              lineHeight: 12,
-              letterSpacing: 0,
-              textAlign: "left",
-              color: "#999999",
-            }}>
-            22.07.15
-          </Text>
-          <MeatballIcon />
-        </View>
-        <Text
-          style={{
-            fontFamily: "Pretendard",
-            fontSize: 14,
-            fontWeight: "bold",
-            fontStyle: "normal",
-            lineHeight: 24,
-            letterSpacing: 0,
-            textAlign: "left",
-            color: "#ffffff",
-          }}>
-          겁나 빠른 황소
-        </Text>
-        <View style={{ flexDirection: "row" }}>
-          <StarIcon />
-          <StarIcon />
-          <StarIcon />
-          <StarIcon />
-          <StarIcon />
-        </View>
-        <Text
-          style={{
-            fontFamily: "Pretendard",
-            fontSize: 12,
-            fontWeight: "bold",
-            fontStyle: "normal",
-            letterSpacing: 0,
-            textAlign: "left",
-            color: "#888888",
-          }}>
-          스타일 좋음
-        </Text>
-        <Text
-          style={{
-            fontFamily: "Pretendard",
-            fontSize: 12,
-            fontWeight: "bold",
-            fontStyle: "normal",
-            letterSpacing: 0,
-            textAlign: "left",
-            color: "#888888",
-          }}>
-          서비스 보통
-        </Text>
-        <Text
-          style={{
-            fontFamily: "Pretendard",
-            fontSize: 13,
-            fontWeight: "300",
-            fontStyle: "normal",
-            lineHeight: 18,
-            letterSpacing: 0,
-            textAlign: "left",
-            color: "rgba(255, 255, 255, 0.8)",
-          }}>
-          진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~
-          강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘
-          짤라줘요~ 강추!{" "}
-        </Text>
-        <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
-          <View style={styles.review_tag}>
-            <Text style={styles.review_tag_text}>#다움펌</Text>
+        <View style={{ marginBottom: verticalScale(30) }}>
+          <ReviewItem />
+          <View style={{ width: "100%", alignItems: "center" }}>
+            <View
+              style={{
+                width: "89%",
+                height: verticalScale(1),
+                backgroundColor: "#333333",
+              }}
+            />
           </View>
-          <View style={styles.review_tag}>
-            <Text style={styles.review_tag_text}>#남성컷</Text>
+          <ReviewItem />
+          <View style={{ width: "100%", alignItems: "center" }}>
+            <View
+              style={{
+                width: "89%",
+                height: verticalScale(1),
+                backgroundColor: "#333333",
+              }}
+            />
           </View>
+          <ReviewItem />
         </View>
       </View>
     </ScrollView>
@@ -538,6 +700,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
     textAlign: "left",
     color: "#999999",
+    marginBottom: verticalScale(5),
   },
   designer_name: {
     fontFamily: "Pretendard",
@@ -547,6 +710,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
     textAlign: "left",
     color: "#ffffff",
+    marginBottom: verticalScale(10),
+  },
+  designer_star_container: {
+    flexDirection: "row",
+  },
+  star: {
+    padding: verticalScale(3),
   },
   action_icon: {
     padding: verticalScale(11),
@@ -598,8 +768,16 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     flexDirection: "row",
+    backgroundColor: "#191919",
   },
-  tab_button: {
+  tab_button_on: {
+    width: "25%",
+    paddingTop: verticalScale(17),
+    paddingBottom: verticalScale(17),
+    borderBottomColor: "#ffffff",
+    borderBottomWidth: verticalScale(2),
+  },
+  tab_button_off: {
     width: "25%",
     paddingTop: verticalScale(17),
     paddingBottom: verticalScale(17),
@@ -670,6 +848,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: verticalScale(8),
   },
+  office_hours_last: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   working_day: {
     fontFamily: "Pretendard",
     fontSize: 15,
@@ -687,6 +869,64 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
     textAlign: "right",
     color: "#ffffff",
+  },
+  designer_review: {
+    width: "100%",
+    paddingTop: verticalScale(40),
+    paddingLeft: scale(30),
+    paddingRight: scale(30),
+    paddingBottom: verticalScale(40),
+  },
+  user_name: {
+    fontFamily: "Pretendard",
+    fontSize: 14,
+    fontWeight: "bold",
+    fontStyle: "normal",
+    lineHeight: 24,
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "#ffffff",
+  },
+  review_star_container: {
+    flexDirection: "row",
+    marginBottom: verticalScale(10),
+  },
+  review_preference_container: {
+    marginBottom: verticalScale(20),
+  },
+  review_preference_element: {
+    flexDirection: "row",
+    width: scale(92.2),
+    justifyContent: "space-between",
+  },
+  review_preference: {
+    fontFamily: "Pretendard",
+    fontSize: 12,
+    fontWeight: "bold",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "#888888",
+  },
+  review_preference_contents: {
+    fontFamily: "Pretendard",
+    fontSize: 12,
+    fontWeight: "500",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "#888888",
+  },
+  review_contents: {
+    fontFamily: "Pretendard",
+    fontSize: 13,
+    fontWeight: "300",
+    fontStyle: "normal",
+    lineHeight: 18,
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "rgba(255, 255, 255, 0.8)",
+    marginBottom: verticalScale(14.6),
   },
   review_tag: {
     width: verticalScale(47),
