@@ -7,7 +7,7 @@ import {
   Image,
   TextInput,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { Dimensions } from "react-native";
 const { width } = Dimensions.get("window");
@@ -20,6 +20,7 @@ import SearchIcon from "../assets/icons/search.svg";
 import StarIcon from "../assets/icons/star.svg";
 
 import DefaultDesignerImg from "../assets/images/default_designer.png";
+import axios from "axios";
 
 const HeaderContents = () => (
   <>
@@ -59,7 +60,7 @@ const TagItem = (props: { value: string }) => (
   </View>
 );
 
-const DesignerItem = () => (
+const DesignerItem = data => (
   <View
     style={{
       width: "100%",
@@ -129,7 +130,7 @@ const DesignerItem = () => (
         <TagItem value="커트" />
       </View>
     </View>
-    <View style={{ width: "5%", paddingTop: verticalScale(3) }}>
+    <View style={{ width: "5%", paddingTop: verticalScale(3), top: -25 }}>
       <StarIcon fill="#ffce00" width={17} height={17} />
       <Text
         style={{
@@ -147,6 +148,31 @@ const DesignerItem = () => (
 );
 
 export default function Loading() {
+  const [designerList, setDesignerList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchDesignerList = async () => {
+    try {
+      setError(null);
+
+      setLoading(true);
+
+      const response = await axios.get(
+        "http://localhost:8080/api/v1/hair-designers/list",
+      );
+      console.log(response.data.result.content);
+      setDesignerList(response.data.result.content);
+    } catch (e) {
+      setError(e);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchDesignerList();
+  }, []);
+
   return (
     <ScrollView style={{ width: width, backgroundColor: "#191919" }}>
       <View
@@ -196,13 +222,17 @@ export default function Loading() {
             paddingLeft: scale(18),
           }}>
           <SearchIcon style={{ marginRight: scale(10) }} />
-          <TextInput
-            placeholder="키워드를 검색해 주세요"
+          <Text style={{ color: "#C8C8C8" }}>키워드를 검색해 주세요</Text>
+          {/* <TextInput
+            placeholder={"키워드를 검색해 주세요"}
             placeholderTextColor="#C8C8C8"
-          />
+          /> */}
         </View>
       </View>
       <View>
+        {designerList.map(item => (
+          <DesignerItem data={item} />
+        ))}
         <DesignerItem />
         <View
           style={{
