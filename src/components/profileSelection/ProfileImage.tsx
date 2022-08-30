@@ -10,7 +10,7 @@ import {
 import React, { useState } from "react";
 import LinearGradient from "react-native-linear-gradient";
 import { Button } from "@rneui/themed";
-import { scale, moderateScale, verticalScale } from "../utils/scale";
+import { scale, moderateScale, verticalScale } from "../../utils/scale";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
