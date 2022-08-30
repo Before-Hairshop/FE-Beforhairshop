@@ -7,13 +7,16 @@ import ProfileSelection from "../screens/ProfileSelection";
 import DesignerProfile from "../screens/DesignerProfile";
 import DesignerList from "../screens/DesignerList";
 
+import Loading from "../screens/Loading";
+
 const mainStack = createNativeStackNavigator();
 
 export const RootNavigator = () => {
   return (
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="DesignerList">
+      initialRouteName="ProfileSelection">
+      <mainStack.Screen name="Loading" component={Loading} />
       <mainStack.Screen name="Main" component={Main} />
       <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />
       <mainStack.Screen name="DesignerProfile" component={DesignerProfile} />
