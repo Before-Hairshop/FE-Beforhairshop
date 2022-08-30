@@ -23,6 +23,7 @@ import WriteIcon from "../assets/icons/write.svg";
 import DefaultMap from "../assets/images/default_map.png";
 import HighlightText from "react-native-highlight-underline-text";
 import DashedLine from "react-native-dashed-line";
+import axios from "axios";
 
 const HeaderContents = () => (
   <>
@@ -155,6 +156,27 @@ export default function Loading() {
 
   const [currentTab, setCurrentTab] = useState("price");
 
+  const [data, setData] = useState();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchData = async () => {
+    try {
+      setError(null);
+      setLoading(true);
+
+      const response = await axios.get(
+        "http://localhost:8080/api/v1/hair-designers?id=1",
+      );
+
+      console.log(response.data.result);
+      setData(response.data.result);
+    } catch (e) {
+      setError(e);
+    }
+    setLoading(false);
+  };
+
   const TabMenu = () => (
     <View style={styles.button_container}>
       <TouchableOpacity
@@ -273,6 +295,10 @@ export default function Loading() {
     </View>
   );
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <ScrollView
       style={styles.profile}
@@ -318,6 +344,9 @@ export default function Loading() {
         <View style={{ width: "44%" }}>
           <Text style={styles.designer}>헤어 디자이너</Text>
           <Text style={styles.designer_name}>이안</Text>
+          {/* <Text style={styles.designer_name}>
+            {data.hairDesigner.member.name}
+          </Text> */}
           <View style={styles.designer_star_container}>
             <YellowStar />
             <YellowStar />
@@ -420,6 +449,9 @@ export default function Loading() {
           girlish lucid droplet purity droplet flutter adolescence kitten
           fascinating.
         </Text>
+        {/* <Text style={styles.introduction_contents}>
+          {data.hairDesigner.description}
+        </Text> */}
         <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
           <View style={styles.introduction_tag}>
             <Text style={styles.introduction_tag_text}># 포마드</Text>
