@@ -78,7 +78,7 @@ export default function PopularHairstyle(props) {
     if (props.status == ADD) {
       return "#000000";
     } else if (props.status == BASE || props.status == EDIT) {
-      return "#222222";
+      return "#888888";
     } else {
       return "#FC2A5B";
     }
@@ -99,9 +99,7 @@ export default function PopularHairstyle(props) {
           ) : (
             <ImageBackground
               source={{ uri: props.thumbnail }}
-              // source={{
-              //   uri: "https://s3-alpha-sig.figma.com/img/2368/2f7c/bf359d92bfd88117fafe2b252fec1f12?Expires=1660521600&Signature=aV7VDi9kBJtisfIq1hv5QYqJ1XJ1WXNcytOI3PWXyMWO10V~HHUji47cNADyU-u-5jTFToo9RJzVGq3c-pJItMj-bBZLNrYsa4I1x6YFT47GNbz16zxXDnaIBuv8z7p2G5btSqZwPIWWbNu7TNLKg51sxBvuPJ7V4LE-GP49DqzSzEfNhqAkfM1TiZXYZt0MHmoMR1gi8MfuAzsIg381es98-DbO3hfj5f~xT52gHy5GhZzVzsw6~NnQlclRINBv4fuqO5Q-hq1I6FZwaFXSIaT4HrzQMsbqO2QBuQpueg3qlTWVaS4lazH8J1OHYneuxoalbM0j2TWA0~xW6kY4YA__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
-              // }}
+              // source = {require("../a")}
               resizeMode="cover"
               style={[styles.image]}
               imageStyle={{ borderRadius: 15 }}>

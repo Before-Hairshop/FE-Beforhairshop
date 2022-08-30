@@ -16,10 +16,11 @@ import Header from "../components/Header";
 import Icon from "react-native-vector-icons/Ionicons";
 import ProfileImage from "../components/ProfileImage";
 import { useNavigation } from "@react-navigation/native";
+import HighlightText from "react-native-highlight-underline-text";
 
 import uuid from "react-native-uuid";
 
-import { getSelectedImage } from "../store/actions/profile_actions";
+import { setSelectedImage } from "../store/actions/profile_actions";
 import { useDispatch, useStore } from "react-redux";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 
@@ -30,6 +31,11 @@ const EDIT = "edit";
 const SELECTED = "selected";
 const ADD = "add";
 
+const placeholderUrl =
+  "https://via.placeholder.com/300.png/09f/fffC/O%20https://placeholder.com/";
+
+const addedPlaceholderUrl =
+  "https://via.placeholder.com/150/0000FF/808080%20?Text=Digital.com";
 export default function ProfileSelection(props) {
   const dispatch = useDispatch();
   const store = useStore();
@@ -39,56 +45,56 @@ export default function ProfileSelection(props) {
     {
       id: "bd7acbeafasd3abb28ba",
       // uri: require("../assets/images/popular_thumbnail.jpeg"),
-      uri: "https://s3-alpha-sig.figma.com/img/ae62/dbb6/f714655497814bc586db89e86864ed36?Expires=1660521600&Signature=CyxSWf-oAwiXPK0A~cUsri26txfwKPLDJeidzb87DU1iusSgNXN27Trr2J2ppz8jGTVAn5fjubDHM7Ngy-qVVqH7BI6H5-D0JvWqplNl6IBrsTIj~O29GcrhMGdqDm8b1x7di0lKYpO7u9UK3mg-FmuH3z-t99dh5EC0axtqOD3GVJnCmP4hbpnnADvTddY-iSo1w1EMOqoXdNJW7q2KXRKgXq36BbO7SaOKAxAkQ5KD0Q3ftf33oj-x56-r1VQsIQoYyyq1OwQZNDMHKw99~JcghWIigU05DhdUtRQ10vBnRssH8qgZpsuaAJAsEdKN2yvYvCWtUULdS06TDK3oAg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+      uri: placeholderUrl,
       title: "1 Item",
       status: BASE,
     },
     {
       id: "3ac68afc-c605-48d3-aafsdfasdf4f8-fbd91aa97f63",
       // uri: require("../assets/images/popular_thumbnail.jpeg"),
-      uri: "https://s3-alpha-sig.figma.com/img/ae62/dbb6/f714655497814bc586db89e86864ed36?Expires=1660521600&Signature=CyxSWf-oAwiXPK0A~cUsri26txfwKPLDJeidzb87DU1iusSgNXN27Trr2J2ppz8jGTVAn5fjubDHM7Ngy-qVVqH7BI6H5-D0JvWqplNl6IBrsTIj~O29GcrhMGdqDm8b1x7di0lKYpO7u9UK3mg-FmuH3z-t99dh5EC0axtqOD3GVJnCmP4hbpnnADvTddY-iSo1w1EMOqoXdNJW7q2KXRKgXq36BbO7SaOKAxAkQ5KD0Q3ftf33oj-x56-r1VQsIQoYyyq1OwQZNDMHKw99~JcghWIigU05DhdUtRQ10vBnRssH8qgZpsuaAJAsEdKN2yvYvCWtUULdS06TDK3oAg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+      uri: placeholderUrl,
       title: "2 Item",
       status: BASE,
     },
     {
       id: "58694a0f-3da1-471f-asdfasdfbd96-145571e29d72",
       // uri: require("../assets/images/popular_thumbnail.jpeg"),
-      uri: "https://s3-alpha-sig.figma.com/img/ae62/dbb6/f714655497814bc586db89e86864ed36?Expires=1660521600&Signature=CyxSWf-oAwiXPK0A~cUsri26txfwKPLDJeidzb87DU1iusSgNXN27Trr2J2ppz8jGTVAn5fjubDHM7Ngy-qVVqH7BI6H5-D0JvWqplNl6IBrsTIj~O29GcrhMGdqDm8b1x7di0lKYpO7u9UK3mg-FmuH3z-t99dh5EC0axtqOD3GVJnCmP4hbpnnADvTddY-iSo1w1EMOqoXdNJW7q2KXRKgXq36BbO7SaOKAxAkQ5KD0Q3ftf33oj-x56-r1VQsIQoYyyq1OwQZNDMHKw99~JcghWIigU05DhdUtRQ10vBnRssH8qgZpsuaAJAsEdKN2yvYvCWtUULdS06TDK3oAg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+      uri: placeholderUrl,
       title: "3 Item",
       status: BASE,
     },
     {
       id: "58694a0f-3da1-471f-bd9sadfadsf6-145571e29d72",
       // uri: require("../assets/images/popular_thumbnail.jpeg"),
-      uri: "https://s3-alpha-sig.figma.com/img/ae62/dbb6/f714655497814bc586db89e86864ed36?Expires=1660521600&Signature=CyxSWf-oAwiXPK0A~cUsri26txfwKPLDJeidzb87DU1iusSgNXN27Trr2J2ppz8jGTVAn5fjubDHM7Ngy-qVVqH7BI6H5-D0JvWqplNl6IBrsTIj~O29GcrhMGdqDm8b1x7di0lKYpO7u9UK3mg-FmuH3z-t99dh5EC0axtqOD3GVJnCmP4hbpnnADvTddY-iSo1w1EMOqoXdNJW7q2KXRKgXq36BbO7SaOKAxAkQ5KD0Q3ftf33oj-x56-r1VQsIQoYyyq1OwQZNDMHKw99~JcghWIigU05DhdUtRQ10vBnRssH8qgZpsuaAJAsEdKN2yvYvCWtUULdS06TDK3oAg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+      uri: placeholderUrl,
       title: "4 Item",
       status: BASE,
     },
     {
       id: "58694a0ffasdfdasf71f-bd96-145571e29d72",
       // uri: require("../assets/images/popular_thumbnail1.png"),
-      uri: "https://s3-alpha-sig.figma.com/img/ae62/dbb6/f714655497814bc586db89e86864ed36?Expires=1660521600&Signature=CyxSWf-oAwiXPK0A~cUsri26txfwKPLDJeidzb87DU1iusSgNXN27Trr2J2ppz8jGTVAn5fjubDHM7Ngy-qVVqH7BI6H5-D0JvWqplNl6IBrsTIj~O29GcrhMGdqDm8b1x7di0lKYpO7u9UK3mg-FmuH3z-t99dh5EC0axtqOD3GVJnCmP4hbpnnADvTddY-iSo1w1EMOqoXdNJW7q2KXRKgXq36BbO7SaOKAxAkQ5KD0Q3ftf33oj-x56-r1VQsIQoYyyq1OwQZNDMHKw99~JcghWIigU05DhdUtRQ10vBnRssH8qgZpsuaAJAsEdKN2yvYvCWtUULdS06TDK3oAg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+      uri: placeholderUrl,
       title: "5 Item",
       status: BASE,
     },
     {
       id: "58694a0f-3daasdfas1-471f-bd9sd6-145571e29d72",
       // uri: require("../assets/images/popular_thumbnail.jpeg"),
-      uri: "https://s3-alpha-sig.figma.com/img/ae62/dbb6/f714655497814bc586db89e86864ed36?Expires=1660521600&Signature=CyxSWf-oAwiXPK0A~cUsri26txfwKPLDJeidzb87DU1iusSgNXN27Trr2J2ppz8jGTVAn5fjubDHM7Ngy-qVVqH7BI6H5-D0JvWqplNl6IBrsTIj~O29GcrhMGdqDm8b1x7di0lKYpO7u9UK3mg-FmuH3z-t99dh5EC0axtqOD3GVJnCmP4hbpnnADvTddY-iSo1w1EMOqoXdNJW7q2KXRKgXq36BbO7SaOKAxAkQ5KD0Q3ftf33oj-x56-r1VQsIQoYyyq1OwQZNDMHKw99~JcghWIigU05DhdUtRQ10vBnRssH8qgZpsuaAJAsEdKN2yvYvCWtUULdS06TDK3oAg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+      uri: placeholderUrl,
       title: "6 Item",
       status: BASE,
     },
     {
       id: "58694a0f-3daasdfsdfasdas1-471f-bd9sd6-145571e29d72",
       // uri: require("../assets/images/popular_thumbnail.jpeg"),
-      uri: "https://s3-alpha-sig.figma.com/img/ae62/dbb6/f714655497814bc586db89e86864ed36?Expires=1660521600&Signature=CyxSWf-oAwiXPK0A~cUsri26txfwKPLDJeidzb87DU1iusSgNXN27Trr2J2ppz8jGTVAn5fjubDHM7Ngy-qVVqH7BI6H5-D0JvWqplNl6IBrsTIj~O29GcrhMGdqDm8b1x7di0lKYpO7u9UK3mg-FmuH3z-t99dh5EC0axtqOD3GVJnCmP4hbpnnADvTddY-iSo1w1EMOqoXdNJW7q2KXRKgXq36BbO7SaOKAxAkQ5KD0Q3ftf33oj-x56-r1VQsIQoYyyq1OwQZNDMHKw99~JcghWIigU05DhdUtRQ10vBnRssH8qgZpsuaAJAsEdKN2yvYvCWtUULdS06TDK3oAg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+      uri: placeholderUrl,
       title: "7 Ifsdaftem",
       status: BASE,
     },
     {
       id: "58694a0f-3daasadfsadffsdfasdas1-471f-bd9sd6-145571e29d72",
       // uri: require("../assets/images/popular_thumbnail.jpeg"),
-      uri: "https://s3-alpha-sig.figma.com/img/ae62/dbb6/f714655497814bc586db89e86864ed36?Expires=1660521600&Signature=CyxSWf-oAwiXPK0A~cUsri26txfwKPLDJeidzb87DU1iusSgNXN27Trr2J2ppz8jGTVAn5fjubDHM7Ngy-qVVqH7BI6H5-D0JvWqplNl6IBrsTIj~O29GcrhMGdqDm8b1x7di0lKYpO7u9UK3mg-FmuH3z-t99dh5EC0axtqOD3GVJnCmP4hbpnnADvTddY-iSo1w1EMOqoXdNJW7q2KXRKgXq36BbO7SaOKAxAkQ5KD0Q3ftf33oj-x56-r1VQsIQoYyyq1OwQZNDMHKw99~JcghWIigU05DhdUtRQ10vBnRssH8qgZpsuaAJAsEdKN2yvYvCWtUULdS06TDK3oAg__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA",
+      uri: placeholderUrl,
       title: "8 Ifsdaftem",
       status: ADD,
     },
@@ -108,7 +114,7 @@ export default function ProfileSelection(props) {
         newArray[i].status = EDIT;
       }
     }
-    console.log("edit start");
+
     setImageInfo(newArray);
   };
 
@@ -122,7 +128,7 @@ export default function ProfileSelection(props) {
         newArray[i].status = BASE;
       }
     }
-    console.log("edit finished");
+
     setImageInfo(newArray);
   };
 
@@ -135,12 +141,9 @@ export default function ProfileSelection(props) {
 
   const handleSelection = async (id, status) => {
     if (status == ADD) {
-      console.log("add new image");
       try {
         const result = await launchImageLibrary({}, response => {
-          console.log(response);
-          let uri =
-            "https://s3-alpha-sig.figma.com/img/2368/2f7c/bf359d92bfd88117fafe2b252fec1f12?Expires=1660521600&Signature=aV7VDi9kBJtisfIq1hv5QYqJ1XJ1WXNcytOI3PWXyMWO10V~HHUji47cNADyU-u-5jTFToo9RJzVGq3c-pJItMj-bBZLNrYsa4I1x6YFT47GNbz16zxXDnaIBuv8z7p2G5btSqZwPIWWbNu7TNLKg51sxBvuPJ7V4LE-GP49DqzSzEfNhqAkfM1TiZXYZt0MHmoMR1gi8MfuAzsIg381es98-DbO3hfj5f~xT52gHy5GhZzVzsw6~NnQlclRINBv4fuqO5Q-hq1I6FZwaFXSIaT4HrzQMsbqO2QBuQpueg3qlTWVaS4lazH8J1OHYneuxoalbM0j2TWA0~xW6kY4YA__&Key-Pair-Id=APKAINTVSUGEWH5XD5UA";
+          let uri = addedPlaceholderUrl;
           let newImage = {
             id: uuid.v4(),
             uri: uri,
@@ -159,8 +162,6 @@ export default function ProfileSelection(props) {
     } else {
       setSelectedImageId(id);
       if (screenStatus == EDIT) {
-        console.log(`image to delete is ${id}`);
-
         setIsModalVisible(true);
       } else {
         imageInfo.forEach((item, index) => {
@@ -173,23 +174,23 @@ export default function ProfileSelection(props) {
             item.id != store.getState().Profile.selectedImage
           ) {
             //when user choose new image
+            console.log(item);
             let newArray = [...imageInfo];
             newArray[index].status = SELECTED;
             setImageInfo(newArray);
 
             setScreenStatus(SELECTED);
-            dispatch(getSelectedImage(id));
-
-            console.log(newArray[index]);
+            dispatch(setSelectedImage(item));
           } else {
+            console.log(item);
             //when user choose already selected image
             let newArray = [...imageInfo];
             imageInfo[index].status = BASE;
             setImageInfo(newArray);
 
             setScreenStatus(BASE);
-            console.log(newArray[index]);
-            dispatch(getSelectedImage(""));
+
+            dispatch(setSelectedImage(item));
           }
         });
       }
@@ -243,7 +244,6 @@ export default function ProfileSelection(props) {
   };
 
   const renderItem = ({ item }) => {
-    console.log(item);
     return (
       <ProfileImage
         thumbnail={item.uri}
@@ -318,26 +318,33 @@ export default function ProfileSelection(props) {
               }}>
               가상 헤어를 적용 할
             </Text>
-            <Text>
-              <Text
-                style={{
-                  fontFamily: "Pretendard-Bold",
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              <HighlightText
+                isFixed={false}
+                ratio={0.26}
+                underlineColor="rgba(252, 42, 91, 0.5)"
+                textStyle={{
+                  fontFamily: "Pretendard",
                   fontSize: verticalScale(22),
-                  color: "white",
-                  textDecorationLine: "underline",
-                  textDecorationColor: "#8a2139",
-                }}>
-                프로필을 선택
+                  fontWeight: "bold",
+                  fontStyle: "normal",
+                  letterSpacing: 0,
+                  textAlign: "left",
+                  color: "#ffffff",
+                }}
+                text="프로필을 선택"
+              />
+              <Text>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard-Regular",
+                    fontSize: verticalScale(22),
+                    color: "white",
+                  }}>
+                  해주세요.
+                </Text>
               </Text>
-              <Text
-                style={{
-                  fontFamily: "Pretendard-Regular",
-                  fontSize: verticalScale(22),
-                  color: "white",
-                }}>
-                해주세요.
-              </Text>
-            </Text>
+            </View>
           </View>
         </View>
       </View>
