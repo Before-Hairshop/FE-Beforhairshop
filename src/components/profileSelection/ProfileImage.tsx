@@ -48,7 +48,7 @@ export default function PopularHairstyle(props) {
             padding: verticalScale(13),
           }}>
           <Image
-            source={require("../assets/images/profile_selected_icon.png")}
+            source={require("../../assets/images/profile_selected_icon.png")}
             style={{
               width: verticalScale(22),
               height: verticalScale(22),
@@ -64,7 +64,7 @@ export default function PopularHairstyle(props) {
             padding: verticalScale(13),
           }}>
           <Image
-            source={require("../assets/images/delete_icon.png")}
+            source={require("../../assets/images/delete_icon.png")}
             style={{
               width: verticalScale(22),
               height: verticalScale(22),
@@ -92,7 +92,7 @@ export default function PopularHairstyle(props) {
           {props.status == ADD ? (
             <View style={{}}>
               <Image
-                source={require("../assets/images/plus.png")}
+                source={require("../../assets/images/plus.png")}
                 style={{ width: verticalScale(62), height: verticalScale(62) }}
               />
             </View>
