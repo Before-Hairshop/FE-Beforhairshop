@@ -26,7 +26,7 @@ export default function Loading() {
 
   const onLoad = () => {
     // setIsUserLoggedIn(true);
-    isUserLoggedIn = true;
+    // isUserLoggedIn = true;
     // setIsUserLoggedIn(input => true);
 
     setTimeout(() => {
@@ -64,9 +64,7 @@ export default function Loading() {
           justifyContent: "center",
         }}>
         <Animated.View
-          // source={Logo}
           style={{
-            // opacity: opacity,
             alignItems: "center",
             bottom: opacity.interpolate({
               inputRange: [0, 1],
@@ -79,7 +77,6 @@ export default function Loading() {
       </View>
       <View style={{ flex: 1 }}>
         <Animated.View
-          // source={Logo}
           style={{
             opacity: opacity,
 
@@ -103,9 +100,6 @@ export default function Loading() {
               style={styles.iconStyle}></Image>
             <Image
               source={require("../assets/icons/kakao_icon.png")}
-              style={styles.iconStyle}></Image>
-            <Image
-              source={require("../assets/icons/apple_icon.png")}
               style={styles.iconStyle}></Image>
           </View>
         </Animated.View>
