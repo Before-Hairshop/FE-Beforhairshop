@@ -6,6 +6,8 @@ import {
   Text,
   TouchableOpacity,
   Linking,
+  Platform,
+  PermissionsAndroid,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import DefaultDesigner from "../assets/images/default_designer_profile.png";
@@ -24,6 +26,7 @@ import DefaultMap from "../assets/images/default_map.png";
 import HighlightText from "react-native-highlight-underline-text";
 import DashedLine from "react-native-dashed-line";
 import axios from "axios";
+import Map from "./Map";
 
 const HeaderContents = () => (
   <>
@@ -594,7 +597,7 @@ export default function Loading() {
         <View style={styles.underline_content_container}>
           <UnderLineContent value="위치" />
         </View>
-        <Image
+        {/* <Image
           source={DefaultMap}
           style={{
             width: "100%",
@@ -602,7 +605,16 @@ export default function Loading() {
             borderRadius: 10,
             marginBottom: verticalScale(20),
           }}
-        />
+        /> */}
+        <View
+          style={{
+            width: "100%",
+            height: verticalScale(200),
+            borderRadius: 10,
+            marginBottom: verticalScale(20),
+          }}>
+          <Map />
+        </View>
         <Text
           style={{
             fontFamily: "Pretendard",
