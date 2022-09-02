@@ -1,47 +1,48 @@
 import { StyleSheet, Text, View, Image, Animated, Alert } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect, useRef } from "react";
 import { scale, verticalScale } from "../utils/scale";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 const Logo = require("../assets/images/Logo.png");
-export default function Loading() {
-  const navigation = useNavigation();
-  // const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-  let isUserLoggedIn = false;
+
+const useDidMountEffect = (func, deps) => {
+  const didMount = useRef(false);
 
   useEffect(() => {
-    onLoad();
+    if (didMount.current) func();
+    else didMount.current = true;
+  }, deps);
+};
+
+const wait = timeToDelay =>
+  new Promise(resolve => setTimeout(resolve, timeToDelay));
+
+export default function Loading() {
+  const navigation = useNavigation();
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState("");
+
+  useEffect(() => {
+    async function waitForSecond() {
+      await wait(3000);
+      setIsUserLoggedIn(true);
+    }
+    waitForSecond();
   }, []);
+
+  useDidMountEffect(() => {
+    if (isUserLoggedIn) {
+      navigation.navigate("Main");
+    } else {
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 1000,
+      }).start(() => {});
+    }
+  }, [isUserLoggedIn]);
 
   let xValue = new Animated.Value(60);
   let opacity = new Animated.Value(0);
-
-  const onComplete = () => {
-    // navigation.navigate("Main");
-    if (isUserLoggedIn) {
-      navigation.navigate("Main");
-    }
-  };
-
-  const onLoad = () => {
-    // setIsUserLoggedIn(true);
-    // isUserLoggedIn = true;
-    // setIsUserLoggedIn(input => true);
-
-    setTimeout(() => {
-      if (isUserLoggedIn) {
-        onComplete();
-      } else {
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 1000,
-        }).start(() => {
-          onComplete();
-        });
-      }
-    }, 1000);
-  };
 
   return (
     <View
