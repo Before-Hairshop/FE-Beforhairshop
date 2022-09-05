@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-export default function Loading() {
+export default function UserCheck() {
   return (
     <View>
-      <Text>Loading</Text>
+      <Text>UserCheck</Text>
     </View>
   );
 }
