@@ -16,58 +16,12 @@ export default function ServiceTerms() {
   const navigation = useNavigation();
 
   return (
-    <View
-      style={{
-        width: width,
-        height: height,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#000000",
-      }}>
-      <View
-        style={{
-          width: "89%",
-          height: verticalScale(600),
-          backgroundColor: "#1d1d1d",
-          alignItems: "center",
-          borderRadius: 15,
-          padding: verticalScale(20),
-        }}>
-        <Text
-          style={{
-            fontFamily: "Pretendard",
-            fontSize: 20,
-            fontWeight: "bold",
-            fontStyle: "normal",
-            letterSpacing: 0,
-            textAlign: "left",
-            color: "#ffffff",
-          }}>
-          이용약관
-        </Text>
-        <View
-          style={{
-            width: "100%",
-            height: verticalScale(1),
-            backgroundColor: "#343434",
-            marginTop: verticalScale(20),
-          }}
-        />
-        <ScrollView
-          style={{
-            width: "100%",
-            marginTop: verticalScale(19),
-          }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 12,
-              fontWeight: "600",
-              fontStyle: "italic",
-              letterSpacing: 0,
-              textAlign: "left",
-              color: "#ffffff",
-            }}>
+    <View style={styles.frame}>
+      <View style={styles.container}>
+        <Text style={styles.title}>이용약관</Text>
+        <View style={styles.division} />
+        <ScrollView style={styles.contents_container}>
+          <Text style={styles.contents}>
             비포헤어샵('beforehairshop.com'이하 'beforehairshop')은(는)
             「개인정보 보호법」 제30조에 따라 정보주체의 개인정보를 보호하고
             이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여
@@ -100,32 +54,75 @@ export default function ServiceTerms() {
           </Text>
         </ScrollView>
         <TouchableOpacity
-          style={{
-            width: "100%",
-            height: verticalScale(55),
-            borderRadius: 10,
-            backgroundColor: "#fc2a5b",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: verticalScale(19),
-          }}
+          style={styles.accept_button}
           onPress={() => navigation.navigate("UserCheck")}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: 16,
-              fontWeight: "600",
-              fontStyle: "normal",
-              letterSpacing: 0,
-              textAlign: "left",
-              color: "#ffffff",
-            }}>
-            동의 후 서비스 이용하기
-          </Text>
+          <Text style={styles.accept_text}>동의 후 서비스 이용하기</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  frame: {
+    width: width,
+    height: height,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#000000",
+  },
+  container: {
+    width: "89%",
+    height: verticalScale(600),
+    backgroundColor: "#1d1d1d",
+    alignItems: "center",
+    borderRadius: 15,
+    padding: verticalScale(20),
+  },
+  title: {
+    fontFamily: "Pretendard",
+    fontSize: 20,
+    fontWeight: "bold",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "#ffffff",
+  },
+  division: {
+    width: "100%",
+    height: verticalScale(1),
+    backgroundColor: "#343434",
+    marginTop: verticalScale(20),
+  },
+  contents_container: {
+    width: "100%",
+    marginTop: verticalScale(19),
+  },
+  contents: {
+    fontFamily: "Pretendard",
+    fontSize: 12,
+    fontWeight: "600",
+    fontStyle: "italic",
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "#ffffff",
+  },
+  accept_button: {
+    width: "100%",
+    height: verticalScale(55),
+    borderRadius: 10,
+    backgroundColor: "#fc2a5b",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: verticalScale(19),
+  },
+  accept_text: {
+    fontFamily: "Pretendard",
+    fontSize: 16,
+    fontWeight: "600",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "#ffffff",
+  },
+});
