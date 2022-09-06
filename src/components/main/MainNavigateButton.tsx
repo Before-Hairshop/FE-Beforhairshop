@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Image } from "react-native";
 import React from "react";
 import { Button } from "@rneui/themed";
 import Icon from "react-native-vector-icons/Ionicons";
-import { scale, verticalScale, moderateScale } from "../utils/scale";
+import { scale, verticalScale, moderateScale } from "../../utils/scale";
 import { useNavigation } from "@react-navigation/native";
 
 export default function MainNavigateButton(props) {
