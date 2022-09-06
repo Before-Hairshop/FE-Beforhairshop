@@ -14,7 +14,8 @@ export default function HairButton(props) {
           width: props.width,
         },
       ]}
-      onPress={props.onPressDeactive}>
+      onPress={props.onPressDeactive}
+      disabled={props.disabled}>
       <Text style={styles.hairButtonText}>{props.content}</Text>
     </TouchableOpacity>
   ) : (
@@ -25,7 +26,8 @@ export default function HairButton(props) {
           width: props.width,
         },
       ]}
-      onPress={props.onPressActive}>
+      onPress={props.onPressActive}
+      disabled={props.disabled}>
       <Text style={styles.hairButtonNotActiveText}>{props.content}</Text>
     </TouchableOpacity>
   );

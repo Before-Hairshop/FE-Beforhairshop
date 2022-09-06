@@ -14,13 +14,15 @@ import Loading from "../screens/Loading";
 import ServiceTerms from "../screens/ServiceTerms";
 import UserCheck from "../screens/UserCheck";
 
+import Suggestion from "../screens/Suggestion";
+
 const mainStack = createNativeStackNavigator();
 
 export const RootNavigator = () => {
   return (
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="Loading">
+      initialRouteName="Suggestion">
       <mainStack.Screen name="Loading" component={Loading} />
       <mainStack.Screen name="Main" component={Main} />
       <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />
@@ -35,6 +37,8 @@ export const RootNavigator = () => {
         name="UserProfileLookup"
         component={UserProfileLookup}
       />
+
+      <mainStack.Screen name="Suggestion" component={Suggestion} />
     </mainStack.Navigator>
   );
 };
