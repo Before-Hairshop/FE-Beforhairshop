@@ -8,6 +8,9 @@ import {
   Linking,
   Platform,
   PermissionsAndroid,
+  Modal,
+  Pressable,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import DefaultDesigner from "../assets/images/default_designer_profile.png";
@@ -27,13 +30,6 @@ import HighlightText from "react-native-highlight-underline-text";
 import DashedLine from "react-native-dashed-line";
 import axios from "axios";
 import Map from "./Map";
-
-const HeaderContents = () => (
-  <>
-    <GoBackIcon />
-    <MeatballIcon />
-  </>
-);
 
 const DashedLineContent = () => (
   <View
@@ -162,6 +158,21 @@ export default function Loading() {
   const [data, setData] = useState();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const HeaderContents = () => (
+    <>
+      <GoBackIcon />
+      <TouchableOpacity
+        onPress={() => {
+          console.log("open!!!");
+          setIsModalVisible(true);
+        }}>
+        <MeatballIcon />
+      </TouchableOpacity>
+    </>
+  );
 
   const fetchData = async () => {
     try {
@@ -321,6 +332,24 @@ export default function Loading() {
         }
       }}
       stickyHeaderIndices={[6]}>
+      <Modal //모달창
+        animationType={"slide"}
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => {
+          setIsModalVisible(!isModalVisible);
+          console.log("modal appearance");
+        }}
+        style={{ alignItems: "center" }}>
+        <View style={{ width: "100%", backgroundColor: "red" }}>
+          <Text style={{ fontSize: 20 }}>모달창!</Text>
+          <TouchableOpacity
+            style={{ margin: 3 }}
+            onPress={() => setIsModalVisible(false)}>
+            <Text>닫기</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
       <Image source={DefaultDesigner} style={styles.designer_img} />
       <View style={{ width: "100%", position: "absolute" }}>
         <Header contents={<HeaderContents />} />
