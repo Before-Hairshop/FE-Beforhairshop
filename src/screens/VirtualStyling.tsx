@@ -16,12 +16,12 @@ const SELECTED = "selected";
 
 const colorInfo = ["블랙", "브라운", "옐로우", "레드", "블루", "오렌지"];
 const colorImage = [
-  require("../assets/images/black_hair.png"),
-  require("../assets/images/brown_hair.png"),
-  require("../assets/images/yellow_hair.png"),
-  require("../assets/images/red_hair.png"),
-  require("../assets/images/blue_hair.png"),
-  require("../assets/images/orange_hair.png"),
+  require("../assets/images/virtualStyling/black_hair.png"),
+  require("../assets/images/virtualStyling/brown_hair.png"),
+  require("../assets/images/virtualStyling/yellow_hair.png"),
+  require("../assets/images/virtualStyling/red_hair.png"),
+  require("../assets/images/virtualStyling/blue_hair.png"),
+  require("../assets/images/virtualStyling/orange_hair.png"),
 ];
 
 const hairstyleInfo = [
@@ -44,23 +44,23 @@ const hairstyleInfo = [
 ];
 
 const hairstyleImage = [
-  require("../assets/images/original_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/original_hairstyle.jpg"),
 
-  require("../assets/images/afro_hairstyle.jpg"),
-  require("../assets/images/bowl_cut_hairstyle.jpg"),
-  require("../assets/images/braid_hairstyle.jpg"),
-  require("../assets/images/caesar_cut_hairstyle.jpg"),
-  require("../assets/images/chignon_hairstyle.jpg"),
-  // require("../assets/images/dreadlocks_hairstyle.jpg"),
-  // require("../assets/images/fauxhawk_hairstyle.jpg"),
-  // require("../assets/images/jewfro_hairstyle.jpg"),
-  // require("../assets/images/perm_hairstyle.jpg"),
-  // require("../assets/images/pixie_cut_hairstyle.jpg"),
-  // require("../assets/images/psychobilly_wedge_hairstyle.jpg"),
-  // require("../assets/images/regular_taper_cut_hairstyle.jpg"),
-  // require("../assets/images/shingle_bob_hairstyle.jpg"),
-  // require("../assets/images/short_hair_hairstyle.jpg"),
-  // require("../assets/images/slicked-back_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/afro_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/bowl_cut_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/braid_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/caesar_cut_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/chignon_hairstyle.jpg"),
+  // require("../assets/images/virtualStyling/dreadlocks_hairstyle.jpg"),
+  // require("../assets/images/virtualStyling/fauxhawk_hairstyle.jpg"),
+  // require("../assets/images/virtualStyling/jewfro_hairstyle.jpg"),
+  // require("../assets/images/virtualStyling/perm_hairstyle.jpg"),
+  // require("../assets/images/virtualStyling/pixie_cut_hairstyle.jpg"),
+  // require("../assets/images/virtualStyling/psychobilly_wedge_hairstyle.jpg"),
+  // require("../assets/images/virtualStyling/regular_taper_cut_hairstyle.jpg"),
+  // require("../assets/images/virtualStyling/shingle_bob_hairstyle.jpg"),
+  // require("../assets/images/virtualStyling/short_hair_hairstyle.jpg"),
+  // require("../assets/images/virtualStyling/slicked-back_hairstyle.jpg"),
 ];
 
 const allHairstyleInfo = [
@@ -83,23 +83,23 @@ const allHairstyleInfo = [
 ];
 
 const allHairstyleImage = [
-  require("../assets/images/original_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/original_hairstyle.jpg"),
 
-  require("../assets/images/afro_hairstyle.jpg"),
-  require("../assets/images/bowl_cut_hairstyle.jpg"),
-  require("../assets/images/braid_hairstyle.jpg"),
-  require("../assets/images/caesar_cut_hairstyle.jpg"),
-  require("../assets/images/chignon_hairstyle.jpg"),
-  require("../assets/images/dreadlocks_hairstyle.jpg"),
-  require("../assets/images/fauxhawk_hairstyle.jpg"),
-  require("../assets/images/jewfro_hairstyle.jpg"),
-  require("../assets/images/perm_hairstyle.jpg"),
-  require("../assets/images/pixie_cut_hairstyle.jpg"),
-  require("../assets/images/psychobilly_wedge_hairstyle.jpg"),
-  require("../assets/images/regular_taper_cut_hairstyle.jpg"),
-  require("../assets/images/shingle_bob_hairstyle.jpg"),
-  require("../assets/images/short_hair_hairstyle.jpg"),
-  require("../assets/images/slicked-back_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/afro_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/bowl_cut_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/braid_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/caesar_cut_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/chignon_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/dreadlocks_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/fauxhawk_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/jewfro_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/perm_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/pixie_cut_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/psychobilly_wedge_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/regular_taper_cut_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/shingle_bob_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/short_hair_hairstyle.jpg"),
+  require("../assets/images/virtualStyling/slicked-back_hairstyle.jpg"),
 ];
 
 export default function VirtualStyling() {

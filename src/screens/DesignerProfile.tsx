@@ -331,7 +331,7 @@ export default function Loading() {
           setCurrentTab("review");
         }
       }}
-      stickyHeaderIndices={[6]}>
+      stickyHeaderIndices={[7]}>
       <Modal //모달창
         animationType={"slide"}
         transparent={true}

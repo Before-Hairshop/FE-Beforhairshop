@@ -10,9 +10,9 @@ import { TouchableOpacity } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Avatar } from "@rneui/themed";
 import Swiper from "react-native-swiper";
-import AdBanner from "../components/AdBanner";
-import MainNavigateButton from "../components/MainNavigateButton";
-import PopularHairstyle from "../components/PopularHairstyle";
+import AdBanner from "../components/main/AdBanner";
+import MainNavigateButton from "../components/main/MainNavigateButton";
+import PopularHairstyle from "../components/main/PopularHairstyle";
 import Header from "../components/Header";
 import { scale, verticalScale } from "../utils/scale";
 
@@ -20,9 +20,11 @@ export default function Main(props) {
   const [slideTime, setSlideTime] = useState(1);
   const [swiperIndex, setSwiperIndex] = useState(0);
   const bannerLists = [
-    "../assets/images/MainBanner1.png",
-    "../assets/images/MainBanner2.png",
+    "../assets/images/main/MainBanner1.png",
+    "../assets/images/main/MainBanner2.png",
   ];
+
+  const popularHairLists = [];
   useEffect(() => {
     const autoTimer = setTimeout(() => setSlideTime(10), 1000);
     return () => clearTimeout(autoTimer);
@@ -93,7 +95,7 @@ export default function Main(props) {
                 subColor="#c5b593"
                 text={["AI 분석으로", "나에게 맞는 헤어스타일", "알아보기"]}
                 textBold={[true, true, false]}
-                thumbnail={require("../assets/images/MainBanner1.png")}></AdBanner>
+                thumbnail={require("../assets/images/main/MainBanner1.png")}></AdBanner>
               <AdBanner
                 mainColor="#fcf1f0"
                 subColor="#db4544"
@@ -103,19 +105,19 @@ export default function Main(props) {
                   "맞춤형 헤어스타일",
                 ]}
                 textBold={[false, false, true]}
-                thumbnail={require("../assets/images/MainBanner2.png")}></AdBanner>
+                thumbnail={require("../assets/images/main/MainBanner2.png")}></AdBanner>
             </Swiper>
           </View>
           <View style={{ flex: 8 }}>
             <View style={{ flex: 1 }}>
               <MainNavigateButton
                 text={["나에게 어울리는 스타일을 찾아", "헤어스타일 체험"]}
-                icon={require(`../assets/images/VirtualStylingIcon.png`)}></MainNavigateButton>
+                icon={require(`../assets/images/main/VirtualStylingIcon.png`)}></MainNavigateButton>
             </View>
             <View style={{ flex: 1 }}>
               <MainNavigateButton
                 text={["맞춤형 서비스를 위한", "헤어 디자이너"]}
-                icon={require(`../assets/images/HairDesignerIcon.png`)}></MainNavigateButton>
+                icon={require(`../assets/images/main/HairDesignerIcon.png`)}></MainNavigateButton>
             </View>
           </View>
         </View>
@@ -132,16 +134,16 @@ export default function Main(props) {
         <ScrollView horizontal style={{ marginTop: 20 }}>
           <PopularHairstyle
             styleName="히피펌"
-            thumbnail={require("../assets/images/popular_thumbnail.jpeg")}></PopularHairstyle>
+            thumbnail={require("../assets/images/main/popular_thumbnail.jpeg")}></PopularHairstyle>
           <PopularHairstyle
             styleName="가일컷"
-            thumbnail={require("../assets/images/popular_thumbnail2.png")}></PopularHairstyle>
+            thumbnail={require("../assets/images/main/popular_thumbnail2.png")}></PopularHairstyle>
           <PopularHairstyle
             styleName="히피펌"
-            thumbnail={require("../assets/images/popular_thumbnail.jpeg")}></PopularHairstyle>
+            thumbnail={require("../assets/images/main/popular_thumbnail.jpeg")}></PopularHairstyle>
           <PopularHairstyle
             styleName="가일컷"
-            thumbnail={require("../assets/images/popular_thumbnail2.png")}></PopularHairstyle>
+            thumbnail={require("../assets/images/main/popular_thumbnail2.png")}></PopularHairstyle>
         </ScrollView>
       </View>
     </View>
