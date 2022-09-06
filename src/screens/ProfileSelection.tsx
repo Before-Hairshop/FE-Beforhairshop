@@ -14,7 +14,7 @@ import { Button } from "@rneui/themed";
 import { scale, verticalScale } from "../utils/scale";
 import Header from "../components/Header";
 import Icon from "react-native-vector-icons/Ionicons";
-import ProfileImage from "../components/ProfileImage";
+import ProfileImage from "../components/profileSelection/ProfileImage";
 import { useNavigation } from "@react-navigation/native";
 import HighlightText from "react-native-highlight-underline-text";
 

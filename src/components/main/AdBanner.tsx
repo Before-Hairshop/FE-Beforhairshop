@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
 import { Chip } from "@rneui/themed";
 import LinearGradient from "react-native-linear-gradient";
 import React from "react";
-import { verticalScale } from "../utils/scale";
+import { verticalScale } from "../../utils/scale";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
