@@ -11,6 +11,8 @@ import {
   Modal,
   Pressable,
   Alert,
+  TouchableWithoutFeedback,
+  Animated,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import DefaultDesigner from "../assets/images/default_designer_profile.png";
@@ -30,6 +32,12 @@ import HighlightText from "react-native-highlight-underline-text";
 import DashedLine from "react-native-dashed-line";
 import axios from "axios";
 import Map from "./Map";
+
+import ModifyIcon from "../assets/icons/modify.svg";
+import ReportIcon from "../assets/icons/report.svg";
+import DeleteIcon from "../assets/icons/delete.svg";
+
+import { useNavigation } from "@react-navigation/native";
 
 const DashedLineContent = () => (
   <View
@@ -159,7 +167,10 @@ export default function Loading() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isDesignerModalVisible, setIsDesignerModalVisible] = useState(false);
+  const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+
+  const navigation = useNavigation();
 
   const HeaderContents = () => (
     <>
@@ -167,9 +178,11 @@ export default function Loading() {
       <TouchableOpacity
         onPress={() => {
           console.log("open!!!");
-          setIsModalVisible(true);
+          setIsDesignerModalVisible(true);
         }}>
-        <MeatballIcon />
+        <View style={{ height: 20, justifyContent: "center" }}>
+          <MeatballIcon />
+        </View>
       </TouchableOpacity>
     </>
   );
@@ -273,7 +286,12 @@ export default function Loading() {
           }}>
           22.07.15
         </Text>
-        <MeatballIcon />
+        <TouchableOpacity
+          onPress={() => {
+            setIsReviewModalVisible(true);
+          }}>
+          <MeatballIcon />
+        </TouchableOpacity>
       </View>
       <Text style={styles.user_name}>겁나 빠른 황소</Text>
       <View style={styles.review_star_container}>
@@ -332,22 +350,160 @@ export default function Loading() {
         }
       }}
       stickyHeaderIndices={[7]}>
-      <Modal //모달창
+      <Modal
         animationType={"slide"}
         transparent={true}
-        visible={isModalVisible}
+        visible={isDesignerModalVisible}
         onRequestClose={() => {
-          setIsModalVisible(!isModalVisible);
-          console.log("modal appearance");
+          setIsDesignerModalVisible(!isDesignerModalVisible);
         }}
-        style={{ alignItems: "center" }}>
-        <View style={{ width: "100%", backgroundColor: "red" }}>
-          <Text style={{ fontSize: 20 }}>모달창!</Text>
-          <TouchableOpacity
-            style={{ margin: 3 }}
-            onPress={() => setIsModalVisible(false)}>
-            <Text>닫기</Text>
-          </TouchableOpacity>
+        statusBarTranslucent>
+        <View
+          style={{
+            flex: 1,
+          }}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setIsDesignerModalVisible(false);
+            }}>
+            <View style={{ flex: 1 }} />
+          </TouchableWithoutFeedback>
+          <Animated.View
+            style={{
+              width: "100%",
+              height: verticalScale(292),
+              backgroundColor: "#0c0c0c",
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+              paddingTop: verticalScale(40),
+            }}>
+            <TouchableOpacity
+              style={{
+                height: verticalScale(60),
+                flexDirection: "row",
+                paddingTop: verticalScale(20),
+                paddingBottom: verticalScale(20),
+                paddingLeft: scale(25),
+              }}>
+              <View
+                style={{
+                  width: scale(35),
+                  height: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: scale(10),
+                }}>
+                <ModifyIcon />
+              </View>
+              <View style={{ height: "100%", justifyContent: "center" }}>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: 15,
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    letterSpacing: -1,
+                    textAlign: "left",
+                    color: "rgba(255, 255, 255, 0.7)",
+                  }}>
+                  수정하기
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <View style={{ width: "100%", alignItems: "center" }}>
+              <View
+                style={{
+                  width: "89%",
+                  height: verticalScale(1),
+                  backgroundColor: "#333333",
+                }}
+              />
+            </View>
+            <TouchableOpacity
+              style={{
+                height: verticalScale(60),
+                flexDirection: "row",
+                paddingTop: verticalScale(20),
+                paddingBottom: verticalScale(20),
+                paddingLeft: scale(25),
+              }}>
+              <View
+                style={{
+                  width: scale(35),
+                  height: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: scale(10),
+                }}>
+                <ReportIcon />
+              </View>
+              <View style={{ height: "100%", justifyContent: "center" }}>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: 15,
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    letterSpacing: -1,
+                    textAlign: "left",
+                    color: "rgba(255, 255, 255, 0.7)",
+                  }}>
+                  신고하기
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <View style={{ width: "100%", alignItems: "center" }}>
+              <View
+                style={{
+                  width: "89%",
+                  height: verticalScale(1),
+                  backgroundColor: "#333333",
+                }}
+              />
+            </View>
+            <TouchableOpacity
+              style={{
+                height: verticalScale(60),
+                flexDirection: "row",
+                paddingTop: verticalScale(20),
+                paddingBottom: verticalScale(20),
+                paddingLeft: scale(25),
+              }}>
+              <View
+                style={{
+                  width: scale(35),
+                  height: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: scale(10),
+                }}>
+                <DeleteIcon />
+              </View>
+              <View style={{ height: "100%", justifyContent: "center" }}>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: 15,
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    letterSpacing: -1,
+                    textAlign: "left",
+                    color: "rgba(255, 255, 255, 0.7)",
+                  }}>
+                  삭제하기
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <View style={{ width: "100%", alignItems: "center" }}>
+              <View
+                style={{
+                  width: "89%",
+                  height: verticalScale(1),
+                  backgroundColor: "#333333",
+                }}
+              />
+            </View>
+          </Animated.View>
         </View>
       </Modal>
       <Image source={DefaultDesigner} style={styles.designer_img} />
@@ -717,6 +873,129 @@ export default function Loading() {
           console.log(layout);
           setReviewViewY(layout.y);
         }}>
+        <Modal
+          animationType={"slide"}
+          transparent={true}
+          visible={isReviewModalVisible}
+          onRequestClose={() => {
+            setIsReviewModalVisible(!isReviewModalVisible);
+          }}
+          statusBarTranslucent>
+          <View
+            style={{
+              flex: 1,
+            }}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setIsReviewModalVisible(false);
+              }}>
+              <View style={{ flex: 1 }} />
+            </TouchableWithoutFeedback>
+            <Animated.View
+              style={{
+                width: "100%",
+                height: verticalScale(292),
+                backgroundColor: "#0c0c0c",
+                borderTopLeftRadius: 30,
+                borderTopRightRadius: 30,
+                paddingTop: verticalScale(40),
+              }}>
+              <TouchableOpacity
+                style={{
+                  height: verticalScale(60),
+                  paddingTop: verticalScale(20),
+                  paddingBottom: verticalScale(20),
+                  paddingLeft: scale(35),
+                }}>
+                <View style={{ height: "100%", justifyContent: "center" }}>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: 15,
+                      fontWeight: "500",
+                      fontStyle: "normal",
+                      letterSpacing: -1,
+                      textAlign: "left",
+                      color: "rgba(255, 255, 255, 0.7)",
+                    }}>
+                    수정하기
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <View style={{ width: "100%", alignItems: "center" }}>
+                <View
+                  style={{
+                    width: "89%",
+                    height: verticalScale(1),
+                    backgroundColor: "#333333",
+                  }}
+                />
+              </View>
+              <TouchableOpacity
+                style={{
+                  height: verticalScale(60),
+                  paddingTop: verticalScale(20),
+                  paddingBottom: verticalScale(20),
+                  paddingLeft: scale(35),
+                }}>
+                <View style={{ height: "100%", justifyContent: "center" }}>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: 15,
+                      fontWeight: "500",
+                      fontStyle: "normal",
+                      letterSpacing: -1,
+                      textAlign: "left",
+                      color: "rgba(255, 255, 255, 0.7)",
+                    }}>
+                    신고하기
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <View style={{ width: "100%", alignItems: "center" }}>
+                <View
+                  style={{
+                    width: "89%",
+                    height: verticalScale(1),
+                    backgroundColor: "#333333",
+                  }}
+                />
+              </View>
+              <TouchableOpacity
+                style={{
+                  height: verticalScale(60),
+                  paddingTop: verticalScale(20),
+                  paddingBottom: verticalScale(20),
+                  paddingLeft: scale(35),
+                }}>
+                <View style={{ height: "100%", justifyContent: "center" }}>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: 15,
+                      fontWeight: "500",
+                      fontStyle: "normal",
+                      letterSpacing: -1,
+                      textAlign: "left",
+                      color: "rgba(255, 255, 255, 0.7)",
+                    }}>
+                    삭제하기
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <View style={{ width: "100%", alignItems: "center" }}>
+                <View
+                  style={{
+                    width: "89%",
+                    height: verticalScale(1),
+                    backgroundColor: "#333333",
+                  }}
+                />
+              </View>
+            </Animated.View>
+          </View>
+        </Modal>
         <View style={styles.underline_content_container}>
           <UnderLineContent value="디자이너 리뷰" />
         </View>
