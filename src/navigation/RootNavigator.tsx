@@ -17,7 +17,7 @@ export const RootNavigator = () => {
   return (
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="UserProfile">
+      initialRouteName="Loading">
       <mainStack.Screen name="Loading" component={Loading} />
       <mainStack.Screen name="Main" component={Main} />
       <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />

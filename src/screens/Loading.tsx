@@ -1,4 +1,12 @@
-import { StyleSheet, Text, View, Image, Animated, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Animated,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useLayoutEffect, useRef } from "react";
 import { scale, verticalScale } from "../utils/scale";
 import { useState } from "react";
@@ -23,9 +31,10 @@ export default function Loading() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState("");
 
   useEffect(() => {
+    //로그인 여부 확인
     async function waitForSecond() {
       await wait(3000);
-      setIsUserLoggedIn(true);
+      setIsUserLoggedIn(false);
     }
     waitForSecond();
   }, []);
@@ -41,7 +50,6 @@ export default function Loading() {
     }
   }, [isUserLoggedIn]);
 
-  let xValue = new Animated.Value(60);
   let opacity = new Animated.Value(0);
 
   return (
@@ -96,12 +104,17 @@ export default function Loading() {
             SNS 계정으로 간편가입하기{" "}
           </Text>
           <View style={{ flexDirection: "row", margin: verticalScale(23) }}>
-            <Image
-              source={require("../assets/icons/google_icon.png")}
-              style={styles.iconStyle}></Image>
-            <Image
-              source={require("../assets/icons/kakao_icon.png")}
-              style={styles.iconStyle}></Image>
+            <TouchableOpacity>
+              <Image
+                source={require("../assets/icons/google_icon.png")}
+                style={styles.iconStyle}></Image>
+            </TouchableOpacity>
+
+            <TouchableOpacity>
+              <Image
+                source={require("../assets/icons/kakao_icon.png")}
+                style={styles.iconStyle}></Image>
+            </TouchableOpacity>
           </View>
         </Animated.View>
       </View>
