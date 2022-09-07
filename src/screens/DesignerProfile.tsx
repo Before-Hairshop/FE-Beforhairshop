@@ -109,9 +109,10 @@ const ReviewPhoto = () => (
         opacity: 0.15,
         borderRadius: 10,
         backgroundColor: "#d9d9d9",
+        marginRight: scale(10),
       }}
     />
-    <View style={{ justifyContent: "flex-end" }}>
+    <View style={{ justifyContent: "flex-end", marginRight: scale(10) }}>
       <View
         style={{
           width: 87.8,
@@ -122,7 +123,7 @@ const ReviewPhoto = () => (
         }}
       />
     </View>
-    <View style={{ justifyContent: "flex-end" }}>
+    <View style={{ justifyContent: "flex-end", marginRight: scale(10) }}>
       <View
         style={{
           width: 87.8,
@@ -266,7 +267,11 @@ export default function Loading() {
   );
 
   const ReviewItem = () => (
-    <View>
+    <View
+      style={{
+        paddingTop: verticalScale(40),
+        paddingBottom: verticalScale(30),
+      }}>
       <View
         style={{
           flexDirection: "row",
@@ -1004,7 +1009,7 @@ export default function Loading() {
           <View style={{ width: "100%", alignItems: "center" }}>
             <View
               style={{
-                width: "89%",
+                width: scale(334),
                 height: verticalScale(1),
                 backgroundColor: "#333333",
               }}
@@ -1014,7 +1019,7 @@ export default function Loading() {
           <View style={{ width: "100%", alignItems: "center" }}>
             <View
               style={{
-                width: "89%",
+                width: scale(334),
                 height: verticalScale(1),
                 backgroundColor: "#333333",
               }}
