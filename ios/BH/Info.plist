@@ -64,5 +64,7 @@
 		<string>Pretendard-SemiBold.ttf</string>
 		<string>Pretendard-Thin.ttf</string>
 	</array>
+	<key>NMFClientId</key>
+	<string>$(NAVER_MAP_CLIENT_ID)</string>
 </dict>
 </plist>

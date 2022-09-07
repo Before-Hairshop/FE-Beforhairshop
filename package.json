@@ -17,6 +17,7 @@
     "axios": "^0.27.2",
     "react": "18.0.0",
     "react-native": "0.69.1",
+    "react-native-config": "^1.4.6",
     "react-native-dashed-line": "^1.1.0",
     "react-native-highlight-underline-text": "^1.0.4",
     "react-native-image-picker": "^4.8.4",
