@@ -13,6 +13,7 @@ import UserProfile from "../screens/UserProfile";
 import Loading from "../screens/Loading";
 import ServiceTerms from "../screens/ServiceTerms";
 import UserCheck from "../screens/UserCheck";
+import Location from "../screens/Location";
 
 const mainStack = createNativeStackNavigator();
 
@@ -31,6 +32,7 @@ export const RootNavigator = () => {
       <mainStack.Screen name="ServiceTerms" component={ServiceTerms} />
       <mainStack.Screen name="UserCheck" component={UserCheck} />
       <mainStack.Screen name="UserProfile" component={UserProfile} />
+      <mainStack.Screen name="Location" component={Location} />
       <mainStack.Screen
         name="UserProfileLookup"
         component={UserProfileLookup}
