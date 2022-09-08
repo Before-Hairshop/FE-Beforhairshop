@@ -5,11 +5,19 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Dimensions } from "react-native";
 import { scale, verticalScale } from "../utils/scale";
 import { useNavigation } from "@react-navigation/native";
 import GoBackIcon from "../assets/icons/goBack.svg";
+import NaverMapView, {
+  Circle,
+  Marker,
+  Path,
+  Polyline,
+  Polygon,
+  Align,
+} from "../components/map";
 
 const { width, height } = Dimensions.get("window");
 
@@ -54,6 +62,10 @@ const Header = () => (
 
 export default function Location() {
   const navigation = useNavigation();
+  const [location, setLocation] = useState({
+    latitude: 37.564362,
+    longitude: 126.977011,
+  });
 
   return (
     <View
@@ -70,7 +82,34 @@ export default function Location() {
         shadowOpacity: 1,
       }}>
       <Header />
-      <View style={{ backgroundColor: "black", height: verticalScale(464) }} />
+      <View style={{ backgroundColor: "black", height: verticalScale(464) }}>
+        <NaverMapView
+          style={{ width: "100%", height: "100%" }}
+          showsMyLocationButton={true}
+          center={{
+            ...{ latitude: 37.564362, longitude: 126.977011 },
+            zoom: 16,
+          }}
+          // onTouch={e => console.log("onTouch", JSON.stringify(e.nativeEvent))}
+          onTouch={e => console.log("onTouch", e)}
+          onCameraChange={e => {
+            // console.log(typeof e);
+            setLocation(current => {
+              let newCondition = { ...current };
+              newCondition["latitude"] = e.latitude;
+              newCondition["longitude"] = e.longitude;
+              return newCondition;
+            });
+          }}
+          // onMapClick={e => console.warn("onMapClick", JSON.stringify(e))}
+          useTextureView>
+          <Marker
+            coordinate={location}
+            // onClick={() => console.warn("onClick! p0")}
+            caption={{ text: "test caption", align: Align.Top }}
+          />
+        </NaverMapView>
+      </View>
       <View
         style={{
           width: "100%",
