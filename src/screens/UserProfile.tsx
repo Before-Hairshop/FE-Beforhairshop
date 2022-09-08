@@ -18,6 +18,7 @@ import HairButton from "../components/UserProfile/HairButton";
 import { launchImageLibrary, launchCamera } from "react-native-image-picker";
 import PlusIcon from "../assets/icons/plus.png";
 import { useNavigation } from "@react-navigation/native";
+import ProfileUploadButton from "../components/common/ProfileUploadButton";
 
 import { Platform } from "react-native";
 
@@ -83,27 +84,6 @@ export default function UserProfileLookup() {
     setWantHairImage([]);
   }, []);
 
-  const ImageUploadButton = props => {
-    return (
-      <TouchableOpacity
-        style={props.style}
-        onPress={async () => {
-          //   const result = await launchCamera();
-          console.log(props);
-          const result = await launchImageLibrary();
-          let newArray = [...props.toChangeArray];
-          newArray[props.index] = result.assets[0].uri;
-          console.log(props.index);
-          props.toChangeFunction(newArray);
-        }}>
-        <Image
-          source={{ uri: props.toChangeArray[props.index] }}
-          style={{ width: "100%", aspectRatio: 1 }}
-        />
-      </TouchableOpacity>
-    );
-  };
-
   const WantedStyleUploadButton = props => {
     return (
       <TouchableOpacity
@@ -160,11 +140,12 @@ export default function UserProfileLookup() {
                     alignItems: "center",
                     margin: verticalScale(10),
                   }}>
-                  <ImageUploadButton
+                  <ProfileUploadButton
                     index={index}
                     toChangeArray={profileImage}
                     toChangeFunction={setProfileImage}
-                    style={styles.userProfileImage}></ImageUploadButton>
+                    style={styles.userProfileImage}></ProfileUploadButton>
+
                   <Text
                     style={{ color: "white", paddingTop: verticalScale(10) }}>
                     {profileExplanation[index]}
