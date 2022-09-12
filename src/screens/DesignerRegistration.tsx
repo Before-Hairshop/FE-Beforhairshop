@@ -17,6 +17,10 @@ import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header";
 import ProfileUploadButton from "../components/common/ProfileUploadButton";
 
+import { Dropdown } from "react-native-element-dropdown";
+import Icon from "react-native-vector-icons/Ionicons";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
 const BASEWIDTH = 375;
 const BASEPADDING = 20;
 const numberOfLines = 4;
@@ -58,18 +62,107 @@ export default function Loading() {
   const [profileImage, setProfileImage] = useState([baseImageURL]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
+
+  const [tagInput, setTagInput] = useState("");
+  const [hairTag, setHairTag] = useState([]);
   const [shopName, setShopName] = useState("");
   const [location, setLocation] = useState("");
   const [specificLocation, setSpecificLocation] = useState("");
-  const [styleList, setStyleList] = useState("");
-  const [priceInfo, setPriceInfo] = useState("");
+
+  const [date, setDate] = useState(new Date(1598051730000));
+
+  const [menuInfo, setMenuInfo] = useState([]);
+  const [styleName, setStyleName] = useState("");
+  const [price, setPrice] = useState("");
+
   const [schedule, setSchedule] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+
+  const [category, setCategory] = useState("");
+  const [categoryItem, setCategoryItem] = useState([
+    {
+      label: "컷",
+      value: "컷",
+    },
+    {
+      label: "펌",
+      value: "펌",
+    },
+    {
+      label: "염색",
+      value: "염색",
+    },
+  ]);
+
+  const [workingDayItem, setWorkingDayItem] = useState([
+    {
+      label: "월요일",
+      value: "MON",
+    },
+    {
+      label: "화요일",
+      value: "TUE",
+    },
+    {
+      label: "수요일",
+      value: "WED",
+    },
+    {
+      label: "목요일",
+      value: "THU",
+    },
+    {
+      label: "금요일",
+      value: "FRI",
+    },
+    {
+      label: "토요일",
+      value: "SAT",
+    },
+    {
+      label: "일요일",
+      value: "SUN",
+    },
+  ]);
+
+  const [showStartTimePicker, setShowStartTimePicker] = useState(false);
+
+  const HairTagButton = ({ index }) => {
+    return (
+      <TouchableOpacity
+        style={{
+          borderColor: MAINCOLOR,
+          borderWidth: 1,
+          borderRadius: scale(16),
+          paddingHorizontal: scale(10),
+          marginRight: scale(10),
+        }}
+        onPress={() => {
+          let newArray = [...hairTag];
+          newArray.splice(index, 1);
+          setHairTag(newArray);
+        }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-evenly",
+          }}>
+          <Text style={{ color: MAINCOLOR }}>{hairTag[index]}</Text>
+          <Icon
+            name="close-outline"
+            color={MAINCOLOR}
+            style={{ fontSize: verticalScale(35) }}
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.mainView}>
       <Header contents={<HeaderContents></HeaderContents>}></Header>
+
       <ScrollView>
         <View style={{ alignItems: "center", margin: verticalScale(10) }}>
           <View style={{ flexDirection: "row" }}>
@@ -139,32 +232,163 @@ export default function Loading() {
             <TextInput
               placeholder="#태그"
               placeholderTextColor={GRAYCOLOR}
-              defaultValue={description}
+              value={tagInput}
+              onChangeText={text => setTagInput(text)}
               onEndEditing={e => {
-                setDescription(e.nativeEvent.text);
+                let newHairTagArray = [...hairTag];
+                newHairTagArray.push(e.nativeEvent.text);
+
+                setHairTag(newHairTagArray);
+                setTagInput("");
               }}
+              autoCorrect={false}
               style={[styles.inputText]}></TextInput>
           </View>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{ paddingTop: verticalScale(13), margin: verticalScale(5) }}
+            contentContainerStyle={{
+              justifyContent: "center",
+              alignItems: "center",
+            }}>
+            {hairTag.map((item, index) => {
+              return <HairTagButton index={index}></HairTagButton>;
+            })}
+          </ScrollView>
         </View>
 
         <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}>가격 </Text>
+          <Text style={styles.itemTextStyle}>헤어 목록</Text>
 
-          <View style={styles.userTextUnderline}>
-            <TextInput
-              placeholder="예) 30000"
-              placeholderTextColor={GRAYCOLOR}
-              style={styles.inputText}></TextInput>
+          <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+            <View style={{ flex: 1, marginRight: scale(10) }}>
+              <View style={[styles.userTextUnderline]}>
+                <Dropdown
+                  style={[styles.inputText, styles.dropdownStyle]}
+                  placeholderStyle={{ color: GRAYCOLOR }}
+                  selectedTextStyle={{ color: "#cccccc" }}
+                  data={categoryItem}
+                  labelField="label"
+                  valueField="value"
+                  placeholder="카테고리"
+                  value={category}
+                  onChange={item => {
+                    setCategory(item.value);
+                  }}
+                />
+              </View>
+            </View>
+            <View style={{ flex: 1, marginRight: scale(10) }}>
+              <View style={styles.userTextUnderline}>
+                <TextInput
+                  placeholder="스타일 명"
+                  placeholderTextColor={GRAYCOLOR}
+                  textAlignVertical="center"
+                  value={styleName}
+                  onChangeText={text => {
+                    setStyleName(text);
+                  }}
+                  style={[styles.inputText, styles.dropdownStyle]}></TextInput>
+              </View>
+            </View>
+            <View style={{ flex: 1 }}>
+              <View style={styles.userTextUnderline}>
+                <TextInput
+                  placeholder="가격"
+                  value={price}
+                  onChangeText={text => {
+                    setPrice(text);
+                  }}
+                  placeholderTextColor={GRAYCOLOR}
+                  style={[styles.inputText, styles.dropdownStyle]}></TextInput>
+              </View>
+            </View>
           </View>
+
+          <TouchableOpacity
+            style={{
+              alignItems: "center",
+              backgroundColor: "#2e2e2e",
+              padding: 10,
+              marginTop: verticalScale(25),
+              borderRadius: 10,
+              width: "100%",
+            }}
+            onPress={() => {
+              let newArray = JSON.parse(JSON.stringify(menuInfo));
+              newArray.push({
+                category,
+                styleName,
+                price,
+              });
+              setMenuInfo(newArray);
+              setCategory("");
+              setStyleName("");
+              setPrice("");
+            }}>
+            <Text style={{ fontSize: scale(14), color: "#a0a0a0" }}>
+              추가 +
+            </Text>
+          </TouchableOpacity>
+
+          {menuInfo.map((item, index) => {
+            return (
+              <>
+                <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+                  <View style={{ flex: 1, marginRight: scale(10) }}>
+                    <Text style={styles.inputText}>
+                      {menuInfo[index].category}
+                    </Text>
+                  </View>
+                  <View style={{ flex: 1, marginRight: scale(10) }}>
+                    <Text style={styles.inputText}>
+                      {menuInfo[index].styleName}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      margin: 0,
+                      padding: 0,
+                    }}>
+                    <Text style={styles.inputText}>
+                      {menuInfo[index].price}
+                    </Text>
+
+                    <TouchableOpacity
+                      onPress={() => {
+                        let newArray = JSON.parse(JSON.stringify(menuInfo));
+                        newArray.splice(index, 1);
+                        setMenuInfo(newArray);
+                      }}>
+                      <Icon
+                        name="remove-circle-outline"
+                        color={MAINCOLOR}
+                        size={scale(20)}></Icon>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </>
+            );
+          })}
         </View>
 
-        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+        <View style={{ marginTop: 12, alignItems: "flex-start", zIndex: 0 }}>
           <Text style={styles.itemTextStyle}>헤어샵 이름</Text>
 
           <View style={styles.userTextUnderline}>
             <TextInput
               placeholder="헤어샵 이름을 입력해주세요."
               placeholderTextColor={GRAYCOLOR}
+              value={shopName}
+              onChangeText={text => {
+                setShopName(text);
+              }}
               style={styles.inputText}></TextInput>
           </View>
         </View>
@@ -187,19 +411,121 @@ export default function Loading() {
             <TextInput
               placeholder="상세 주소를 입력해주세요."
               placeholderTextColor={GRAYCOLOR}
+              value={specificLocation}
+              onChangeText={text => {
+                setSpecificLocation(text);
+              }}
               style={styles.inputText}></TextInput>
           </View>
         </View>
 
         <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}>근무 일정</Text>
+          <Text style={styles.itemTextStyle}>영업 시간</Text>
 
-          <View style={styles.userTextUnderline}>
-            <TextInput
-              placeholder="예) 투블럭"
-              placeholderTextColor={GRAYCOLOR}
-              style={styles.inputText}></TextInput>
+          <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+            <View style={{ flex: 1, marginRight: scale(10) }}>
+              <View style={[styles.userTextUnderline]}>
+                <TouchableOpacity onPress={() => {}}>
+                  <Text style={{ color: "white" }}>asdf</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={{ flex: 1, marginRight: scale(10) }}>
+              <View style={styles.userTextUnderline}>
+                <TextInput
+                  placeholder="스타일 명"
+                  placeholderTextColor={GRAYCOLOR}
+                  textAlignVertical="center"
+                  value={styleName}
+                  onChangeText={text => {
+                    setStyleName(text);
+                  }}
+                  style={[styles.inputText, styles.dropdownStyle]}></TextInput>
+              </View>
+            </View>
+            <View style={{ flex: 1 }}>
+              <View style={styles.userTextUnderline}>
+                <TextInput
+                  placeholder="가격"
+                  value={price}
+                  onChangeText={text => {
+                    setPrice(text);
+                  }}
+                  placeholderTextColor={GRAYCOLOR}
+                  style={[styles.inputText, styles.dropdownStyle]}></TextInput>
+              </View>
+            </View>
           </View>
+
+          <TouchableOpacity
+            style={{
+              alignItems: "center",
+              backgroundColor: "#2e2e2e",
+              padding: 10,
+              marginTop: verticalScale(25),
+              borderRadius: 10,
+              width: "100%",
+            }}
+            onPress={() => {
+              let newArray = JSON.parse(JSON.stringify(menuInfo));
+              newArray.push({
+                category,
+                styleName,
+                price,
+              });
+              setMenuInfo(newArray);
+              setCategory("");
+              setStyleName("");
+              setPrice("");
+            }}>
+            <Text style={{ fontSize: scale(14), color: "#a0a0a0" }}>
+              추가 +
+            </Text>
+          </TouchableOpacity>
+
+          {menuInfo.map((item, index) => {
+            return (
+              <>
+                <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+                  <View style={{ flex: 1, marginRight: scale(10) }}>
+                    <Text style={styles.inputText}>
+                      {menuInfo[index].category}
+                    </Text>
+                  </View>
+                  <View style={{ flex: 1, marginRight: scale(10) }}>
+                    <Text style={styles.inputText}>
+                      {menuInfo[index].styleName}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      margin: 0,
+                      padding: 0,
+                    }}>
+                    <Text style={styles.inputText}>
+                      {menuInfo[index].price}
+                    </Text>
+
+                    <TouchableOpacity
+                      onPress={() => {
+                        let newArray = JSON.parse(JSON.stringify(menuInfo));
+                        newArray.splice(index, 1);
+                        setMenuInfo(newArray);
+                      }}>
+                      <Icon
+                        name="remove-circle-outline"
+                        color={MAINCOLOR}
+                        size={scale(20)}></Icon>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </>
+            );
+          })}
         </View>
 
         <View style={{ marginTop: 12, alignItems: "flex-start" }}>
@@ -209,6 +535,11 @@ export default function Loading() {
             <TextInput
               placeholder="전화 번호를 입력해주세요."
               placeholderTextColor={GRAYCOLOR}
+              value={phoneNumber}
+              onChangeText={text => {
+                setPhoneNumber(text);
+              }}
+              keyboardType="phone-pad"
               style={styles.inputText}></TextInput>
           </View>
         </View>
@@ -258,8 +589,16 @@ const styles = StyleSheet.create({
     fontFamily: "Pretendard",
     fontSize: scale(16),
 
+    margin: 0,
+    padding: 0,
+    // textAlignVertical: "baseline",
+
     marginBottom: verticalScale(10),
     marginTop: verticalScale(15),
     color: "#cccccc",
+  },
+
+  dropdownStyle: {
+    height: verticalScale(35),
   },
 });
