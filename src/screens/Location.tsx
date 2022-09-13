@@ -1,16 +1,9 @@
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import { Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import { scale, verticalScale } from "../utils/scale";
-import GoBackIcon from "../assets/icons/goBack.svg";
 import NaverMapView, {
   Circle,
   Marker,
@@ -19,47 +12,10 @@ import NaverMapView, {
   Polygon,
   Align,
 } from "../components/map";
+import LocationHeader from "../components/location/LocationHeader";
+import { getReverseGeocoding } from "../api/getReverseGeocoding";
 
 const { width, height } = Dimensions.get("window");
-
-const Header = () => (
-  <View
-    style={{
-      marginTop: Platform.OS === "ios" ? verticalScale(40) : verticalScale(0),
-      height: verticalScale(70),
-      flexDirection: "row",
-      justifyContent: "space-between",
-      paddingTop: verticalScale(15),
-      paddingBottom: verticalScale(15),
-      paddingLeft: verticalScale(8),
-      paddingRight: verticalScale(8),
-    }}>
-    <TouchableOpacity
-      style={{
-        width: scale(40),
-        height: verticalScale(40),
-        alignItems: "center",
-        justifyContent: "center",
-      }}>
-      <GoBackIcon />
-    </TouchableOpacity>
-    <View style={{ height: "100%", justifyContent: "center" }}>
-      <Text
-        style={{
-          fontFamily: "Pretendard",
-          fontSize: 18,
-          fontWeight: "600",
-          fontStyle: "normal",
-          letterSpacing: 0,
-          textAlign: "center",
-          color: "#ffffff",
-        }}>
-        지도에서 위치 확인
-      </Text>
-    </View>
-    <View style={{ width: scale(40), height: verticalScale(40) }} />
-  </View>
-);
 
 export default function Location() {
   const [location, setLocation] = useState({
@@ -71,7 +27,7 @@ export default function Location() {
 
   return (
     <View style={styles.frame}>
-      <Header />
+      <LocationHeader />
       <View style={styles.map_section}>
         <NaverMapView
           style={{ width: "100%", height: "100%" }}
@@ -83,7 +39,6 @@ export default function Location() {
           // onTouch={e => console.log("onTouch", JSON.stringify(e.nativeEvent))}
           // onTouch={e => console.log("onTouch", e)}
           onCameraChange={e => {
-            // console.log(typeof e);
             setLocation(current => {
               let newCondition = { ...current };
               newCondition["latitude"] = e.latitude;
@@ -92,6 +47,7 @@ export default function Location() {
               console.log(e.longitude);
               return newCondition;
             });
+            getReverseGeocoding(`${e.latitude},${e.longitude}`);
           }}
           // onMapClick={e => console.warn("onMapClick", JSON.stringify(e))}
           useTextureView>
