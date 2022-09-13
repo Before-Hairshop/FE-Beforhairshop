@@ -4,26 +4,18 @@ import {
   View,
   Image,
   Animated,
-  Alert,
   TouchableOpacity,
-  Linking,
   Modal,
-  SafeAreaView,
   Platform,
-  NativeSyntheticEvent,
 } from "react-native";
-import React, { createRef, useEffect, useLayoutEffect, useRef } from "react";
-import { scale, verticalScale } from "../utils/scale";
+import React, { createRef, useEffect, useRef } from "react";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
 import { WebView } from "react-native-webview";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  WebViewMessage,
-  WebViewNavigation,
-} from "react-native-webview/lib/WebViewTypes";
 import CookieManager from "@react-native-cookies/cookies";
+
+import { scale, verticalScale } from "../utils/scale";
 
 const GOOGLE_SOCIAL_LOGIN_URI =
   "http://localhost:8080/oauth2/authorization/google";
@@ -32,7 +24,7 @@ const NAVER_SOCIAL_LOGIN_URI =
   "http://localhost:8080/oauth2/authorization/naver";
 // "http://localhost:8080/logout";
 const KAKAO_SOCIAL_LOGIN_URI =
-  "http://127.0.0.1:8080/oauth2/authorization/kakao";
+  "http://localhost:8080/oauth2/authorization/kakao";
 
 const userAgent =
   // "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19";
@@ -56,29 +48,24 @@ const useDidMountEffect = (func, deps) => {
   }, deps);
 };
 
-const wait = timeToDelay =>
+const wait = (timeToDelay: number) => {
   new Promise(resolve => setTimeout(resolve, timeToDelay));
+};
 
 export default function Loading() {
-  const navigation = useNavigation();
-
   const [isUserLoggedIn, setIsUserLoggedIn] = useState("");
   const [socialModalVisible, setSocialModalVisible] = useState(false);
 
+  const navigation = useNavigation();
+  const webViewRef = createRef<WebView>();
+  const opacity = new Animated.Value(0);
+
   const signInWithGoogle = () => {
     setSocialModalVisible(true);
-    // const result = await axios.get(
-    //   "http://localhost:8080/oauth2/authorization/google",
-    // );
-    // Linking.openURL("http://localhost:8080/oauth2/authorization/google");
   };
 
   const signInWithKakao = () => {
     setSocialModalVisible(true);
-    // const result = await axios.get(
-    //   "http://localhost:8080/oauth2/authorization/google",
-    // );
-    // Linking.openURL("http://localhost:8080/oauth2/authorization/google");
   };
 
   useEffect(() => {
@@ -101,28 +88,14 @@ export default function Loading() {
     }
   }, [isUserLoggedIn]);
 
-  let opacity = new Animated.Value(0);
+  const storeData = async (value: string) => {
+    try {
+      await AsyncStorage.setItem("@SESSION_ID", value);
+    } catch (error) {
+      //
+    }
+  };
 
-  // useEffect(() => {
-  //   let getCookies = () =>
-  //     CookieManager.getAll(useWebKit).then(cookies => {
-  //       console.log("CookieManager.get =>", cookies);
-  //     });
-  //   if (Platform.OS === "android") {
-  //     getCookies = () =>
-  //       CookieManager.get("https://linkedin.com").then(cookies => {
-  //         console.log("CookieManager.get =>", cookies);
-  //       });
-  //   }
-  //   getCookies();
-  // }, []);
-
-  let webViewRef = createRef<WebView>();
-
-  // const CHECK_COOKIE: string = ReactNativeWebView.postMessage(
-  //   "Cookie: " + document.cookie,
-  // );
-  // true;
   const onNavigationStateChange = async (
     navigationState: WebViewNavigation,
   ) => {
@@ -132,22 +105,14 @@ export default function Loading() {
     //   console.log(res);
     // });
     const cookies = await CookieManager.get("http://localhost:8080");
-    console.log(cookies.JSESSIONID.value);
+    console.log(cookies);
+    storeData(cookies.JSESSIONID.value);
     // if (webViewRef.current) {
     //   console.log("onNavigationStateChange");
     //   // webViewRef.current.injectJavaScript("Data from React Native App");
 
     // }
   };
-
-  // const onMessage = (event: NativeSyntheticEvent<WebViewMessage>) => {
-  //   const { data } = event.nativeEvent;
-  //   console.log("onMessage");
-
-  //   if (data.includes("Cookie:")) {
-  //     //
-  //   }
-  // };
 
   return (
     <View
@@ -202,15 +167,54 @@ export default function Loading() {
           </Text>
           <View style={{ flexDirection: "row", margin: verticalScale(23) }}>
             <TouchableOpacity onPress={signInWithGoogle}>
-              <Image
-                source={require("../assets/icons/google_icon.png")}
-                style={styles.iconStyle}></Image>
+              <View
+                style={[
+                  styles.iconStyle,
+                  {
+                    backgroundColor: "#ffffff",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: scale(60),
+                  },
+                ]}>
+                <Image
+                  source={require("../assets/icons/google_login.png")}
+                  style={{
+                    width: scale(30),
+                    height: verticalScale(30),
+                  }}></Image>
+              </View>
             </TouchableOpacity>
-
             <TouchableOpacity onPress={signInWithKakao}>
               <Image
-                source={require("../assets/icons/kakao_icon.png")}
+                source={require("../assets/icons/kakao_login.png")}
                 style={styles.iconStyle}></Image>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Image
+                source={require("../assets/icons/naver_login.png")}
+                style={styles.iconStyle}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <View
+                style={[
+                  styles.iconStyle,
+                  {
+                    backgroundColor: "#ffffff",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: scale(60),
+                  },
+                ]}>
+                <Image
+                  source={require("../assets/icons/apple_login.png")}
+                  style={{
+                    width: scale(30),
+                    height: verticalScale(30),
+                    top: verticalScale(-2),
+                  }}></Image>
+              </View>
             </TouchableOpacity>
           </View>
         </Animated.View>
@@ -229,14 +233,13 @@ export default function Loading() {
           // }}
           // originWhitelist={["*"]}
           source={{ uri: NAVER_SOCIAL_LOGIN_URI }}
-          userAgent={userAgent}
+          // userAgent={userAgent}
           // WebView 로딩이 시작되거나 끝나면 호출해주는 것
           onNavigationStateChange={onNavigationStateChange}
           // onMessage={onMessage}
           onMessage={evt => {
             console.log("받은 데이터: " + evt);
           }}
-          // userAgent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
           sharedCookiesEnabled={true}
           thirdPartyCookiesEnabled={true}
           // useWebKit={true}
@@ -253,8 +256,9 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontFamily: "Pretendard-Bold",
   },
-
   iconStyle: {
-    marginHorizontal: verticalScale(12.5),
+    marginHorizontal: verticalScale(10.5),
+    width: scale(60),
+    height: verticalScale(60),
   },
 });
