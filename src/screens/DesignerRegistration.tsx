@@ -19,7 +19,7 @@ import ProfileUploadButton from "../components/common/ProfileUploadButton";
 
 import { Dropdown } from "react-native-element-dropdown";
 import Icon from "react-native-vector-icons/Ionicons";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const BASEWIDTH = 375;
 const BASEPADDING = 20;
@@ -68,8 +68,6 @@ export default function Loading() {
   const [shopName, setShopName] = useState("");
   const [location, setLocation] = useState("");
   const [specificLocation, setSpecificLocation] = useState("");
-
-  const [date, setDate] = useState(new Date(1598051730000));
 
   const [menuInfo, setMenuInfo] = useState([]);
   const [styleName, setStyleName] = useState("");
@@ -125,7 +123,9 @@ export default function Loading() {
     },
   ]);
 
-  const [showStartTimePicker, setShowStartTimePicker] = useState(false);
+  const [selectedWeek, setSelectedWeek] = useState("");
+
+  const [isDatepickerShown, setIsDatePickerShown] = useState(false);
 
   const HairTagButton = ({ index }) => {
     return (
@@ -285,7 +285,7 @@ export default function Loading() {
                 <TextInput
                   placeholder="스타일 명"
                   placeholderTextColor={GRAYCOLOR}
-                  textAlignVertical="center"
+                  // textAlignVertical="center"
                   value={styleName}
                   onChangeText={text => {
                     setStyleName(text);
@@ -425,34 +425,60 @@ export default function Loading() {
           <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
             <View style={{ flex: 1, marginRight: scale(10) }}>
               <View style={[styles.userTextUnderline]}>
-                <TouchableOpacity onPress={() => {}}>
-                  <Text style={{ color: "white" }}>asdf</Text>
-                </TouchableOpacity>
+                <Dropdown
+                  style={[styles.inputText, styles.dropdownStyle]}
+                  placeholderStyle={{ color: GRAYCOLOR }}
+                  selectedTextStyle={{ color: "#cccccc" }}
+                  data={workingDayItem}
+                  labelField="label"
+                  valueField="value"
+                  placeholder="근무 요일"
+                  value={selectedWeek}
+                  onChange={item => {
+                    setSelectedWeek(item.value);
+                  }}></Dropdown>
               </View>
             </View>
             <View style={{ flex: 1, marginRight: scale(10) }}>
-              <View style={styles.userTextUnderline}>
-                <TextInput
-                  placeholder="스타일 명"
-                  placeholderTextColor={GRAYCOLOR}
-                  textAlignVertical="center"
-                  value={styleName}
-                  onChangeText={text => {
-                    setStyleName(text);
-                  }}
-                  style={[styles.inputText, styles.dropdownStyle]}></TextInput>
+              <View style={[styles.userTextUnderline]}>
+                <TouchableOpacity>
+                  <View
+                    style={[
+                      styles.inputText,
+                      styles.dropdownStyle,
+                      { justifyContent: "center" },
+                    ]}>
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: scale(16),
+                        color: "#cccccc",
+                      }}>
+                      영업 시작 시간
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               </View>
             </View>
             <View style={{ flex: 1 }}>
               <View style={styles.userTextUnderline}>
-                <TextInput
-                  placeholder="가격"
-                  value={price}
-                  onChangeText={text => {
-                    setPrice(text);
-                  }}
-                  placeholderTextColor={GRAYCOLOR}
-                  style={[styles.inputText, styles.dropdownStyle]}></TextInput>
+                <TouchableOpacity>
+                  <View
+                    style={[
+                      styles.inputText,
+                      styles.dropdownStyle,
+                      { justifyContent: "center" },
+                    ]}>
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: scale(16),
+                        color: "#cccccc",
+                      }}>
+                      영업 종료 시간
+                    </Text>
+                  </View>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -544,6 +570,14 @@ export default function Loading() {
           </View>
         </View>
       </ScrollView>
+      <DateTimePickerModal
+        isVisible={isDatepickerShown}
+        mode={"time"}
+        onConfirm={() => setIsDatePickerShown(false)}
+        onCancel={() => {
+          setIsDatePickerShown(false);
+        }}
+      />
     </View>
   );
 }
