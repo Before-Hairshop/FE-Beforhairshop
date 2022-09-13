@@ -22,8 +22,28 @@ export default function Location() {
     latitude: 37.564362,
     longitude: 126.977011,
   });
+  const [address, setAddress] = useState([]);
+  const [addressDetail, setAddressDetail] = useState([]);
 
   const navigation = useNavigation();
+
+  const setUpAddress = async (longitude: number, latitude: number) => {
+    const { results } = await getReverseGeocoding(`${longitude},${latitude}`);
+    console.log(results[0]);
+    setAddress([]);
+    setAddressDetail([]);
+    setAddress([
+      results[0].region.area1.name,
+      results[0].region.area2.name,
+      results[0].region.area3.name,
+      results[0].region.area4.name,
+    ]);
+    setAddressDetail([
+      results[0].land.name,
+      results[0].land.number1,
+      results[0].land.number2,
+    ]);
+  };
 
   return (
     <View style={styles.frame}>
@@ -47,7 +67,9 @@ export default function Location() {
               console.log(e.longitude);
               return newCondition;
             });
-            getReverseGeocoding(`${e.latitude},${e.longitude}`);
+            setUpAddress(e.longitude, e.latitude);
+            console.log(address);
+            console.log(addressDetail);
           }}
           // onMapClick={e => console.warn("onMapClick", JSON.stringify(e))}
           useTextureView>
@@ -63,9 +85,13 @@ export default function Location() {
           <Text style={styles.info_text}>도로명</Text>
         </View>
         <Text style={styles.address_text}>
-          서울특별시 광진구 능동로 42길 33 2501호
+          {/* 서울특별시 광진구 능동로 42길 33 2501호 */}
+          {address}
         </Text>
-        <Text style={styles.detail_address_text}>능동로 42길 33 2501호</Text>
+        <Text style={styles.detail_address_text}>
+          {/* 능동로 42길 33 2501호 */}
+          {addressDetail}
+        </Text>
         <TouchableOpacity style={styles.button_container}>
           <Text style={styles.button_text}>이 위치로 주소 설정</Text>
         </TouchableOpacity>
