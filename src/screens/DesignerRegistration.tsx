@@ -73,7 +73,7 @@ export default function Loading() {
   const [styleName, setStyleName] = useState("");
   const [price, setPrice] = useState("");
 
-  const [schedule, setSchedule] = useState("");
+  const [schedule, setSchedule] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState("");
 
   const [category, setCategory] = useState("");
@@ -123,7 +123,22 @@ export default function Loading() {
     },
   ]);
 
+  const workingdayDict = {};
+  workingdayDict["MON"] = "월요일";
+  workingdayDict["TUE"] = "화요일";
+  workingdayDict["WED"] = "수요일";
+  workingdayDict["THU"] = "목요일";
+  workingdayDict["FRI"] = "금요일";
+  workingdayDict["SAT"] = "토요일";
+  workingdayDict["SUN"] = "일요일";
+
   const [selectedWeek, setSelectedWeek] = useState("");
+
+  const [isBeginTime, setIsBeginTime] = useState(false);
+  const [beginTime, setBeginTime] = useState("영업 시작 시간");
+
+  const [isEndTime, setIsEndTime] = useState(false);
+  const [endTime, setEndTime] = useState("영업 종료 시간");
 
   const [isDatepickerShown, setIsDatePickerShown] = useState(false);
 
@@ -154,6 +169,37 @@ export default function Loading() {
             color={MAINCOLOR}
             style={{ fontSize: verticalScale(35) }}
           />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const SetTimeButton = ({ isBeginButton }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          if (isBeginButton) {
+            setIsBeginTime(true);
+          } else {
+            setIsEndTime(true);
+          }
+
+          setIsDatePickerShown(true);
+        }}>
+        <View
+          style={[
+            styles.inputText,
+            styles.dropdownStyle,
+            { justifyContent: "center" },
+          ]}>
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontSize: scale(16),
+              color: "#cccccc",
+            }}>
+            {isBeginButton ? beginTime.substr(0, 5) : endTime.substr(0, 5)}
+          </Text>
         </View>
       </TouchableOpacity>
     );
@@ -441,44 +487,12 @@ export default function Loading() {
             </View>
             <View style={{ flex: 1, marginRight: scale(10) }}>
               <View style={[styles.userTextUnderline]}>
-                <TouchableOpacity>
-                  <View
-                    style={[
-                      styles.inputText,
-                      styles.dropdownStyle,
-                      { justifyContent: "center" },
-                    ]}>
-                    <Text
-                      style={{
-                        fontFamily: "Pretendard",
-                        fontSize: scale(16),
-                        color: "#cccccc",
-                      }}>
-                      영업 시작 시간
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+                <SetTimeButton isBeginButton={true} />
               </View>
             </View>
             <View style={{ flex: 1 }}>
               <View style={styles.userTextUnderline}>
-                <TouchableOpacity>
-                  <View
-                    style={[
-                      styles.inputText,
-                      styles.dropdownStyle,
-                      { justifyContent: "center" },
-                    ]}>
-                    <Text
-                      style={{
-                        fontFamily: "Pretendard",
-                        fontSize: scale(16),
-                        color: "#cccccc",
-                      }}>
-                      영업 종료 시간
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+                <SetTimeButton isBeginButton={false} />
               </View>
             </View>
           </View>
@@ -493,34 +507,31 @@ export default function Loading() {
               width: "100%",
             }}
             onPress={() => {
-              let newArray = JSON.parse(JSON.stringify(menuInfo));
+              let newArray = JSON.parse(JSON.stringify(schedule));
               newArray.push({
-                category,
-                styleName,
-                price,
+                selectedWeek,
+                beginTime,
+                endTime,
               });
-              setMenuInfo(newArray);
-              setCategory("");
-              setStyleName("");
-              setPrice("");
+              setSchedule(newArray);
             }}>
             <Text style={{ fontSize: scale(14), color: "#a0a0a0" }}>
               추가 +
             </Text>
           </TouchableOpacity>
 
-          {menuInfo.map((item, index) => {
+          {schedule.map((item, index) => {
             return (
               <>
                 <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
                   <View style={{ flex: 1, marginRight: scale(10) }}>
                     <Text style={styles.inputText}>
-                      {menuInfo[index].category}
+                      {workingdayDict[schedule[index].selectedWeek]}
                     </Text>
                   </View>
                   <View style={{ flex: 1, marginRight: scale(10) }}>
                     <Text style={styles.inputText}>
-                      {menuInfo[index].styleName}
+                      {schedule[index].beginTime.substr(0, 5)}
                     </Text>
                   </View>
                   <View
@@ -533,14 +544,14 @@ export default function Loading() {
                       padding: 0,
                     }}>
                     <Text style={styles.inputText}>
-                      {menuInfo[index].price}
+                      {schedule[index].endTime.substr(0, 5)}
                     </Text>
 
                     <TouchableOpacity
                       onPress={() => {
-                        let newArray = JSON.parse(JSON.stringify(menuInfo));
+                        let newArray = JSON.parse(JSON.stringify(schedule));
                         newArray.splice(index, 1);
-                        setMenuInfo(newArray);
+                        setSchedule(newArray);
                       }}>
                       <Icon
                         name="remove-circle-outline"
@@ -572,10 +583,24 @@ export default function Loading() {
       </ScrollView>
       <DateTimePickerModal
         isVisible={isDatepickerShown}
+        locale="en_GB"
         mode={"time"}
-        onConfirm={() => setIsDatePickerShown(false)}
+        onConfirm={value => {
+          value.setSeconds(0);
+          let timeString = value.toLocaleTimeString("en-US", { hour12: false });
+          if (isBeginTime) {
+            setBeginTime(timeString);
+          } else {
+            setEndTime(timeString);
+          }
+          setIsDatePickerShown(false);
+          setIsBeginTime(false);
+          setIsEndTime(false);
+        }}
         onCancel={() => {
           setIsDatePickerShown(false);
+          setIsBeginTime(false);
+          setIsEndTime(false);
         }}
       />
     </View>
