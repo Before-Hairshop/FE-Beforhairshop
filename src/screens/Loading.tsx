@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import CookieManager from "@react-native-cookies/cookies";
 
 import { scale, verticalScale } from "../utils/scale";
+import axios from "axios";
 
 const GOOGLE_SOCIAL_LOGIN_URI =
   "http://localhost:8080/oauth2/authorization/google";
@@ -25,6 +26,7 @@ const NAVER_SOCIAL_LOGIN_URI =
 // "http://localhost:8080/logout";
 const KAKAO_SOCIAL_LOGIN_URI =
   "http://localhost:8080/oauth2/authorization/kakao";
+// "http://localhost:8080/logout";
 
 const userAgent =
   // "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19";
@@ -54,18 +56,18 @@ const wait = (timeToDelay: number) => {
 
 export default function Loading() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState("");
-  const [socialModalVisible, setSocialModalVisible] = useState(false);
+  const [socialLoginModalVisible, setSocialLoginModalVisible] = useState(false);
 
   const navigation = useNavigation();
   const webViewRef = createRef<WebView>();
   const opacity = new Animated.Value(0);
 
   const signInWithGoogle = () => {
-    setSocialModalVisible(true);
+    setSocialLoginModalVisible(true);
   };
 
   const signInWithKakao = () => {
-    setSocialModalVisible(true);
+    setSocialLoginModalVisible(true);
   };
 
   useEffect(() => {
@@ -91,6 +93,12 @@ export default function Loading() {
   const storeData = async (value: string) => {
     try {
       await AsyncStorage.setItem("@SESSION_ID", value);
+      // const data = await axios.get("http://localhost:8080/api/v1/members", {
+      //   // headers: {
+      //   //   JSESSIONID: "value",
+      //   // },
+      // });
+      // console.log(data);
     } catch (error) {
       //
     }
@@ -99,20 +107,26 @@ export default function Loading() {
   const onNavigationStateChange = async (
     navigationState: WebViewNavigation,
   ) => {
-    // console.log(navigationState);
-    // CookieManager.getAll(true).then(res => {
-    //   // console.log(res.ACCOUNT_CHOOSER);
-    //   console.log(res);
-    // });
-    const cookies = await CookieManager.get("http://localhost:8080");
-    console.log(cookies);
-    storeData(cookies.JSESSIONID.value);
-    // if (webViewRef.current) {
-    //   console.log("onNavigationStateChange");
-    //   // webViewRef.current.injectJavaScript("Data from React Native App");
-
-    // }
+    console.log(navigationState);
+    if (navigationState.url == "http://localhost:8080/") {
+      const cookies = await CookieManager.get("http://localhost:8080");
+      storeData(cookies.JSESSIONID.value);
+      setSocialLoginModalVisible(false);
+    }
   };
+
+  const callAPI = async () => {
+    // const data = await axios.get("http://localhost:8080/api/v1/members", {
+    //   // headers: {
+    //   //   JSESSIONID: "value",
+    //   // },
+    // });
+    // console.log(data);
+  };
+
+  useEffect(() => {
+    callAPI();
+  }, []);
 
   return (
     <View
@@ -222,7 +236,7 @@ export default function Loading() {
       <Modal
         animationType="slide"
         transparent={true}
-        visible={socialModalVisible}>
+        visible={socialLoginModalVisible}>
         <WebView
           ref={webViewRef}
           cacheEnabled={false}
@@ -232,7 +246,7 @@ export default function Loading() {
           //   );
           // }}
           // originWhitelist={["*"]}
-          source={{ uri: NAVER_SOCIAL_LOGIN_URI }}
+          source={{ uri: KAKAO_SOCIAL_LOGIN_URI }}
           // userAgent={userAgent}
           // WebView 로딩이 시작되거나 끝나면 호출해주는 것
           onNavigationStateChange={onNavigationStateChange}
