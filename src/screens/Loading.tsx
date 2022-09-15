@@ -22,8 +22,8 @@ const GOOGLE_SOCIAL_LOGIN_URI =
   "http://localhost:8080/oauth2/authorization/google";
 // "http://localhost:8080/logout";
 const NAVER_SOCIAL_LOGIN_URI =
-  "http://localhost:8080/oauth2/authorization/naver";
-// "http://localhost:8080/logout";
+  // "http://localhost:8080/oauth2/authorization/naver";
+  "http://localhost:8080/logout";
 const KAKAO_SOCIAL_LOGIN_URI =
   "http://localhost:8080/oauth2/authorization/kakao";
 // "http://localhost:8080/logout";
@@ -51,7 +51,7 @@ const useDidMountEffect = (func, deps) => {
 };
 
 const wait = (timeToDelay: number) => {
-  new Promise(resolve => setTimeout(resolve, timeToDelay));
+  return new Promise(resolve => setTimeout(resolve, timeToDelay));
 };
 
 export default function Loading() {
@@ -73,8 +73,8 @@ export default function Loading() {
   useEffect(() => {
     //로그인 여부 확인
     async function waitForSecond() {
-      await wait(3000);
-      setIsUserLoggedIn(false);
+      await wait(2000);
+      await callAPI();
     }
     waitForSecond();
   }, []);
@@ -116,17 +116,19 @@ export default function Loading() {
   };
 
   const callAPI = async () => {
-    // const data = await axios.get("http://localhost:8080/api/v1/members", {
-    //   // headers: {
-    //   //   JSESSIONID: "value",
-    //   // },
-    // });
-    // console.log(data);
+    const result = await axios.get("http://localhost:8080/api/v1/members", {
+      // headers: {
+      //   JSESSIONID: "value",
+      // },
+    });
+    if (result.data.result) {
+      setIsUserLoggedIn(true);
+    } else {
+      setIsUserLoggedIn(false);
+    }
+    console.log(result);
+    // if()
   };
-
-  useEffect(() => {
-    callAPI();
-  }, []);
 
   return (
     <View
@@ -246,7 +248,7 @@ export default function Loading() {
           //   );
           // }}
           // originWhitelist={["*"]}
-          source={{ uri: KAKAO_SOCIAL_LOGIN_URI }}
+          source={{ uri: NAVER_SOCIAL_LOGIN_URI }}
           // userAgent={userAgent}
           // WebView 로딩이 시작되거나 끝나면 호출해주는 것
           onNavigationStateChange={onNavigationStateChange}
