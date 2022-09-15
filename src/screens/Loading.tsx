@@ -11,33 +11,24 @@ import {
 import React, { createRef, useEffect, useRef } from "react";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { WebView } from "react-native-webview";
+import { WebView, WebViewNavigation } from "react-native-webview";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CookieManager from "@react-native-cookies/cookies";
 
 import { scale, verticalScale } from "../utils/scale";
 import axios from "axios";
 
-const GOOGLE_SOCIAL_LOGIN_URI =
-  "http://localhost:8080/oauth2/authorization/google";
-// "http://localhost:8080/logout";
-const NAVER_SOCIAL_LOGIN_URI =
-  // "http://localhost:8080/oauth2/authorization/naver";
-  "http://localhost:8080/logout";
-const KAKAO_SOCIAL_LOGIN_URI =
-  "http://localhost:8080/oauth2/authorization/kakao";
-// "http://localhost:8080/logout";
+const socialLoginURI = {
+  google: "http://localhost:8080/oauth2/authorization/google",
+  kakao: "http://localhost:8080/oauth2/authorization/kakao",
+  naver: "http://localhost:8080/oauth2/authorization/naver",
+  logout: "http://localhost:8080/logout",
+};
 
 const userAgent =
-  // "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19";
-  // "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
-  // "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19";
   Platform.OS === "android"
     ? "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19"
     : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75";
-// "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19";
-// "customUserAgent";
-// "userAgent='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
 
 const Logo = require("../assets/images/Logo.png");
 
@@ -57,21 +48,18 @@ const wait = (timeToDelay: number) => {
 export default function Loading() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState("");
   const [socialLoginModalVisible, setSocialLoginModalVisible] = useState(false);
+  const [loginType, setLoginType] = useState("");
 
   const navigation = useNavigation();
   const webViewRef = createRef<WebView>();
   const opacity = new Animated.Value(0);
 
-  const signInWithGoogle = () => {
-    setSocialLoginModalVisible(true);
-  };
-
-  const signInWithKakao = () => {
+  const signIn = async (type: string) => {
+    await setLoginType(type);
     setSocialLoginModalVisible(true);
   };
 
   useEffect(() => {
-    //로그인 여부 확인
     async function waitForSecond() {
       await wait(2000);
       await callAPI();
@@ -93,12 +81,6 @@ export default function Loading() {
   const storeData = async (value: string) => {
     try {
       await AsyncStorage.setItem("@SESSION_ID", value);
-      // const data = await axios.get("http://localhost:8080/api/v1/members", {
-      //   // headers: {
-      //   //   JSESSIONID: "value",
-      //   // },
-      // });
-      // console.log(data);
     } catch (error) {
       //
     }
@@ -107,11 +89,12 @@ export default function Loading() {
   const onNavigationStateChange = async (
     navigationState: WebViewNavigation,
   ) => {
-    console.log(navigationState);
+    // console.log(navigationState);
     if (navigationState.url == "http://localhost:8080/") {
       const cookies = await CookieManager.get("http://localhost:8080");
       storeData(cookies.JSESSIONID.value);
       setSocialLoginModalVisible(false);
+      setIsUserLoggedIn(true);
     }
   };
 
@@ -121,13 +104,12 @@ export default function Loading() {
       //   JSESSIONID: "value",
       // },
     });
+    console.log(result);
     if (result.data.result) {
       setIsUserLoggedIn(true);
     } else {
       setIsUserLoggedIn(false);
     }
-    console.log(result);
-    // if()
   };
 
   return (
@@ -182,7 +164,7 @@ export default function Loading() {
             SNS 계정으로 간편가입하기{" "}
           </Text>
           <View style={{ flexDirection: "row", margin: verticalScale(23) }}>
-            <TouchableOpacity onPress={signInWithGoogle}>
+            <TouchableOpacity onPress={() => signIn("google")}>
               <View
                 style={[
                   styles.iconStyle,
@@ -201,18 +183,18 @@ export default function Loading() {
                   }}></Image>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={signInWithKakao}>
+            <TouchableOpacity onPress={() => signIn("kakao")}>
               <Image
                 source={require("../assets/icons/kakao_login.png")}
                 style={styles.iconStyle}></Image>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => signIn("naver")}>
               <Image
                 source={require("../assets/icons/naver_login.png")}
                 style={styles.iconStyle}
               />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => signIn("")}>
               <View
                 style={[
                   styles.iconStyle,
@@ -248,7 +230,7 @@ export default function Loading() {
           //   );
           // }}
           // originWhitelist={["*"]}
-          source={{ uri: NAVER_SOCIAL_LOGIN_URI }}
+          source={{ uri: socialLoginURI[loginType] }}
           // userAgent={userAgent}
           // WebView 로딩이 시작되거나 끝나면 호출해주는 것
           onNavigationStateChange={onNavigationStateChange}
