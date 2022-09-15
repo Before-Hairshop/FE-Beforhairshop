@@ -2,281 +2,245 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
+  Platform,
   Image,
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
 } from "react-native";
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
 import GoBackIcon from "../assets/icons/goBack.svg";
-import { verticalScale, scale } from "../utils/scale";
+import React, { useState, useEffect } from "react";
+
+import { scale, verticalScale } from "../utils/scale";
 import Header from "../components/Header";
-import { useState } from "react";
-import PlusIcon from "../assets/icons/plus.png";
+import Icon from "react-native-vector-icons/Ionicons";
 
-import { launchImageLibrary } from "react-native-image-picker";
-
-const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
+import { useNavigation } from "@react-navigation/native";
+import HighlightText from "react-native-highlight-underline-text";
 
 const MAINCOLOR = "#fc2a5b";
-const HeaderContents = () => {
-  const navigation = useNavigation();
-  return (
-    <>
-      <View style={{ flex: 1 }}>
-        <GoBackIcon />
-      </View>
-      <View
-        style={{ flex: 10, justifyContent: "center", alignItems: "center" }}>
-        <Text
-          style={{
-            fontFamily: "Pretendard-Bold",
-            fontSize: verticalScale(18),
-            fontWeight: "bold",
-            fontStyle: "normal",
-            letterSpacing: 0.07,
-            textAlign: "left",
-            color: "#ffffff",
-          }}>
-          [홍길동] 스타일 추천서
-        </Text>
-      </View>
-      <View style={{ flex: 1, alignItems: "flex-end" }}></View>
-    </>
-  );
-};
+const GRAYCOLOR = "#555555";
 
-export default function Suggestion() {
+const thumbnail =
+  "https://via.placeholder.com/300.png/09f/fffC/O%20https://placeholder.com/";
+
+export default function ProfileSelection(props) {
+  const navigation = useNavigation();
+  const [designerName, setDesignerName] = useState("adasdfdsdf");
+  const [greeting, setGreeting] = useState("");
   const [suggestionList, setSuggestionList] = useState([
     {
-      hairstyleName: "",
-      reason: "",
-      imageUrl: [],
-      price: "",
+      hairstyleName: "포마드",
+      reason:
+        "고객님의 헤어를 분석한 결과, 포마드 헤어스타일이 잘 어울릴 것 같아요! 제가 시술한 헤어스타일들을 보시고, 괜찮으시면 저에게 연락주세요. 감사합니다. ",
+      imageUrl: [thumbnail, thumbnail, thumbnail],
+      price: "15000",
+    },
+    {
+      hairstyleName: "투블럭",
+      reason:
+        "고객님의 헤어를 분석한 결과, 포마드 헤어스타일이 잘 어울릴 것 같아요! 제가 시술한 헤어스타일들을 보시고, 괜찮으시면 저에게 연락주세요. 감사합니다. ",
+      imageUrl: [thumbnail, thumbnail],
+      price: "30000",
     },
   ]);
 
-  const [greetings, setGreetings] = useState("");
-
-  const SuggestionItem = props => {
+  useEffect(() => {
+    setDesignerName("이안");
+    setGreeting(
+      "반갑습니다. 원하시는 헤어 커트는 저희가 제일 잘해요>...어쩌구어쩌구 방문하세요",
+    );
+  });
+  const HeaderContents = () => {
     return (
       <>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={styles.SuggestionTitleText}>
-            추천 {props.itemIndex + 1}
+        <View style={{ flex: 1 }}>
+          <GoBackIcon />
+        </View>
+        <View
+          style={{ flex: 2, justifyContent: "center", alignItems: "center" }}>
+          <Text
+            style={{
+              fontFamily: "Pretendard-Bold",
+              fontSize: scale(18),
+              fontWeight: "bold",
+              fontStyle: "normal",
+              letterSpacing: 0.07,
+              textAlign: "left",
+              color: "#ffffff",
+            }}>
+            헤어 디자이너 {designerName}
           </Text>
-
-          {props.itemIndex == 0 ? null : (
-            <TouchableOpacity
-              style={{ marginVertical: verticalScale(42) }}
-              onPress={() => {
-                let newArray = [...suggestionList];
-                newArray.splice(props.itemIndex, 1);
-
-                setSuggestionList(newArray);
-              }}>
-              <Image
-                source={require("../assets/icons/delete_icon.png")}
-                style={{ width: verticalScale(300), aspectRatio: 1 }}></Image>
-            </TouchableOpacity>
-          )}
         </View>
-
-        <Text style={styles.itemTextStyle}>
-          추천 헤어스타일을 입력해주세요.
-        </Text>
-
-        <View style={styles.userTextUnderline}>
-          <TextInput
-            placeholder="예시) 포마드, 투블럭, C컬펌"
-            placeholderTextColor="#555555"
-            defaultValue={suggestionList[props.itemIndex].hairstyleName}
-            onEndEditing={e => {
-              let newArray = [...suggestionList];
-              console.log(newArray);
-              newArray[props.itemIndex].hairstyleName = e.nativeEvent.text;
-              setSuggestionList(newArray);
-            }}
-            style={styles.highlightText}></TextInput>
-        </View>
-
-        <Text style={styles.itemTextStyle}>
-          해당 스타일을 추천한 이유를 적어주세요.
-        </Text>
-
-        <View style={styles.userTextUnderline}>
-          <TextInput
-            placeholder="추천 이유를 적어주세요."
-            placeholderTextColor="#555555"
-            autoCorrect={false}
-            defaultValue={suggestionList[props.itemIndex].reason}
-            onEndEditing={e => {
-              let newArray = [...suggestionList];
-              console.log(newArray);
-              newArray[props.itemIndex].reason = e.nativeEvent.text;
-              setSuggestionList(newArray);
-            }}
-            style={styles.highlightText}></TextInput>
-        </View>
-
-        <Text style={styles.itemTextStyle}>
-          (선택) 추천 헤어스타일 이미지를 첨부해주세요.
-        </Text>
-
-        <View style={{ flexDirection: "row" }}>
-          {suggestionList[props.itemIndex].imageUrl.map((item, index) => {
-            return (
-              <HairImageButton
-                itemIndex={index}
-                suggestionIndex={props.itemIndex}></HairImageButton>
-            );
-          })}
-
-          {suggestionList[props.itemIndex].imageUrl.length < 3 ? (
-            <HairImageAddButton
-              suggestionIndex={props.itemIndex}></HairImageAddButton>
-          ) : null}
-        </View>
-
-        <Text style={styles.itemTextStyle}>제안 비용</Text>
-
-        <View style={styles.userTextUnderline}>
-          <TextInput
-            autoCorrect={false}
-            placeholder="예시) 30000"
-            placeholderTextColor="#555555"
-            style={styles.highlightText}
-            defaultValue={suggestionList[props.itemIndex].price}
-            onEndEditing={e => {
-              let newArray = [...suggestionList];
-              console.log(newArray);
-              newArray[props.itemIndex].price = e.nativeEvent.text;
-              console.log(newArray);
-              setSuggestionList(newArray);
-            }}></TextInput>
-        </View>
+        <View style={{ flex: 1, alignItems: "flex-end" }}></View>
       </>
     );
   };
 
-  const HairImageButton = props => {
+  const UnderLineContent = ({ value, fontSize }) => (
+    <HighlightText
+      isFixed={false}
+      ratio={0.26}
+      underlineColor="rgba(252, 42, 91, 0.5)"
+      textStyle={{
+        fontFamily: "Pretendard",
+        fontSize: scale(fontSize),
+        fontWeight: "bold",
+        fontStyle: "normal",
+        letterSpacing: 0,
+        textAlign: "left",
+        color: "#ffffff",
+      }}
+      text={value}
+    />
+  );
+
+  const SuggestionItem = ({ index, item }) => {
     return (
-      <TouchableOpacity
-        style={styles.wantStyleImage}
-        onPress={() => {
-          let newArray = [...suggestionList];
-          console.log(
-            `index is ${props.itendex} suggestionIndex is ${props.suggestionIndex}`,
-          );
-          newArray[props.suggestionIndex].imageUrl.splice(props.itemIndex, 1);
-          setSuggestionList(newArray);
-          console.log(props.suggestionIndex, props.itemIndex);
-        }}>
-        <Image
-          source={{
-            uri: suggestionList[props.suggestionIndex].imageUrl[
-              props.itemIndex
-            ],
+      <>
+        <UnderLineContent
+          value={`추천 스타일 No. ${index + 1}`}
+          fontSize={scale(22)}></UnderLineContent>
+        <TouchableOpacity
+          style={{
+            borderColor: MAINCOLOR,
+            borderWidth: 1,
+            borderRadius: scale(16),
+            paddingHorizontal: scale(10),
+            paddingVertical: verticalScale(3),
+            marginTop: verticalScale(18),
+            alignSelf: "baseline",
           }}
-          style={{ width: "100%", aspectRatio: 1 }}
-        />
-      </TouchableOpacity>
+          disabled>
+          <View style={{}}>
+            <Text style={{ color: MAINCOLOR }}>
+              {suggestionList[index].hairstyleName}
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <Text style={styles.baseText}>{suggestionList[index].reason}</Text>
+        <View
+          style={{ flexDirection: "row", marginVertical: verticalScale(17) }}>
+          {suggestionList[index].imageUrl.map((item, innerIndex) => {
+            console.log(suggestionList[index].imageUrl[innerIndex]);
+            return (
+              <Image
+                source={{ uri: suggestionList[index].imageUrl[innerIndex] }}
+                style={{
+                  width: "30%",
+                  aspectRatio: 1,
+                  marginHorizontal: verticalScale(6),
+                  borderRadius: 10,
+
+                  overflow: "hidden",
+                  borderWidth: 2,
+                  borderColor: "#373737",
+                }}
+              />
+            );
+          })}
+        </View>
+        <Text style={styles.baseText}>
+          가격:{" "}
+          <Text style={{ color: MAINCOLOR }}>
+            {suggestionList[index].price} 원
+          </Text>
+        </Text>
+      </>
     );
   };
 
-  const HairImageAddButton = props => {
-    return (
-      <TouchableOpacity
-        style={styles.wantStyleImage}
-        onPress={async () => {
-          const result = await launchImageLibrary();
-          console.log(result);
-          let newArray = [...suggestionList];
-          console.log(props.suggestionIndex);
-          console.log(newArray);
-          newArray[props.suggestionIndex].imageUrl.push(result.assets[0].uri);
-          setSuggestionList(newArray);
-          console.log(props.suggestionIndex, props.itemIndex);
-        }}>
-        <Image
-          source={{ uri: baseImageURL }}
-          style={{ width: "100%", aspectRatio: 1 }}
-        />
-      </TouchableOpacity>
-    );
-  };
   return (
     <View style={styles.mainView}>
       <Header contents={<HeaderContents></HeaderContents>}></Header>
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}>
-        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}>인사말 </Text>
-
-          <View style={styles.userTextUnderline}>
-            <TextInput
-              placeholder="인사말을 작성해주세요."
-              placeholderTextColor="#555555"
-              defaultValue={greetings}
-              onEndEditing={e => {
-                setGreetings(e.nativeEvent.text);
-              }}
-              style={styles.highlightText}></TextInput>
-          </View>
-
-          <View style={{ width: "100%" }}>
-            <>
-              {suggestionList.map((item, index) => (
-                <SuggestionItem itemIndex={index} />
-              ))}
-              <TouchableOpacity
+      <View style={{ flex: 9 }}>
+        <ScrollView>
+          <View style={{ flex: 1, paddingTop: 15 }}>
+            <View style={{ flex: 6 }}>
+              <Text
                 style={{
-                  alignItems: "center",
-                  backgroundColor: "#2e2e2e",
-                  padding: 10,
-                  marginTop: verticalScale(25),
-                  borderRadius: 10,
-                }}
-                onPress={() => {
-                  let newArray = [...suggestionList];
-                  newArray.push({
-                    hairstyleName: "",
-                    reason: "",
-                    imageUrl: [],
-                    price: "",
-                  });
-                  setSuggestionList(newArray);
+                  fontFamily: "Pretendard",
+                  fontSize: scale(22),
+                  color: "white",
                 }}>
-                <Text style={{ fontSize: scale(14), color: "#a0a0a0" }}>
-                  스타일 추천서 추가 +
+                안녕하세요?
+              </Text>
+              <View style={{ flexDirection: "row" }}>
+                <UnderLineContent
+                  value={`헤어디자이너 ${designerName}`}
+                  fontSize={scale(22)}></UnderLineContent>
+                <Text>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard-Regular",
+                      fontSize: scale(22),
+                      color: "white",
+                    }}>
+                    입니다.
+                  </Text>
                 </Text>
-              </TouchableOpacity>
-            </>
+              </View>
+
+              <Text style={styles.baseText}>{greeting}</Text>
+            </View>
+
+            {suggestionList.map((item, index) => {
+              return <SuggestionItem index={index}></SuggestionItem>;
+            })}
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
 
-      <TouchableOpacity
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#fc2a5b",
-
-          marginTop: verticalScale(25),
-          marginBottom: verticalScale(50),
-          height: verticalScale(55),
-          borderRadius: 10,
-        }}
-        onPress={() => {
-          console.log(suggestionList);
-        }}>
-        <Text style={{ fontSize: scale(16), color: "#ffffff" }}>
-          메시지 보내기
-        </Text>
-      </TouchableOpacity>
+      <View style={{ flex: 2 }}>
+        <TouchableOpacity
+          style={{
+            width: "100%",
+            height: verticalScale(55),
+            backgroundColor: "#fc2a5b",
+            borderRadius: 10,
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: verticalScale(30.5),
+          }}
+          onPress={() => {
+            navigation.navigate("DesignerProfile");
+          }}>
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 1 }}></View>
+            <View
+              style={{
+                flex: 10,
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: 16,
+                  fontWeight: "600",
+                  fontStyle: "normal",
+                  letterSpacing: -0.16,
+                  color: "#ffffff",
+                }}>
+                디자이너 프로필 보러가기
+              </Text>
+            </View>
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
+              <Icon
+                name="chevron-forward-outline"
+                size={verticalScale(30)}
+                color="#fc7292"
+              />
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -284,53 +248,24 @@ export default function Suggestion() {
 const styles = StyleSheet.create({
   mainView: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: verticalScale(20),
 
     backgroundColor: "#191919",
   },
-  itemTextStyle: {
-    fontFamily: "Pretendard",
-    fontSize: scale(16),
 
-    marginBottom: verticalScale(10),
-    marginTop: verticalScale(15),
-
-    letterSpacing: 0,
-
-    color: "#ffffff",
+  title: {
+    fontSize: 32,
   },
-
-  userTextUnderline: {
-    borderBottomColor: "#373737",
-    borderBottomWidth: 1,
-    width: "100%",
-  },
-
-  highlightText: {
-    fontFamily: "Pretendard",
-    fontSize: scale(16),
-
-    marginBottom: verticalScale(10),
-    marginTop: verticalScale(15),
+  headerRightButton: {
+    fontFamily: "Pretendard-Bold",
+    fontSize: verticalScale(16),
     color: "#fc2a5b",
   },
 
-  SuggestionTitleText: {
+  baseText: {
+    color: "#eeeeee",
+    fontSize: scale(14),
     fontFamily: "Pretendard",
-    fontSize: scale(25),
-
-    color: "#ffffff",
-    marginVertical: verticalScale(42),
-  },
-
-  wantStyleImage: {
-    width: "30%",
-    aspectRatio: 1,
-    marginHorizontal: verticalScale(6),
-    borderRadius: 10,
-
-    overflow: "hidden",
-    borderWidth: 2,
-    borderColor: "#373737",
+    paddingVertical: verticalScale(15),
   },
 });

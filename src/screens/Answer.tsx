@@ -47,7 +47,7 @@ const HeaderContents = () => {
   );
 };
 
-export default function Suggestion() {
+export default function Answer() {
   const [suggestionList, setSuggestionList] = useState([
     {
       hairstyleName: "",
@@ -57,12 +57,31 @@ export default function Suggestion() {
     },
   ]);
 
+  const [greetings, setGreetings] = useState("");
+
   const SuggestionItem = props => {
     return (
       <>
-        <Text style={styles.SuggestionTitleText}>
-          추천 {props.itemIndex + 1}
-        </Text>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={styles.SuggestionTitleText}>
+            추천 {props.itemIndex + 1}
+          </Text>
+
+          {props.itemIndex == 0 ? null : (
+            <TouchableOpacity
+              style={{ marginVertical: verticalScale(42) }}
+              onPress={() => {
+                let newArray = [...suggestionList];
+                newArray.splice(props.itemIndex, 1);
+
+                setSuggestionList(newArray);
+              }}>
+              <Image
+                source={require("../assets/icons/delete_icon.png")}
+                style={{ width: verticalScale(300), aspectRatio: 1 }}></Image>
+            </TouchableOpacity>
+          )}
+        </View>
 
         <Text style={styles.itemTextStyle}>
           추천 헤어스타일을 입력해주세요.
@@ -72,14 +91,13 @@ export default function Suggestion() {
           <TextInput
             placeholder="예시) 포마드, 투블럭, C컬펌"
             placeholderTextColor="#555555"
-            value={suggestionList[props.itemIndex].hairstyleName}
-            onChangeText={text => {
+            defaultValue={suggestionList[props.itemIndex].hairstyleName}
+            onEndEditing={e => {
               let newArray = [...suggestionList];
               console.log(newArray);
-              newArray[props.itemIndex].hairstyleName = text;
+              newArray[props.itemIndex].hairstyleName = e.nativeEvent.text;
               setSuggestionList(newArray);
             }}
-            autoCorrect={false}
             style={styles.highlightText}></TextInput>
         </View>
 
@@ -92,10 +110,11 @@ export default function Suggestion() {
             placeholder="추천 이유를 적어주세요."
             placeholderTextColor="#555555"
             autoCorrect={false}
-            onChangeText={text => {
+            defaultValue={suggestionList[props.itemIndex].reason}
+            onEndEditing={e => {
               let newArray = [...suggestionList];
               console.log(newArray);
-              newArray[props.itemIndex].reason = text;
+              newArray[props.itemIndex].reason = e.nativeEvent.text;
               setSuggestionList(newArray);
             }}
             style={styles.highlightText}></TextInput>
@@ -120,13 +139,6 @@ export default function Suggestion() {
           ) : null}
         </View>
 
-        {/* <View style={styles.userTextUnderline}>
-          <TextInput
-            placeholder="추천 이유를 적어주세요."
-            placeholderTextColor="#555555"
-            style={styles.highlightText}></TextInput>
-        </View> */}
-
         <Text style={styles.itemTextStyle}>제안 비용</Text>
 
         <View style={styles.userTextUnderline}>
@@ -135,21 +147,14 @@ export default function Suggestion() {
             placeholder="예시) 30000"
             placeholderTextColor="#555555"
             style={styles.highlightText}
-            onBlur={e => {
-              console.log(e.nativeEvent.text);
-
+            defaultValue={suggestionList[props.itemIndex].price}
+            onEndEditing={e => {
               let newArray = [...suggestionList];
               console.log(newArray);
               newArray[props.itemIndex].price = e.nativeEvent.text;
               console.log(newArray);
-              // setSuggestionList(newArray);
-            }}
-            // onChangeText={text => {
-            //   let newArray = [...suggestionList];
-            //   console.log(newArray);
-            //   newArray[props.itemIndex].price = text;
-            //   setSuggestionList(newArray);}}
-          ></TextInput>
+              setSuggestionList(newArray);
+            }}></TextInput>
         </View>
       </>
     );
@@ -215,14 +220,18 @@ export default function Suggestion() {
             <TextInput
               placeholder="인사말을 작성해주세요."
               placeholderTextColor="#555555"
+              defaultValue={greetings}
+              onEndEditing={e => {
+                setGreetings(e.nativeEvent.text);
+              }}
               style={styles.highlightText}></TextInput>
           </View>
 
           <View style={{ width: "100%" }}>
             <>
-              {suggestionList.map((item, index) => {
-                return <SuggestionItem itemIndex={index} key={index} />;
-              })}
+              {suggestionList.map((item, index) => (
+                <SuggestionItem itemIndex={index} />
+              ))}
               <TouchableOpacity
                 style={{
                   alignItems: "center",

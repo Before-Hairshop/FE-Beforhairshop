@@ -34,7 +34,7 @@ export default function Loading() {
     //로그인 여부 확인
     async function waitForSecond() {
       await wait(3000);
-      setIsUserLoggedIn(false);
+      setIsUserLoggedIn(true);
     }
     waitForSecond();
   }, []);
