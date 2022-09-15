@@ -107,8 +107,10 @@ export default function Loading() {
     console.log(result);
     if (result.data.result) {
       setIsUserLoggedIn(true);
+      // setIsUserLoggedIn(false);
     } else {
       setIsUserLoggedIn(false);
+      // setIsUserLoggedIn(true);
     }
   };
 
@@ -230,7 +232,10 @@ export default function Loading() {
           //   );
           // }}
           // originWhitelist={["*"]}
-          source={{ uri: socialLoginURI[loginType] }}
+          source={{
+            // uri: socialLoginURI[loginType]
+            uri: socialLoginURI["logout"],
+          }}
           // userAgent={userAgent}
           // WebView 로딩이 시작되거나 끝나면 호출해주는 것
           onNavigationStateChange={onNavigationStateChange}
