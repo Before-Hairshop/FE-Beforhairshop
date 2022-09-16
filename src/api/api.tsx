@@ -1,5 +1,5 @@
 import axios from "axios";
-import Config from "react-native-config";
+import { readData } from "../utils/asyncStorage";
 
 const BASEURL = "http://localhost:8080";
 
@@ -11,11 +11,10 @@ const axiosApi = () => {
 };
 
 const axiosAuthApi = () => {
-  const token = "token";
   const instance = axios.create({
     baseURL: BASEURL,
     headers: {
-      Authorization: "Bearer" + token,
+      Cookies: `JSESSIONID=${readData()}`,
     },
   });
   return instance;

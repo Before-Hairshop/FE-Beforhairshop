@@ -12,11 +12,11 @@ import React, { createRef, useEffect, useRef } from "react";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { WebView, WebViewNavigation } from "react-native-webview";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import CookieManager from "@react-native-cookies/cookies";
 
 import { scale, verticalScale } from "../utils/scale";
-import axios from "axios";
+import { getMemberInfo } from "../api/getMemberInfo";
+import { storeData } from "../utils/asyncStorage";
 
 const socialLoginURI = {
   google: "http://localhost:8080/oauth2/authorization/google",
@@ -63,6 +63,7 @@ export default function Loading() {
     async function waitForSecond() {
       await wait(2000);
       await callAPI();
+      // console.log(await readData());
     }
     waitForSecond();
   }, []);
@@ -78,14 +79,6 @@ export default function Loading() {
     }
   }, [isUserLoggedIn]);
 
-  const storeData = async (value: string) => {
-    try {
-      await AsyncStorage.setItem("@SESSION_ID", value);
-    } catch (error) {
-      //
-    }
-  };
-
   const onNavigationStateChange = async (
     navigationState: WebViewNavigation,
   ) => {
@@ -99,11 +92,7 @@ export default function Loading() {
   };
 
   const callAPI = async () => {
-    const result = await axios.get("http://localhost:8080/api/v1/members", {
-      // headers: {
-      //   JSESSIONID: "value",
-      // },
-    });
+    const result = await getMemberInfo();
     console.log(result);
     if (result.data.result) {
       setIsUserLoggedIn(true);
@@ -233,8 +222,8 @@ export default function Loading() {
           // }}
           // originWhitelist={["*"]}
           source={{
-            // uri: socialLoginURI[loginType]
-            uri: socialLoginURI["logout"],
+            uri: socialLoginURI[loginType],
+            // uri: socialLoginURI["logout"],
           }}
           // userAgent={userAgent}
           // WebView 로딩이 시작되거나 끝나면 호출해주는 것
