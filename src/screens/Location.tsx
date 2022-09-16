@@ -84,13 +84,9 @@ export default function Location() {
         <View style={styles.info_container}>
           <Text style={styles.info_text}>도로명</Text>
         </View>
-        <Text style={styles.address_text}>
-          {/* 서울특별시 광진구 능동로 42길 33 2501호 */}
-          {address}
-        </Text>
+        <Text style={styles.address_text}>{address.join(" ")}</Text>
         <Text style={styles.detail_address_text}>
-          {/* 능동로 42길 33 2501호 */}
-          {addressDetail}
+          {addressDetail.join(" ")}
         </Text>
         <TouchableOpacity style={styles.button_container}>
           <Text style={styles.button_text}>이 위치로 주소 설정</Text>
