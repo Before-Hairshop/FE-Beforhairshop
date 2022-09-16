@@ -15,7 +15,8 @@ import PlusIcon from "../assets/icons/plus.png";
 import { verticalScale, scale } from "../utils/scale";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header";
-import { AirbnbRating, Rating } from "react-native-ratings";
+// import { AirbnbRating, Rating } from "react-native-ratings";
+import { Rating, AirbnbRating } from "react-native-ratings";
 import StarImage from "../assets/icons/star_empty.png";
 import StarIcon from "../assets/icons/star.svg";
 import { Platform } from "react-native";
@@ -26,12 +27,26 @@ import HairButton from "../components/UserProfile/HairButton";
 
 import Icon from "react-native-vector-icons/Ionicons";
 
+import StarRating from "../components/common/StarRating";
+
 const BASEWIDTH = 375;
 const BASEPADDING = 20;
 const numberOfLines = 4;
 const MAINCOLOR = "#fc2a5b";
 const GRAYCOLOR = "#555555";
 const TEXTCOLOR = "#CCCCCC";
+
+const YellowStar = () => (
+  <View style={styles.star}>
+    <StarIcon fill="#ffce00" width={35} height={35}></StarIcon>
+  </View>
+);
+
+const GreyStar = () => (
+  <View style={styles.star}>
+    <StarIcon fill="#191919" stroke="#555555" scale={22} />
+  </View>
+);
 
 const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
 const HeaderContents = () => {
@@ -143,21 +158,8 @@ export default function Suggestion() {
               평가해주세요.
             </Text>
           </View>
-          <AirbnbRating
-            ratingCount={5}
-            imageSize={60}
-            selectedColor="#ffce00"
-            unSelectedColor="#ffffff"
-            tintColor="#191919"
-            starContainerStyle={{
-              borderRadius: 15,
-              borderColor: "white",
-            }}
-            ratingContainerStyle={{
-              borderRadius: 15,
-              borderColor: "white",
-            }}
-          />
+
+          <StarRating size={32}></StarRating>
         </View>
 
         <View style={{ marginTop: 12 }}>
@@ -364,5 +366,14 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 2,
     borderColor: "#373737",
+  },
+
+  review_star_container: {
+    flexDirection: "row",
+    marginBottom: verticalScale(10),
+  },
+
+  star: {
+    padding: verticalScale(3),
   },
 });
