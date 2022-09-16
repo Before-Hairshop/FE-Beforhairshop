@@ -25,10 +25,7 @@ const socialLoginURI = {
   logout: "http://localhost:8080/logout",
 };
 
-const userAgent =
-  Platform.OS === "android"
-    ? "Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19"
-    : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75";
+const userAgent = "useragent";
 
 const Logo = require("../assets/images/Logo.png");
 
@@ -63,7 +60,6 @@ export default function Loading() {
     async function waitForSecond() {
       await wait(2000);
       await callAPI();
-      // console.log(await readData());
     }
     waitForSecond();
   }, []);
@@ -92,14 +88,18 @@ export default function Loading() {
   };
 
   const callAPI = async () => {
-    const result = await getMemberInfo();
-    console.log(result);
-    if (result.data.result) {
-      setIsUserLoggedIn(true);
-      // setIsUserLoggedIn(false);
-    } else {
+    try {
+      const result = await getMemberInfo();
+      console.log(result);
+      if (result.data.result) {
+        setIsUserLoggedIn(true);
+        // setIsUserLoggedIn(false);
+      } else {
+        setIsUserLoggedIn(false);
+        // setIsUserLoggedIn(true);
+      }
+    } catch (error) {
       setIsUserLoggedIn(false);
-      // setIsUserLoggedIn(true);
     }
   };
 
@@ -215,20 +215,13 @@ export default function Loading() {
         <WebView
           ref={webViewRef}
           cacheEnabled={false}
-          // onLoad={() => {
-          //   console.log(
-          //     webViewRef.postMessage("전송 데이터(React) : 웹으로 데이터 전송"),
-          //   );
-          // }}
           // originWhitelist={["*"]}
           source={{
             uri: socialLoginURI[loginType],
             // uri: socialLoginURI["logout"],
           }}
-          // userAgent={userAgent}
-          // WebView 로딩이 시작되거나 끝나면 호출해주는 것
-          onNavigationStateChange={onNavigationStateChange}
-          // onMessage={onMessage}
+          userAgent={userAgent}
+          onNavigationStateChange={onNavigationStateChange} // WebView 로딩이 시작되거나 끝나면 호출해주는 것
           onMessage={evt => {
             console.log("받은 데이터: " + evt);
           }}
@@ -236,6 +229,7 @@ export default function Loading() {
           thirdPartyCookiesEnabled={true}
           // useWebKit={true}
           javaScriptEnabled={true}
+          domStorageEnabled={true}
         />
       </Modal>
     </View>
