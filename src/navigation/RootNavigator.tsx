@@ -16,6 +16,7 @@ import UserCheck from "../screens/UserCheck";
 
 import Suggestion from "../screens/Suggestion";
 import DesignerRegistration from "../screens/DesignerRegistration";
+import Review from "../screens/Review";
 
 import Answer from "../screens/Answer";
 
@@ -25,7 +26,7 @@ export const RootNavigator = () => {
   return (
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="Suggestion">
+      initialRouteName="Review">
       <mainStack.Screen name="Loading" component={Loading} />
       <mainStack.Screen name="Main" component={Main} />
       <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />
@@ -48,6 +49,7 @@ export const RootNavigator = () => {
       />
 
       <mainStack.Screen name="Suggestion" component={Suggestion} />
+      <mainStack.Screen name="Review" component={Review} />
     </mainStack.Navigator>
   );
 };

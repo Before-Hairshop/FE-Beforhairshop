@@ -33,7 +33,12 @@ const HeaderContents = () => {
   return (
     <>
       <View style={{ flex: 1 }}>
-        <GoBackIcon />
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Review");
+          }}>
+          <GoBackIcon />
+        </TouchableOpacity>
       </View>
       <View style={{ flex: 2, justifyContent: "center", alignItems: "center" }}>
         <Text

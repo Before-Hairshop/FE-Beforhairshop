@@ -19,7 +19,8 @@ import { launchImageLibrary, launchCamera } from "react-native-image-picker";
 import PlusIcon from "../assets/icons/plus.png";
 import { useNavigation } from "@react-navigation/native";
 import ProfileUploadButton from "../components/common/ProfileUploadButton";
-
+import WantedStyleUploadButton from "../components/common/WantedStyleUploadButton";
+import WantedStyleButton from "../components/common/WantedStyleButton";
 import { Platform } from "react-native";
 
 const numHairStatus = 3;
@@ -83,47 +84,6 @@ export default function UserProfileLookup() {
 
     setWantHairImage([]);
   }, []);
-
-  const WantedStyleUploadButton = props => {
-    return (
-      <TouchableOpacity
-        style={props.style}
-        onPress={async () => {
-          //   const result = await launchCamera();
-          console.log(props);
-
-          const result = await launchImageLibrary();
-          let newArray = [...wantHairImage];
-          newArray.push(result.assets[0].uri);
-
-          setWantHairImage(newArray);
-
-          //   props.toChangeFunction(newArray);
-        }}>
-        <Image
-          source={{ uri: baseImageURL }}
-          style={{ width: "100%", aspectRatio: 1 }}
-        />
-      </TouchableOpacity>
-    );
-  };
-
-  const WantedStyleButton = props => {
-    return (
-      <TouchableOpacity
-        style={props.style}
-        onPress={() => {
-          let newArray = [...wantHairImage];
-          newArray.splice(props.index, 1);
-          setWantHairImage(newArray);
-        }}>
-        <Image
-          source={{ uri: wantHairImage[props.index] }}
-          style={{ width: "100%", aspectRatio: 1 }}
-        />
-      </TouchableOpacity>
-    );
-  };
 
   return (
     <View style={styles.mainView}>
@@ -211,13 +171,17 @@ export default function UserProfileLookup() {
               return (
                 <WantedStyleButton
                   index={index}
+                  array={wantHairImage}
+                  setArray={setWantHairImage}
                   style={styles.wantStyleImage}></WantedStyleButton>
               );
             })}
 
             {wantHairImage.length < 3 ? (
               <WantedStyleUploadButton
-                style={styles.wantStyleImage}></WantedStyleUploadButton>
+                style={styles.wantStyleImage}
+                array={wantHairImage}
+                setArray={setWantHairImage}></WantedStyleUploadButton>
             ) : null}
           </View>
         </View>
