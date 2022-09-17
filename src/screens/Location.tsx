@@ -1,5 +1,12 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
+import {
+  PermissionsAndroid,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
@@ -14,6 +21,9 @@ import NaverMapView, {
 } from "../components/map";
 import LocationHeader from "../components/location/LocationHeader";
 import { getReverseGeocoding } from "../api/getReverseGeocoding";
+import Geolocation from "react-native-geolocation-service";
+
+// Geolocation.requestAuthorization("always");
 
 const { width, height } = Dimensions.get("window");
 
@@ -45,6 +55,28 @@ export default function Location() {
     ]);
   };
 
+  useEffect(() => {
+    // setLocation(current => {
+    //   let newCondition = { ...current };
+    //   newCondition["latitude"] = 37.559105;
+    //   newCondition["longitude"] = 126.979306;
+    //   return newCondition;
+    // });
+    async function current() {
+      if (Platform.OS === "ios") {
+        const auth = await Geolocation.requestAuthorization;
+        console.log(auth);
+      }
+
+      if (Platform.OS === "android") {
+        // await PermissionsAndroid.request(
+        //   PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        // );
+      }
+    }
+    current();
+  }, []);
+
   return (
     <View style={styles.frame}>
       <LocationHeader />
@@ -70,6 +102,15 @@ export default function Location() {
             setUpAddress(e.longitude, e.latitude);
             console.log(address);
             console.log(addressDetail);
+            if (Platform.OS === "ios") {
+              console.log(Geolocation.requestAuthorization);
+            }
+
+            if (Platform.OS === "android") {
+              // await PermissionsAndroid.request(
+              //   PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+              // );
+            }
           }}
           // onMapClick={e => console.warn("onMapClick", JSON.stringify(e))}
           useTextureView>
