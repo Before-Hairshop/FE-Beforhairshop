@@ -1,39 +1,89 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Dimensions } from "react-native";
-import { scale, verticalScale } from "../utils/scale";
 import { useNavigation } from "@react-navigation/native";
+
+import { scale, verticalScale } from "../utils/scale";
 import CheckIcon from "../assets/icons/check.svg";
 
 const { width, height } = Dimensions.get("window");
 
 export default function UserCheck() {
+  const [isDesigner, setIsDesigner] = useState(undefined);
+
+  const navigation = useNavigation();
+
+  const wait = timeToDelay =>
+    new Promise(resolve => setTimeout(resolve, timeToDelay));
+
+  const selectAnswer = async (value: React.SetStateAction<undefined>) => {
+    await setIsDesigner(value);
+    await wait(200);
+    navigation.navigate("Main");
+  };
+
   return (
     <View style={styles.frame}>
       <Text style={styles.welcome_text}>반갑습니다!</Text>
       <Text style={styles.question_text}>헤어 디자이너인가요?</Text>
       <TouchableOpacity
-        style={[styles.button_container, { borderColor: "#fc2a5b" }]}>
+        onPress={() => selectAnswer(true)}
+        style={[
+          styles.button_container,
+          isDesigner !== undefined && isDesigner && { borderColor: "#fc2a5b" },
+        ]}>
         <View style={styles.check_icon_container}>
-          <View style={[styles.circle, { backgroundColor: "#fc2a5b" }]}>
-            <CheckIcon fill="#ffffff" />
+          <View
+            style={[
+              styles.circle,
+              isDesigner !== undefined &&
+                isDesigner && { backgroundColor: "#fc2a5b" },
+            ]}>
+            <CheckIcon
+              fill={
+                isDesigner !== undefined && isDesigner ? "#ffffff" : "#5f5f5f"
+              }
+            />
           </View>
         </View>
         <View style={styles.answer_container}>
-          <Text style={[styles.answer_text, { opacity: 1 }]}>
+          <Text
+            style={[
+              styles.answer_text,
+              isDesigner !== undefined && isDesigner && { opacity: 1 },
+            ]}>
             네, 헤어 디자이너입니다.
           </Text>
         </View>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[styles.button_container, { borderColor: "#2f2f2f" }]}>
+        onPress={() => selectAnswer(false)}
+        style={[
+          styles.button_container,
+          isDesigner !== undefined && !isDesigner && { borderColor: "#fc2a5b" },
+        ]}>
         <View style={styles.check_icon_container}>
-          <View style={styles.circle}>
-            <CheckIcon fill="#5f5f5f" />
+          <View
+            style={[
+              styles.circle,
+              isDesigner !== undefined &&
+                !isDesigner && { backgroundColor: "#fc2a5b" },
+            ]}>
+            <CheckIcon
+              fill={
+                isDesigner !== undefined && !isDesigner ? "#ffffff" : "#5f5f5f"
+              }
+            />
           </View>
         </View>
         <View style={styles.answer_container}>
-          <Text style={styles.answer_text}>아니요</Text>
+          <Text
+            style={[
+              styles.answer_text,
+              isDesigner !== undefined && !isDesigner && { opacity: 1 },
+            ]}>
+            아니요
+          </Text>
         </View>
       </TouchableOpacity>
     </View>
