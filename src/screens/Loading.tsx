@@ -170,7 +170,7 @@ export default function Loading() {
                   source={require("../assets/icons/google_login.png")}
                   style={{
                     width: scale(30),
-                    height: verticalScale(30),
+                    height: scale(30),
                   }}></Image>
               </View>
             </TouchableOpacity>
@@ -200,7 +200,7 @@ export default function Loading() {
                   source={require("../assets/icons/apple_login.png")}
                   style={{
                     width: scale(30),
-                    height: verticalScale(30),
+                    height: scale(30),
                     top: verticalScale(-2),
                   }}></Image>
               </View>
@@ -245,6 +245,6 @@ const styles = StyleSheet.create({
   iconStyle: {
     marginHorizontal: verticalScale(10.5),
     width: scale(60),
-    height: verticalScale(60),
+    height: scale(60),
   },
 });
