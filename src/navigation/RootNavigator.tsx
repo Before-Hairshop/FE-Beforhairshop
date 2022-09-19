@@ -14,6 +14,7 @@ import Loading from "../screens/Loading";
 import ServiceTerms from "../screens/ServiceTerms";
 import UserCheck from "../screens/UserCheck";
 import Location from "../screens/Location";
+import Loading2 from "../screens/Loading2";
 
 const mainStack = createNativeStackNavigator();
 
@@ -23,6 +24,7 @@ export const RootNavigator = () => {
       screenOptions={{ headerShown: false }}
       initialRouteName="Loading">
       <mainStack.Screen name="Loading" component={Loading} />
+      <mainStack.Screen name="Loading2" component={Loading2} />
       <mainStack.Screen name="Main" component={Main} />
       <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />
       <mainStack.Screen name="DesignerProfile" component={DesignerProfile} />
