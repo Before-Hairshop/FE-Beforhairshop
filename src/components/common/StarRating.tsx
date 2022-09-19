@@ -1,30 +1,62 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import StarIcon from "../../assets/icons/star.svg";
 
 import { scale, verticalScale } from "../../utils/scale";
 
-const YellowStar = ({ size }) => (
-  <View style={styles.star}>
-    <StarIcon fill="#ffce00" width={size} height={size}></StarIcon>
-  </View>
-);
-
-const GreyStar = ({ size }) => (
-  <View style={styles.star}>
-    <StarIcon fill="#191919" stroke="#555555" width={size} height={size} />
-  </View>
-);
-
-export default function StarRating({ size, score }) {
+const Star = ({ size, isYellow, setScoreFunction, position, isTouchable }) => {
   return (
-    <View style={{ flexDirection: "row" }}>
-      <YellowStar size={scale(32)} />
-      <YellowStar size={scale(32)} />
-      <YellowStar size={scale(32)} />
-      <YellowStar size={scale(32)} />
-      <GreyStar size={scale(32)} />
-    </View>
+    <TouchableOpacity
+      onPress={() => {
+        if (isTouchable) {
+          setScoreFunction(position);
+        }
+      }}
+      disabled={!isTouchable}>
+      <View style={styles.star}>
+        <StarIcon
+          fill={isYellow ? "#ffce00" : "#191919"}
+          stroke={isYellow ? undefined : "#555555"}
+          width={size}
+          height={size}
+        />
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+export default function StarRating({
+  size,
+  score,
+  containerStyle,
+  setScoreFunction,
+  isTouchable,
+}) {
+  const stars = [];
+
+  for (let i = 0; i < 5; i++) {
+    if (i < score) {
+      stars.push(
+        <Star
+          size={size}
+          isYellow={true}
+          setScoreFunction={setScoreFunction}
+          position={i + 1}
+          isTouchable={isTouchable}></Star>,
+      );
+    } else {
+      stars.push(
+        <Star
+          size={size}
+          isYellow={false}
+          setScoreFunction={setScoreFunction}
+          position={i + 1}
+          isTouchable={isTouchable}></Star>,
+      );
+    }
+  }
+  return (
+    <View style={[{ flexDirection: "row" }, containerStyle]}>{stars}</View>
   );
 }
 

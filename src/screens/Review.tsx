@@ -6,12 +6,14 @@ import {
   ScrollView,
   Image,
   TextInput,
+  ImageBackground,
 } from "react-native";
 import React, { useEffect } from "react";
 import GoBackIcon from "../assets/icons/goBack.svg";
 import { useState } from "react";
 
 import PlusIcon from "../assets/icons/plus.png";
+import DesignerImage from "../assets/images/default_designer.png";
 import { verticalScale, scale } from "../utils/scale";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header";
@@ -49,6 +51,7 @@ const GreyStar = () => (
 );
 
 const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
+const designerImageURL = Image.resolveAssetSource(DesignerImage).uri;
 const HeaderContents = () => {
   const navigation = useNavigation();
   return (
@@ -86,6 +89,7 @@ export default function Suggestion() {
   const numHairRating = 3;
   const numDesignerRating = 3;
   const [hairRating, setHairRating] = useState(-1);
+  const [starScore, setStarScore] = useState(0);
   const [designerRating, setDesignerRating] = useState(-1);
   const [review, setReview] = useState("");
   const [tagInput, setTagInput] = useState("");
@@ -127,30 +131,38 @@ export default function Suggestion() {
   };
 
   useEffect(() => {
-    setProfileImage([baseImageURL]);
+    setProfileImage([designerImageURL]);
   }, []);
   return (
     <View style={styles.mainView}>
       <Header contents={<HeaderContents></HeaderContents>}></Header>
       <ScrollView>
         <View style={{ alignItems: "center", margin: verticalScale(10) }}>
-          <View style={{ flexDirection: "row" }}>
-            {profileImage.map((item, index) => {
-              return (
-                <View
-                  style={{
-                    width: scale(150),
-                    alignItems: "center",
-                    margin: verticalScale(10),
-                  }}>
-                  <Image
-                    source={{ uri: baseImageURL }}
-                    style={styles.userProfileImage}
-                  />
-                </View>
-              );
-            })}
-          </View>
+          <ImageBackground
+            source={{ uri: profileImage[0] }}
+            style={{
+              width: scale(150),
+              aspectRatio: 1,
+              marginHorizontal: verticalScale(6),
+              borderRadius: 100,
+
+              overflow: "hidden",
+              borderWidth: 2,
+              borderColor: "#373737",
+            }}>
+            <View
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: verticalScale(13),
+                justifyContent: "flex-end",
+                alignItems: "center",
+              }}>
+              <Text style={styles.profileImageFont}>이안</Text>
+            </View>
+          </ImageBackground>
 
           <View style={{ paddingTop: verticalScale(25) }}>
             <Text style={styles.profileImageFont}>전체적인 서비스에 대해 </Text>
@@ -159,7 +171,12 @@ export default function Suggestion() {
             </Text>
           </View>
 
-          <StarRating size={32}></StarRating>
+          <StarRating
+            size={scale(32)}
+            containerStyle={{ marginTop: verticalScale(14) }}
+            score={starScore}
+            setScoreFunction={setStarScore}
+            isTouchable={true}></StarRating>
         </View>
 
         <View style={{ marginTop: 12 }}>
@@ -301,17 +318,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#191919",
   },
 
-  userProfileImage: {
-    width: "100%",
-    aspectRatio: 1,
-    marginHorizontal: verticalScale(6),
-    borderRadius: 100,
-
-    overflow: "hidden",
-    borderWidth: 2,
-    borderColor: "#373737",
-  },
-
   profileImageFont: {
     fontFamily: "Pretendard",
     fontSize: scale(16),
@@ -375,5 +381,12 @@ const styles = StyleSheet.create({
 
   star: {
     padding: verticalScale(3),
+  },
+
+  designerName: {
+    fontFamily: "Pretendard",
+    fontSize: scale(32),
+    textAlign: "center",
+    color: "#ffffff",
   },
 });
