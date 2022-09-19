@@ -4,13 +4,28 @@ import {
   View,
   Image,
   Animated,
-  Alert,
   TouchableOpacity,
+  Modal,
+  Platform,
 } from "react-native";
-import React, { useEffect, useLayoutEffect, useRef } from "react";
-import { scale, verticalScale } from "../utils/scale";
+import React, { createRef, useEffect, useRef } from "react";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { WebView, WebViewNavigation } from "react-native-webview";
+import CookieManager from "@react-native-cookies/cookies";
+
+import { scale, verticalScale } from "../utils/scale";
+import { getMemberInfo } from "../api/getMemberInfo";
+import { storeData } from "../utils/asyncStorage";
+
+const socialLoginURI = {
+  google: "http://localhost:8080/oauth2/authorization/google",
+  kakao: "http://localhost:8080/oauth2/authorization/kakao",
+  naver: "http://localhost:8080/oauth2/authorization/naver",
+  logout: "http://localhost:8080/logout",
+};
+
+const userAgent = "useragent";
 
 const Logo = require("../assets/images/Logo.png");
 
@@ -23,18 +38,28 @@ const useDidMountEffect = (func, deps) => {
   }, deps);
 };
 
-const wait = timeToDelay =>
-  new Promise(resolve => setTimeout(resolve, timeToDelay));
+const wait = (timeToDelay: number) => {
+  return new Promise(resolve => setTimeout(resolve, timeToDelay));
+};
 
 export default function Loading() {
-  const navigation = useNavigation();
   const [isUserLoggedIn, setIsUserLoggedIn] = useState("");
+  const [socialLoginModalVisible, setSocialLoginModalVisible] = useState(false);
+  const [loginType, setLoginType] = useState("");
+
+  const navigation = useNavigation();
+  const webViewRef = createRef<WebView>();
+  const opacity = new Animated.Value(0);
+
+  const signIn = async (type: string) => {
+    await setLoginType(type);
+    setSocialLoginModalVisible(true);
+  };
 
   useEffect(() => {
-    //로그인 여부 확인
     async function waitForSecond() {
-      await wait(3000);
-      setIsUserLoggedIn(false);
+      await wait(2000);
+      await callAPI();
     }
     waitForSecond();
   }, []);
@@ -50,7 +75,33 @@ export default function Loading() {
     }
   }, [isUserLoggedIn]);
 
-  let opacity = new Animated.Value(0);
+  const onNavigationStateChange = async (
+    navigationState: WebViewNavigation,
+  ) => {
+    // console.log(navigationState);
+    if (navigationState.url == "http://localhost:8080/") {
+      const cookies = await CookieManager.get("http://localhost:8080");
+      storeData(cookies.JSESSIONID.value);
+      setSocialLoginModalVisible(false);
+      setIsUserLoggedIn(true);
+    }
+  };
+
+  const callAPI = async () => {
+    try {
+      const result = await getMemberInfo();
+      console.log(result);
+      if (result.data.result) {
+        setIsUserLoggedIn(true);
+        // setIsUserLoggedIn(false);
+      } else {
+        setIsUserLoggedIn(false);
+        // setIsUserLoggedIn(true);
+      }
+    } catch (error) {
+      setIsUserLoggedIn(false);
+    }
+  };
 
   return (
     <View
@@ -104,20 +155,83 @@ export default function Loading() {
             SNS 계정으로 간편가입하기{" "}
           </Text>
           <View style={{ flexDirection: "row", margin: verticalScale(23) }}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => signIn("google")}>
+              <View
+                style={[
+                  styles.iconStyle,
+                  {
+                    backgroundColor: "#ffffff",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: scale(60),
+                  },
+                ]}>
+                <Image
+                  source={require("../assets/icons/google_login.png")}
+                  style={{
+                    width: scale(30),
+                    height: scale(30),
+                  }}></Image>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => signIn("kakao")}>
               <Image
-                source={require("../assets/icons/google_icon.png")}
+                source={require("../assets/icons/kakao_login.png")}
                 style={styles.iconStyle}></Image>
             </TouchableOpacity>
-
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => signIn("naver")}>
               <Image
-                source={require("../assets/icons/kakao_icon.png")}
-                style={styles.iconStyle}></Image>
+                source={require("../assets/icons/naver_login.png")}
+                style={styles.iconStyle}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => signIn("")}>
+              <View
+                style={[
+                  styles.iconStyle,
+                  {
+                    backgroundColor: "#ffffff",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: scale(60),
+                  },
+                ]}>
+                <Image
+                  source={require("../assets/icons/apple_login.png")}
+                  style={{
+                    width: scale(30),
+                    height: scale(30),
+                    top: verticalScale(-2),
+                  }}></Image>
+              </View>
             </TouchableOpacity>
           </View>
         </Animated.View>
       </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={socialLoginModalVisible}>
+        <WebView
+          ref={webViewRef}
+          cacheEnabled={false}
+          // originWhitelist={["*"]}
+          source={{
+            uri: socialLoginURI[loginType],
+            // uri: socialLoginURI["logout"],
+          }}
+          userAgent={userAgent}
+          onNavigationStateChange={onNavigationStateChange} // WebView 로딩이 시작되거나 끝나면 호출해주는 것
+          onMessage={evt => {
+            console.log("받은 데이터: " + evt);
+          }}
+          sharedCookiesEnabled={true}
+          thirdPartyCookiesEnabled={true}
+          // useWebKit={true}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+        />
+      </Modal>
     </View>
   );
 }
@@ -128,8 +242,9 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontFamily: "Pretendard-Bold",
   },
-
   iconStyle: {
-    marginHorizontal: verticalScale(12.5),
+    marginHorizontal: verticalScale(10.5),
+    width: scale(60),
+    height: scale(60),
   },
 });

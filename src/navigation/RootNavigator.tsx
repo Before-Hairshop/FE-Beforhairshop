@@ -13,6 +13,8 @@ import UserProfile from "../screens/UserProfile";
 import Loading from "../screens/Loading";
 import ServiceTerms from "../screens/ServiceTerms";
 import UserCheck from "../screens/UserCheck";
+import Location from "../screens/Location";
+import Loading2 from "../screens/Loading2";
 
 import Suggestion from "../screens/Suggestion";
 import DesignerRegistration from "../screens/DesignerRegistration";
@@ -26,8 +28,9 @@ export const RootNavigator = () => {
   return (
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="Review">
+      initialRouteName="Loading">
       <mainStack.Screen name="Loading" component={Loading} />
+      <mainStack.Screen name="Loading2" component={Loading2} />
       <mainStack.Screen name="Main" component={Main} />
       <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />
       <mainStack.Screen name="DesignerProfile" component={DesignerProfile} />
@@ -38,6 +41,7 @@ export const RootNavigator = () => {
       <mainStack.Screen name="UserCheck" component={UserCheck} />
       <mainStack.Screen name="UserProfile" component={UserProfile} />
       <mainStack.Screen name="Answer" component={Answer} />
+      <mainStack.Screen name="Location" component={Location} />
       <mainStack.Screen
         name="UserProfileLookup"
         component={UserProfileLookup}

@@ -62,7 +62,6 @@ buck-out/
 /ios/Pods/
 /vendor/bundle/
 
-
 # Config
 .env
 /ios/tmp.xcconfig
