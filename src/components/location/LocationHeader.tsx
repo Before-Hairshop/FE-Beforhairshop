@@ -9,11 +9,16 @@ import React from "react";
 
 import { scale, verticalScale } from "../../utils/scale";
 import GoBackIcon from "../../assets/icons/goBack.svg";
+import { useNavigation } from "@react-navigation/native";
 
 export default function LocationHeader() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.frame}>
-      <TouchableOpacity style={styles.back_button}>
+      <TouchableOpacity
+        style={styles.back_button}
+        onPress={() => navigation.navigate("Main")}>
         <GoBackIcon />
       </TouchableOpacity>
       <View style={styles.title_container}>

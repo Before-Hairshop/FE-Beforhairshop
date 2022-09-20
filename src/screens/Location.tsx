@@ -29,6 +29,24 @@ export default function Location() {
 
   const navigation = useNavigation();
 
+  async function requestPermissionIOS() {
+    try {
+      return await Geolocation.requestAuthorization("whenInUse");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function requestPermissionANDROID() {
+    try {
+      return await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     async function fetchAddress() {
       const { results } = await getReverseGeocoding(
@@ -57,44 +75,47 @@ export default function Location() {
   }, [coords]);
 
   useEffect(() => {
-    async function setCurrentLocation() {
+    function setCurrentLocation() {
       if (Platform.OS === "ios") {
-        // Geolocation.requestAuthorization();
-        // Geolocation.setRNConfiguration({
-        //   skipPermissionRequests: false,
-        //   authorizationLevel: "whenInUse",
-        // });
-        // const auth = await Geolocation.requestAuthorization("always");
-        Geolocation.getCurrentPosition(
-          position => {
-            console.log(position);
-          },
-          error => {
-            // See error code charts below.
-            console.log(error.code, error.message);
-          },
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-        );
+        requestPermissionIOS().then(result => {
+          if (result === "granted") {
+            Geolocation.getCurrentPosition(
+              position => {
+                console.log(position);
+                setCoords(prev => ({
+                  ...prev,
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                }));
+              },
+              error => {
+                console.log(error.code, error.message);
+              },
+              { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+            );
+          }
+        });
       }
 
       if (Platform.OS === "android") {
-        await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        );
-        Geolocation.getCurrentPosition(
-          position => {
-            console.log(position);
-            setCoords(prev => ({
-              ...prev,
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            }));
-          },
-          error => {
-            console.log(error.code, error.message);
-          },
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-        );
+        requestPermissionANDROID().then(result => {
+          if (result === PermissionsAndroid.RESULTS.GRANTED) {
+            Geolocation.getCurrentPosition(
+              position => {
+                console.log(position);
+                setCoords(prev => ({
+                  ...prev,
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                }));
+              },
+              error => {
+                console.log(error.code, error.message);
+              },
+              { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+            );
+          }
+        });
       }
     }
     setCurrentLocation();
@@ -112,23 +133,24 @@ export default function Location() {
             longitude: coords.longitude,
             zoom: zoomSize,
           }}
-          // onZoomChanged={e => {
-          //   console.log(e);
-          //   // setZoomSize()
-          // }}
           onCameraChange={e => {
             console.log(e);
-            setCoords({
-              latitude: e.latitude,
-              longitude: e.longitude,
-            });
-            setZoomSize(e.zoom);
+            if (
+              coords.latitude != e.latitude ||
+              coords.longitude != e.longitude
+            ) {
+              setCoords({
+                latitude: e.latitude,
+                longitude: e.longitude,
+              });
+            }
+            if (zoomSize != e.zoom) {
+              setZoomSize(e.zoom);
+            }
           }}
-          // onMapClick={e => console.warn("onMapClick", JSON.stringify(e))}
           useTextureView>
           <Marker
             coordinate={coords}
-            // onClick={() => console.warn("onClick! p0")}
             // caption={{ text: "test caption", align: Align.Top }}
           />
         </NaverMapView>
