@@ -7,14 +7,15 @@ import {
   View,
 } from "react-native";
 import React, { useEffect } from "react";
-import NaverMapView, {
-  Circle,
-  Marker,
-  Path,
-  Polyline,
-  Polygon,
-  Align,
-} from "../components/map";
+// import NaverMapView, {
+//   Circle,
+//   Marker,
+//   Path,
+//   Polyline,
+//   Polygon,
+//   Align,
+// } from "../components/map";
+import NaverMapView, { Marker } from "react-native-nmap";
 
 const P0 = { latitude: 37.564362, longitude: 126.977011 };
 // const P1 = { latitude: 37.565051, longitude: 126.978567 };
