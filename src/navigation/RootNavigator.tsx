@@ -22,13 +22,15 @@ import Review from "../screens/Review";
 
 import Answer from "../screens/Answer";
 
+import NavigateUser from "../screens/NavigateUser";
+
 const mainStack = createNativeStackNavigator();
 
 export const RootNavigator = () => {
   return (
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="DesignerRegistration">
+      initialRouteName="NavigateUser">
       <mainStack.Screen name="Loading" component={Loading} />
       <mainStack.Screen name="Loading2" component={Loading2} />
       <mainStack.Screen name="Main" component={Main} />
@@ -54,6 +56,7 @@ export const RootNavigator = () => {
 
       <mainStack.Screen name="Suggestion" component={Suggestion} />
       <mainStack.Screen name="Review" component={Review} />
+      <mainStack.Screen name="NavigateUser" component={NavigateUser} />
     </mainStack.Navigator>
   );
 };

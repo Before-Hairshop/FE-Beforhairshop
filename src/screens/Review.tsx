@@ -38,18 +38,6 @@ const MAINCOLOR = "#fc2a5b";
 const GRAYCOLOR = "#555555";
 const TEXTCOLOR = "#CCCCCC";
 
-const YellowStar = () => (
-  <View style={styles.star}>
-    <StarIcon fill="#ffce00" width={35} height={35}></StarIcon>
-  </View>
-);
-
-const GreyStar = () => (
-  <View style={styles.star}>
-    <StarIcon fill="#191919" stroke="#555555" scale={22} />
-  </View>
-);
-
 const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
 const designerImageURL = Image.resolveAssetSource(DesignerImage).uri;
 const HeaderContents = () => {

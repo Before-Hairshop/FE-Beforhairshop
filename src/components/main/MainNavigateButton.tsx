@@ -10,7 +10,6 @@ export default function MainNavigateButton(props) {
   return (
     <View
       style={{
-        height: "100%",
         alignItems: "center",
         // justifyContent: "center",
       }}>
@@ -23,7 +22,7 @@ export default function MainNavigateButton(props) {
           height: verticalScale(100),
         }}
         containerStyle={{
-          marginTop: 20,
+          marginTop: verticalScale(10),
           borderRadius: 15,
 
           borderWidth: 1,

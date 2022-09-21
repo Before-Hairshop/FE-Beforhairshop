@@ -36,6 +36,7 @@
     "react-native-svg": "^13.2.0",
     "react-native-svg-transformer": "^1.0.0",
     "react-native-swiper": "^1.6.0",
+    "react-native-switch": "^1.5.1",
     "react-native-uuid": "^2.0.1",
     "react-native-vector-icons": "^9.2.0",
     "react-native-webview": "^11.23.1",
