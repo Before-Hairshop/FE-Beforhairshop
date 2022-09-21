@@ -16,13 +16,19 @@ import UserCheck from "../screens/UserCheck";
 import Location from "../screens/Location";
 import Loading2 from "../screens/Loading2";
 
+import Suggestion from "../screens/Suggestion";
+import DesignerRegistration from "../screens/DesignerRegistration";
+import Review from "../screens/Review";
+
+import Answer from "../screens/Answer";
+
 const mainStack = createNativeStackNavigator();
 
 export const RootNavigator = () => {
   return (
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="Loading">
+      initialRouteName="DesignerRegistration">
       <mainStack.Screen name="Loading" component={Loading} />
       <mainStack.Screen name="Loading2" component={Loading2} />
       <mainStack.Screen name="Main" component={Main} />
@@ -34,11 +40,20 @@ export const RootNavigator = () => {
       <mainStack.Screen name="ServiceTerms" component={ServiceTerms} />
       <mainStack.Screen name="UserCheck" component={UserCheck} />
       <mainStack.Screen name="UserProfile" component={UserProfile} />
+      <mainStack.Screen name="Answer" component={Answer} />
       <mainStack.Screen name="Location" component={Location} />
       <mainStack.Screen
         name="UserProfileLookup"
         component={UserProfileLookup}
       />
+
+      <mainStack.Screen
+        name="DesignerRegistration"
+        component={DesignerRegistration}
+      />
+
+      <mainStack.Screen name="Suggestion" component={Suggestion} />
+      <mainStack.Screen name="Review" component={Review} />
     </mainStack.Navigator>
   );
 };

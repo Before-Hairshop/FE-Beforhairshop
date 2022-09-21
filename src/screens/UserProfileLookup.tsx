@@ -2,6 +2,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -13,39 +14,63 @@ import { Button } from "@rneui/themed";
 import { Image } from "react-native";
 import { Dimensions } from "react-native";
 import { useState } from "react";
+import HairButton from "../components/UserProfile/HairButton";
+import { launchImageLibrary, launchCamera } from "react-native-image-picker";
+import PlusIcon from "../assets/icons/plus.png";
+import { useNavigation } from "@react-navigation/native";
 
-const { width, height } = Dimensions.get("window");
+import { Platform } from "react-native";
 
 const numHairStatus = 3;
 const numHairTendency = 5;
+const BASEWIDTH = 375;
+const BASEPADDING = 20;
+const numberOfLines = 4;
+const MAINCOLOR = "#fc2a5b";
 
-const HeaderContents = () => (
-  <>
-    <View style={{ flex: 1 }}>
-      <GoBackIcon />
-    </View>
-    <View style={{ flex: 2, justifyContent: "center", alignItems: "center" }}>
-      <Text
-        style={{
-          height: verticalScale(21),
-          fontFamily: "Pretendard-Bold",
-          fontSize: verticalScale(18),
-          fontWeight: "bold",
-          fontStyle: "normal",
-          letterSpacing: 0.07,
-          textAlign: "left",
-          color: "#ffffff",
-        }}>
-        [홍길동] 프로필
-      </Text>
-    </View>
-    <View style={{ flex: 1 }}></View>
-  </>
-);
+const HeaderContents = () => {
+  return (
+    <>
+      <View style={{ flex: 1 }}>
+        <GoBackIcon />
+      </View>
+      <View style={{ flex: 2, justifyContent: "center", alignItems: "center" }}>
+        <Text
+          style={{
+            fontFamily: "Pretendard-Bold",
+            fontSize: verticalScale(18),
+            fontWeight: "bold",
+            fontStyle: "normal",
+            letterSpacing: 0.07,
+            textAlign: "left",
+            color: "#ffffff",
+          }}>
+          [홍길동] 프로필
+        </Text>
+      </View>
+      <View style={{ flex: 1, alignItems: "flex-end" }}></View>
+    </>
+  );
+};
 
 export default function UserProfileLookup() {
   const [profileImage, setProfileImage] = useState(["", "", ""]);
-  const [wantHairImage, setWantHairImage] = useState(["", "", ""]);
+
+  const [wantHairImage, setWantHairImage] = useState([]);
+
+  const [wantedStyle, setWantedStyle] = useState("");
+  const [wantedStyleDescription, setWantedStyleDescription] = useState("");
+  const [wantedStylingCost, setWantedStylingCost] = useState(0);
+
+  const [hairStatusIndex, setHairStatusIndex] = useState(-1);
+  const [hairTendencyIndex, setHairTendencyIndex] = useState(-1);
+
+  const hairStatus = ["많이 상했어요", "보통이에요", "매우 건강해요"];
+  const hairTendency = ["심한 곱슬", "곱슬", "반곱슬", "반직모", "직모"];
+  const profileExplanation = ["정면 (필수)", "측면 (선택)", "뒷면 (선택)"];
+
+  const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
+  const navigation = useNavigation();
   useEffect(() => {
     setProfileImage([
       "https://picsum.photos/200/300",
@@ -58,7 +83,37 @@ export default function UserProfileLookup() {
       "https://picsum.photos/200/300",
       "https://picsum.photos/200/300",
     ]);
+
+    setHairStatusIndex(1);
+    setHairTendencyIndex(3);
+
+    setWantedStyle("투블럭");
+    setWantedStyleDescription("예쁘게 해주세요");
+
+    setWantedStylingCost("30000");
   }, []);
+
+  const ImageUploadButton = props => {
+    return (
+      <TouchableOpacity style={props.style} disabled>
+        <Image
+          source={{ uri: props.toChangeArray[props.index] }}
+          style={{ width: "100%", aspectRatio: 1 }}
+        />
+      </TouchableOpacity>
+    );
+  };
+
+  const WantedStyleButton = props => {
+    return (
+      <TouchableOpacity style={props.style} disabled>
+        <Image
+          source={{ uri: wantHairImage[props.index] }}
+          style={{ width: "100%", aspectRatio: 1 }}
+        />
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.mainView}>
@@ -70,7 +125,8 @@ export default function UserProfileLookup() {
             borderRadius: 10,
             width: scale(110),
             marginBottom: verticalScale(5),
-          }}>
+          }}
+          onPress={() => navigation.navigate("Suggestion")}>
           매칭 제안
         </Button>
       </View>
@@ -78,50 +134,73 @@ export default function UserProfileLookup() {
       <ScrollView>
         <View style={{ alignItems: "center", margin: verticalScale(10) }}>
           <View style={{ flexDirection: "row" }}>
-            <Image
-              source={{ uri: profileImage[0] }}
-              style={styles.userProfileImage}
-            />
-            <Image
-              source={{ uri: profileImage[1] }}
-              style={styles.userProfileImage}
-            />
-            <Image
-              source={{ uri: profileImage[2] }}
-              style={styles.userProfileImage}
-            />
+            {profileImage.map((item, index) => {
+              return (
+                <View
+                  style={{
+                    width: "30%",
+                    alignItems: "center",
+                    margin: verticalScale(10),
+                  }}>
+                  <ImageUploadButton
+                    index={index}
+                    toChangeArray={profileImage}
+                    toChangeFunction={setProfileImage}
+                    style={styles.userProfileImage}></ImageUploadButton>
+                  <Text
+                    style={{ color: "white", paddingTop: verticalScale(10) }}>
+                    {profileExplanation[index]}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+
+        <View style={{ marginTop: 12 }}>
+          <Text style={[styles.itemTextStyle]}>고객님의 모발 상태</Text>
+
+          <View style={{ flexDirection: "row" }}>
+            {hairStatus.map((item, index) => {
+              return (
+                <HairButton
+                  width={scale((BASEWIDTH - BASEPADDING * 2) / numHairStatus)}
+                  index={index}
+                  content={hairStatus[index]}
+                  disabled
+                  isActive={index == hairStatusIndex}></HairButton>
+              );
+            })}
           </View>
         </View>
 
         <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}> 고객님의 모발 상태 </Text>
+          <Text style={styles.itemTextStyle}>머리 성향</Text>
 
-          <TouchableOpacity
-            style={[
-              styles.buttonStyle,
-              { width: scale((375 - 20) / numHairStatus) },
-            ]}>
-            <Text style={styles.buttonText}>매우 건강해요</Text>
-          </TouchableOpacity>
+          <View style={{ flexDirection: "row" }}>
+            {hairTendency.map((item, index) => {
+              return (
+                <HairButton
+                  width={scale((BASEWIDTH - BASEPADDING * 2) / numHairTendency)}
+                  index={index}
+                  content={hairTendency[index]}
+                  disabled
+                  isActive={index == hairTendencyIndex}></HairButton>
+              );
+            })}
+          </View>
         </View>
 
         <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}> 머리 성향 </Text>
-
-          <TouchableOpacity
-            style={[
-              styles.buttonStyle,
-              { width: scale((375 - 20) / numHairTendency) },
-            ]}>
-            <Text style={styles.buttonText}>직모</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}> 원하는 스타일 </Text>
+          <Text style={styles.itemTextStyle}>원하는 스타일 </Text>
 
           <View style={styles.userTextUnderline}>
-            <Text style={styles.highlightText}>투블럭</Text>
+            <TextInput
+              placeholder="예) 투블럭"
+              placeholderTextColor={MAINCOLOR}
+              value={wantedStyle}
+              editable={false}
+              style={styles.highlightText}></TextInput>
           </View>
         </View>
 
@@ -129,12 +208,34 @@ export default function UserProfileLookup() {
           <View style={{ flexDirection: "row", marginTop: verticalScale(12) }}>
             {wantHairImage.map((item, index) => {
               return (
-                <Image
-                  source={{ uri: wantHairImage[index] }}
-                  style={styles.wantStyleImage}
-                />
+                <WantedStyleButton
+                  index={index}
+                  style={styles.wantStyleImage}></WantedStyleButton>
               );
             })}
+          </View>
+        </View>
+
+        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+          <Text style={styles.itemTextStyle}>
+            원하는 헤어스타일을 자세히 설명해주세요.
+          </Text>
+
+          <View style={styles.userTextUnderline}>
+            <TextInput
+              editable={false}
+              value={wantedStyleDescription}
+              onChangeText={text => setWantedStyleDescription(text)}
+              placeholder="자유롭게 작성해주세요."
+              placeholderTextColor={MAINCOLOR}
+              multiline
+              numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
+              minHeight={
+                Platform.OS === "ios" && numberOfLines
+                  ? 20 * numberOfLines
+                  : null
+              }
+              style={styles.highlightText}></TextInput>
           </View>
         </View>
 
@@ -142,7 +243,14 @@ export default function UserProfileLookup() {
           <Text style={styles.itemTextStyle}> 원하는 스타일링 비용 </Text>
 
           <View style={styles.userTextUnderline}>
-            <Text style={styles.highlightText}>30000원</Text>
+            <TextInput
+              editable={false}
+              value={wantedStylingCost}
+              // onChangeText={text => setWantedStylingCost(text)}
+              placeholder="예) 30000"
+              placeholderTextColor={MAINCOLOR}
+              keyboardType="number-pad"
+              style={styles.highlightText}></TextInput>
           </View>
         </View>
       </ScrollView>
@@ -164,7 +272,7 @@ const styles = StyleSheet.create({
   },
 
   userProfileImage: {
-    width: "30%",
+    width: "100%",
     aspectRatio: 1,
     marginHorizontal: verticalScale(6),
     borderRadius: 100,
@@ -177,26 +285,13 @@ const styles = StyleSheet.create({
   itemTextStyle: {
     fontFamily: "Pretendard",
     fontSize: scale(16),
-    marginHorizontal: -5,
+
     marginBottom: verticalScale(10),
     marginTop: verticalScale(15),
 
     letterSpacing: 0,
 
     color: "#ffffff",
-  },
-
-  buttonStyle: {
-    borderColor: "#fc2a5b",
-    borderWidth: 0.8,
-
-    paddingVertical: verticalScale(18),
-
-    alignItems: "center",
-  },
-
-  buttonText: {
-    color: "#fc2a5b",
   },
 
   highlightText: {
@@ -223,5 +318,10 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 2,
     borderColor: "#373737",
+  },
+
+  deemMainColor: {
+    color: MAINCOLOR,
+    // opacity: 0.8,
   },
 });
