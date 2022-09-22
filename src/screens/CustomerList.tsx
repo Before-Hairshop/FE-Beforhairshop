@@ -1,24 +1,34 @@
 import {
+  FlatList,
   Image,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import { scale, verticalScale } from "../utils/scale";
 import GoBackIcon from "../assets/icons/goBack.svg";
 import DefaultCustomerImg from "../assets/images/customerList/default_customer_profile.png";
+import HashTag from "../components/customerList/HashTag";
 
 export default function CustomerList() {
+  const [data, setData] = useState([{}, {}, {}, {}, {}, {}, {}]);
+
   const navigation = useNavigation();
 
+  // const keyExtractor = item => item.id;
+
   const CustomerItem = () => (
-    <View>
+    <View
+      style={{
+        width: "50%",
+        alignItems: "center",
+        marginTop: verticalScale(21),
+      }}>
       <Image
         source={DefaultCustomerImg}
         style={{
@@ -36,42 +46,51 @@ export default function CustomerList() {
           borderColor: "#222222",
         }}
       />
-      <Text
-        style={{
-          fontFamily: "Pretendard",
-          fontSize: 13,
-          fontWeight: "normal",
-          fontStyle: "normal",
-          letterSpacing: 0,
-          textAlign: "left",
-          color: "#737373",
-        }}>
-        강남구 역삼동
-      </Text>
-      <Text
-        style={{
-          fontFamily: "Pretendard",
-          fontSize: 15,
-          fontWeight: "500",
-          fontStyle: "normal",
-          letterSpacing: 0,
-          textAlign: "left",
-          color: "#ffffff",
-        }}>
-        네모
-      </Text>
-      <Text
-        style={{
-          fontFamily: "Pretendard",
-          fontSize: 13,
-          fontWeight: "normal",
-          fontStyle: "italic",
-          letterSpacing: 0,
-          textAlign: "left",
-          color: "#fc2a5b",
-        }}>
-        30,000원
-      </Text>
+      <View style={{ paddingLeft: scale(6) }}>
+        <Text
+          style={{
+            fontFamily: "Pretendard",
+            fontSize: 13,
+            fontWeight: "normal",
+            fontStyle: "normal",
+            letterSpacing: 0,
+            textAlign: "left",
+            color: "#737373",
+            marginTop: verticalScale(7),
+          }}>
+          강남구 역삼동
+        </Text>
+        <Text
+          style={{
+            fontFamily: "Pretendard",
+            fontSize: 15,
+            fontWeight: "500",
+            fontStyle: "normal",
+            letterSpacing: 0,
+            textAlign: "left",
+            color: "#ffffff",
+            marginTop: verticalScale(7),
+          }}>
+          짱구
+        </Text>
+        <View style={{ flexDirection: "row", marginTop: verticalScale(7) }}>
+          <HashTag />
+          <HashTag />
+          <HashTag />
+        </View>
+        <Text
+          style={{
+            fontFamily: "Pretendard",
+            fontSize: 13,
+            fontWeight: "normal",
+            letterSpacing: 0,
+            textAlign: "left",
+            color: "#fc2a5b",
+            marginTop: verticalScale(7),
+          }}>
+          30,000원
+        </Text>
+      </View>
     </View>
   );
 
@@ -123,11 +142,17 @@ export default function CustomerList() {
           backgroundColor: "#eeeeee",
         }}
       />
-      <ScrollView style={{ flex: 1, flexDirection: "row", flexWrap: "wrap" }}>
-        <CustomerItem />
-        <CustomerItem />
-        <CustomerItem />
-      </ScrollView>
+      <FlatList
+        data={data}
+        renderItem={CustomerItem}
+        // keyExtractor={keyExtractor}
+        numColumns={2}
+        style={{
+          flexDirection: "column",
+        }}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+      />
     </View>
   );
 }
