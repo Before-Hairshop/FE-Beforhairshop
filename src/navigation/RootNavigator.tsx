@@ -22,6 +22,7 @@ import DesignerRegistration from "../screens/DesignerRegistration";
 import Review from "../screens/Review";
 
 import Answer from "../screens/Answer";
+import ChatList from "../screens/ChatList";
 
 const mainStack = createNativeStackNavigator();
 
@@ -29,7 +30,7 @@ export const RootNavigator = () => {
   return (
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="DesignerRegistration">
+      initialRouteName="Loading">
       <mainStack.Screen name="Loading" component={Loading} />
       <mainStack.Screen name="Loading2" component={Loading2} />
       <mainStack.Screen name="Main" component={Main} />
@@ -44,6 +45,7 @@ export const RootNavigator = () => {
       <mainStack.Screen name="Answer" component={Answer} />
       <mainStack.Screen name="Location" component={Location} />
       <mainStack.Screen name="CustomerList" component={CustomerList} />
+      <mainStack.Screen name="ChatList" component={ChatList} />
       <mainStack.Screen
         name="UserProfileLookup"
         component={UserProfileLookup}
