@@ -15,6 +15,7 @@ import ServiceTerms from "../screens/ServiceTerms";
 import UserCheck from "../screens/UserCheck";
 import Location from "../screens/Location";
 import Loading2 from "../screens/Loading2";
+import CustomerList from "../screens/CustomerList";
 
 import Suggestion from "../screens/Suggestion";
 import DesignerRegistration from "../screens/DesignerRegistration";
@@ -42,6 +43,7 @@ export const RootNavigator = () => {
       <mainStack.Screen name="UserProfile" component={UserProfile} />
       <mainStack.Screen name="Answer" component={Answer} />
       <mainStack.Screen name="Location" component={Location} />
+      <mainStack.Screen name="CustomerList" component={CustomerList} />
       <mainStack.Screen
         name="UserProfileLookup"
         component={UserProfileLookup}
