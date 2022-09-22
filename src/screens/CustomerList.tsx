@@ -29,67 +29,69 @@ export default function CustomerList() {
         alignItems: "center",
         marginTop: verticalScale(21),
       }}>
-      <Image
-        source={DefaultCustomerImg}
-        style={{
-          width: scale(160),
-          height: scale(160),
-          borderRadius: 10,
-          shadowColor: "rgba(0, 0, 0, 0.25)",
-          shadowOffset: {
-            width: 0,
-            height: 4,
-          },
-          shadowRadius: 10,
-          shadowOpacity: 1,
-          borderWidth: 1,
-          borderColor: "#222222",
-        }}
-      />
-      <View style={{ paddingLeft: scale(6) }}>
-        <Text
+      <View>
+        <Image
+          source={DefaultCustomerImg}
           style={{
-            fontFamily: "Pretendard",
-            fontSize: 13,
-            fontWeight: "normal",
-            fontStyle: "normal",
-            letterSpacing: 0,
-            textAlign: "left",
-            color: "#737373",
-            marginTop: verticalScale(7),
-          }}>
-          강남구 역삼동
-        </Text>
-        <Text
-          style={{
-            fontFamily: "Pretendard",
-            fontSize: 15,
-            fontWeight: "500",
-            fontStyle: "normal",
-            letterSpacing: 0,
-            textAlign: "left",
-            color: "#ffffff",
-            marginTop: verticalScale(7),
-          }}>
-          짱구
-        </Text>
-        <View style={{ flexDirection: "row", marginTop: verticalScale(7) }}>
-          <HashTag />
-          <HashTag />
-          <HashTag />
+            width: scale(160),
+            height: scale(160),
+            borderRadius: 10,
+            shadowColor: "rgba(0, 0, 0, 0.25)",
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
+            shadowRadius: 10,
+            shadowOpacity: 1,
+            borderWidth: 1,
+            borderColor: "#222222",
+          }}
+        />
+        <View style={{ marginLeft: scale(6) }}>
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontSize: 13,
+              fontWeight: "normal",
+              fontStyle: "normal",
+              letterSpacing: 0,
+              textAlign: "left",
+              color: "#737373",
+              marginTop: verticalScale(7),
+            }}>
+            강남구 역삼동
+          </Text>
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontSize: 15,
+              fontWeight: "500",
+              fontStyle: "normal",
+              letterSpacing: 0,
+              textAlign: "left",
+              color: "#ffffff",
+              marginTop: verticalScale(7),
+            }}>
+            짱구
+          </Text>
+          <View style={{ flexDirection: "row", marginTop: verticalScale(7) }}>
+            <HashTag />
+            <HashTag />
+            <HashTag />
+          </View>
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontSize: 13,
+              fontWeight: "normal",
+              letterSpacing: 0,
+              textAlign: "left",
+              color: "#fc2a5b",
+              marginTop: verticalScale(7),
+            }}>
+            30,000원
+          </Text>
         </View>
-        <Text
-          style={{
-            fontFamily: "Pretendard",
-            fontSize: 13,
-            fontWeight: "normal",
-            letterSpacing: 0,
-            textAlign: "left",
-            color: "#fc2a5b",
-            marginTop: verticalScale(7),
-          }}>
-          30,000원
-        </Text>
       </View>
     </View>
   );
