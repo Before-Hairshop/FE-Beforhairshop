@@ -8,14 +8,14 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 
-import MainNavigateButton from "../components/main/MainNavigateButton";
 import { scale, verticalScale } from "../utils/scale";
 import DefaultPerson from "../assets/images/main/default_person.png";
 import ToggleSwitch from "toggle-switch-react-native";
 // import DefaultPerson2 from "../assets/images/main/popular_thumbnail.jpeg";
 import ChatIcon from "../assets/icons/main/chat.svg";
-import ArrowIcon from "../assets/icons/main/arrow.svg";
+import RightArrowIcon from "../assets/icons/common/arrow.svg";
 import DesignerIcon from "../assets/icons/main/designer.svg";
+import BigContour from "../components/common/BigContour";
 
 const Header = () => (
   <View
@@ -356,13 +356,7 @@ export default function NewMain() {
     <View style={styles.frame}>
       <Header />
       <MainProfile />
-      <View
-        style={{
-          width: "100%",
-          height: verticalScale(10),
-          backgroundColor: "#232323",
-        }}
-      />
+      <BigContour />
       <SubProfile />
       <View style={{ alignItems: "center", marginTop: verticalScale(20) }}>
         <TouchableOpacity
@@ -429,7 +423,7 @@ export default function NewMain() {
                 alignItems: "center",
                 opacity: 0.34,
               }}>
-              <ArrowIcon />
+              <RightArrowIcon />
             </View>
           </View>
         </TouchableOpacity>
@@ -498,7 +492,7 @@ export default function NewMain() {
                 alignItems: "center",
                 opacity: 0.34,
               }}>
-              <ArrowIcon />
+              <RightArrowIcon />
             </View>
           </View>
         </TouchableOpacity>

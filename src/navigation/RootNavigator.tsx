@@ -21,6 +21,7 @@ import Review from "../screens/Review";
 import Answer from "../screens/Answer";
 import ChatList from "../screens/ChatList";
 import NewMain from "../screens/NewMain";
+import Mypage from "../screens/MyPage";
 
 const mainStack = createNativeStackNavigator();
 
@@ -45,6 +46,9 @@ export const RootNavigator = () => {
       <mainStack.Screen name="Location" component={Location} />
       <mainStack.Screen name="CustomerList" component={CustomerList} />
       <mainStack.Screen name="ChatList" component={ChatList} />
+      <mainStack.Screen name="Suggestion" component={Suggestion} />
+      <mainStack.Screen name="Review" component={Review} />
+      <mainStack.Screen name="Mypage" component={Mypage} />
       <mainStack.Screen
         name="UserProfileLookup"
         component={UserProfileLookup}
@@ -53,8 +57,6 @@ export const RootNavigator = () => {
         name="DesignerRegistration"
         component={DesignerRegistration}
       />
-      <mainStack.Screen name="Suggestion" component={Suggestion} />
-      <mainStack.Screen name="Review" component={Review} />
     </mainStack.Navigator>
   );
 };
