@@ -224,7 +224,8 @@ export default function Loading() {
                     width: "30%",
                     alignItems: "center",
                     margin: verticalScale(10),
-                  }}>
+                  }}
+                  key={item}>
                   <ProfileUploadButton
                     index={index}
                     toChangeArray={profileImage}
@@ -305,7 +306,7 @@ export default function Loading() {
               alignItems: "center",
             }}>
             {hairTag.map((item, index) => {
-              return <HairTagButton index={index}></HairTagButton>;
+              return <HairTagButton index={index} key={item}></HairTagButton>;
             })}
           </ScrollView>
         </View>
@@ -387,7 +388,9 @@ export default function Loading() {
           {menuInfo.map((item, index) => {
             return (
               <>
-                <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+                <View
+                  style={{ flexDirection: "row", alignItems: "flex-end" }}
+                  key={item}>
                   <View style={{ flex: 1, marginRight: scale(10) }}>
                     <Text style={styles.inputText}>
                       {menuInfo[index].category}
@@ -528,7 +531,9 @@ export default function Loading() {
           {schedule.map((item, index) => {
             return (
               <>
-                <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+                <View
+                  style={{ flexDirection: "row", alignItems: "flex-end" }}
+                  key={item}>
                   <View style={{ flex: 1, marginRight: scale(10) }}>
                     <Text style={styles.inputText}>
                       {workingdayDict[schedule[index].selectedWeek]}
