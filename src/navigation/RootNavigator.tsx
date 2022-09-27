@@ -22,6 +22,7 @@ import Answer from "../screens/Answer";
 import ChatList from "../screens/ChatList";
 import NewMain from "../screens/NewMain";
 import Mypage from "../screens/MyPage";
+import RecommendList from "../screens/RecommendList";
 
 const mainStack = createNativeStackNavigator();
 
@@ -49,6 +50,7 @@ export const RootNavigator = () => {
       <mainStack.Screen name="Suggestion" component={Suggestion} />
       <mainStack.Screen name="Review" component={Review} />
       <mainStack.Screen name="Mypage" component={Mypage} />
+      <mainStack.Screen name="RecommendList" component={RecommendList} />
       <mainStack.Screen
         name="UserProfileLookup"
         component={UserProfileLookup}
