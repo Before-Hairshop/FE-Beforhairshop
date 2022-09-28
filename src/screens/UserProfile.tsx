@@ -22,6 +22,7 @@ import ProfileUploadButton from "../components/common/ProfileUploadButton";
 import WantedStyleUploadButton from "../components/common/WantedStyleUploadButton";
 import WantedStyleButton from "../components/common/WantedStyleButton";
 import { Platform } from "react-native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const numHairStatus = 3;
 const numHairTendency = 5;
@@ -62,21 +63,22 @@ const HeaderContents = () => {
 
 export default function UserProfileLookup() {
   const [profileImage, setProfileImage] = useState(["", "", ""]);
-
   const [wantHairImage, setWantHairImage] = useState([]);
-
   const [wantedStyle, setWantedStyle] = useState("");
   const [wantedStyleDescription, setWantedStyleDescription] = useState("");
   const [wantedStylingCost, setWantedStylingCost] = useState(0);
-
   const [hairStatusIndex, setHairStatusIndex] = useState(-1);
   const [hairTendencyIndex, setHairTendencyIndex] = useState(-1);
-
   const [numWantedStyle, setNumWantedStyle] = useState(0);
+  const [datePickerIsVisible, setDatePickerIsVisible] = useState(false);
+  const [timePickerIsVisible, setTimePickerIsVisible] = useState(false);
+  const [stylingDate, setStylingDate] = useState(new Date());
+  const [stylingTime, setStylingTime] = useState(new Date());
+  const [phoneNumber, setPhoneNumber] = useState(undefined);
 
   const hairStatus = ["많이 상했어요", "보통이에요", "매우 건강해요"];
   const hairTendency = ["심한 곱슬", "곱슬", "반곱슬", "반직모", "직모"];
-  const profileExplanation = ["정면 (필수)", "측면 (선택)", "뒷면 (선택)"];
+  const profileExplanation = ["정면 (필수)", "측면 (선택)", "후면 (선택)"];
 
   const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
   useEffect(() => {
@@ -221,6 +223,99 @@ export default function UserProfileLookup() {
               style={styles.highlightText}></TextInput>
           </View>
         </View>
+        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+          <Text style={styles.itemTextStyle}>시술 일정</Text>
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={{
+                width: "30%",
+                height: verticalScale(40),
+                justifyContent: "center",
+                borderBottomColor: "#373737",
+                borderBottomWidth: 1,
+              }}
+              onPress={() => {
+                setDatePickerIsVisible(true);
+              }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: scale(16),
+                  fontWeight: "normal",
+                  fontStyle: "normal",
+                  textAlign: "left",
+                  color: "#555555",
+                }}>
+                {stylingDate != undefined
+                  ? `${stylingDate.getFullYear()}. ${stylingDate.getMonth()}. ${stylingDate.getDate()}`
+                  : "날짜"}
+              </Text>
+              <DateTimePickerModal
+                isVisible={datePickerIsVisible}
+                date={stylingDate}
+                mode={"date"}
+                onCancel={() => {
+                  setDatePickerIsVisible(false);
+                }}
+                onConfirm={val => {
+                  setStylingDate(val);
+                  setDatePickerIsVisible(false);
+                  console.log(val);
+                }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                width: "30%",
+                height: verticalScale(40),
+                justifyContent: "center",
+                borderBottomColor: "#373737",
+                borderBottomWidth: 1,
+              }}
+              onPress={() => {
+                setTimePickerIsVisible(true);
+              }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: scale(16),
+                  fontWeight: "normal",
+                  fontStyle: "normal",
+                  textAlign: "left",
+                  color: "#555555",
+                }}>
+                {stylingTime != undefined
+                  ? `${stylingTime.getHours()}시 ${stylingTime.getMinutes()}분`
+                  : "날짜"}
+              </Text>
+              <DateTimePickerModal
+                isVisible={timePickerIsVisible}
+                date={stylingTime}
+                mode={"time"}
+                onCancel={() => {
+                  setTimePickerIsVisible(false);
+                }}
+                onConfirm={val => {
+                  setStylingTime(val);
+                  setTimePickerIsVisible(false);
+                  console.log(val);
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+          <Text style={styles.itemTextStyle}>전화번호</Text>
+
+          <View style={styles.userTextUnderline}>
+            <TextInput
+              onChangeText={num => setPhoneNumber(num)}
+              placeholder="예) 01012345678"
+              placeholderTextColor={MAINCOLOR}
+              value={phoneNumber}
+              style={styles.highlightText}></TextInput>
+          </View>
+        </View>
       </ScrollView>
     </View>
   );
@@ -282,7 +377,6 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     marginHorizontal: verticalScale(6),
     borderRadius: 10,
-
     overflow: "hidden",
     borderWidth: 2,
     borderColor: "#373737",
