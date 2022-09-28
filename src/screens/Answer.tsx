@@ -215,7 +215,6 @@ export default function Answer() {
         showsHorizontalScrollIndicator={false}>
         <View style={{ marginTop: 12, alignItems: "flex-start" }}>
           <Text style={styles.itemTextStyle}>인사말 </Text>
-
           <View style={styles.userTextUnderline}>
             <TextInput
               placeholder="인사말을 작성해주세요."
@@ -226,7 +225,17 @@ export default function Answer() {
               }}
               style={styles.highlightText}></TextInput>
           </View>
-
+          <Text style={styles.itemTextStyle}>시술 일정</Text>
+          <View style={styles.userTextUnderline}>
+            <TextInput
+              placeholder="2022년 5월 30일 PM 1:00"
+              placeholderTextColor="#555555"
+              defaultValue={greetings}
+              onEndEditing={e => {
+                setGreetings(e.nativeEvent.text);
+              }}
+              style={styles.highlightText}></TextInput>
+          </View>
           <View style={{ width: "100%" }}>
             <>
               {suggestionList.map((item, index) => (
@@ -265,8 +274,7 @@ export default function Answer() {
           justifyContent: "center",
           backgroundColor: "#fc2a5b",
 
-          marginTop: verticalScale(25),
-          marginBottom: verticalScale(50),
+          marginBottom: verticalScale(30),
           height: verticalScale(55),
           borderRadius: 10,
         }}
