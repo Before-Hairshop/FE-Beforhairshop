@@ -2,11 +2,9 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   Animated,
   TouchableOpacity,
   Modal,
-  Platform,
 } from "react-native";
 import React, { createRef, useEffect, useRef } from "react";
 import { useState } from "react";
@@ -17,6 +15,10 @@ import CookieManager from "@react-native-cookies/cookies";
 import { scale, verticalScale } from "../utils/scale";
 import { getMemberInfo } from "../api/getMemberInfo";
 import { storeData } from "../utils/asyncStorage";
+import GoogleLoginIcon from "../components/loading/GoogleLoginIcon";
+import KakaoLoginIcon from "../components/loading/KakaoLoginIcon";
+import NaverLoginIcon from "../components/loading/NaverLoginIcon";
+import AppleLoginIcon from "../components/loading/AppleLoginIcon";
 
 const socialLoginURI = {
   google: "http://localhost:8080/oauth2/authorization/google",
@@ -27,7 +29,7 @@ const socialLoginURI = {
 
 const userAgent = "useragent";
 
-const Logo = require("../assets/images/Logo.png");
+// const Logo = require("../assets/images/Logo.png");
 
 const useDidMountEffect = (func, deps) => {
   const didMount = useRef(false);
@@ -71,7 +73,8 @@ export default function Loading() {
       Animated.timing(opacity, {
         toValue: 1,
         duration: 1000,
-      }).start(() => {});
+        useNativeDriver: false,
+      }).start();
     }
   }, [isUserLoggedIn]);
 
@@ -90,7 +93,7 @@ export default function Loading() {
   const callAPI = async () => {
     try {
       const result = await getMemberInfo();
-      console.log(result);
+      console.log(result.status);
       if (result.data.result) {
         setIsUserLoggedIn(true);
         // setIsUserLoggedIn(false);
@@ -156,54 +159,16 @@ export default function Loading() {
           </Text>
           <View style={{ flexDirection: "row", margin: verticalScale(23) }}>
             <TouchableOpacity onPress={() => signIn("google")}>
-              <View
-                style={[
-                  styles.iconStyle,
-                  {
-                    backgroundColor: "#ffffff",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: scale(60),
-                  },
-                ]}>
-                <Image
-                  source={require("../assets/icons/google_login.png")}
-                  style={{
-                    width: scale(30),
-                    height: scale(30),
-                  }}></Image>
-              </View>
+              <GoogleLoginIcon />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => signIn("kakao")}>
-              <Image
-                source={require("../assets/icons/kakao_login.png")}
-                style={styles.iconStyle}></Image>
+              <KakaoLoginIcon />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => signIn("naver")}>
-              <Image
-                source={require("../assets/icons/naver_login.png")}
-                style={styles.iconStyle}
-              />
+              <NaverLoginIcon />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => signIn("")}>
-              <View
-                style={[
-                  styles.iconStyle,
-                  {
-                    backgroundColor: "#ffffff",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: scale(60),
-                  },
-                ]}>
-                <Image
-                  source={require("../assets/icons/apple_login.png")}
-                  style={{
-                    width: scale(30),
-                    height: scale(30),
-                    top: verticalScale(-2),
-                  }}></Image>
-              </View>
+            <TouchableOpacity onPress={() => signIn("logout")}>
+              <AppleLoginIcon />
             </TouchableOpacity>
           </View>
         </Animated.View>
@@ -222,9 +187,6 @@ export default function Loading() {
           }}
           userAgent={userAgent}
           onNavigationStateChange={onNavigationStateChange} // WebView 로딩이 시작되거나 끝나면 호출해주는 것
-          onMessage={evt => {
-            console.log("받은 데이터: " + evt);
-          }}
           sharedCookiesEnabled={true}
           thirdPartyCookiesEnabled={true}
           // useWebKit={true}
