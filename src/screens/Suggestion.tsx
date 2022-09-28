@@ -2,21 +2,18 @@ import {
   StyleSheet,
   Text,
   View,
-  Platform,
   Image,
   ScrollView,
-  FlatList,
   TouchableOpacity,
 } from "react-native";
-import GoBackIcon from "../assets/icons/goBack.svg";
 import React, { useState, useEffect } from "react";
-
-import { scale, verticalScale } from "../utils/scale";
-import Header from "../components/Header";
-import Icon from "react-native-vector-icons/Ionicons";
-
 import { useNavigation } from "@react-navigation/native";
 import HighlightText from "react-native-highlight-underline-text";
+
+import { scale, verticalScale } from "../utils/scale";
+import SimpleHeader from "../components/common/SimpleHeader";
+import Contour from "../components/common/Contour";
+import DefaultImg from "../assets/images/default_designer_profile.png";
 
 const MAINCOLOR = "#fc2a5b";
 const GRAYCOLOR = "#555555";
@@ -51,31 +48,6 @@ export default function ProfileSelection(props) {
       "반갑습니다. 원하시는 헤어 커트는 저희가 제일 잘해요>...어쩌구어쩌구 방문하세요",
     );
   });
-  const HeaderContents = () => {
-    return (
-      <>
-        <View style={{ flex: 1 }}>
-          <GoBackIcon />
-        </View>
-        <View
-          style={{ flex: 2, justifyContent: "center", alignItems: "center" }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard-Bold",
-              fontSize: scale(18),
-              fontWeight: "bold",
-              fontStyle: "normal",
-              letterSpacing: 0.07,
-              textAlign: "left",
-              color: "#ffffff",
-            }}>
-            헤어 디자이너 {designerName}
-          </Text>
-        </View>
-        <View style={{ flex: 1, alignItems: "flex-end" }}></View>
-      </>
-    );
-  };
 
   const UnderLineContent = ({ value, fontSize }) => (
     <HighlightText
@@ -95,162 +67,259 @@ export default function ProfileSelection(props) {
     />
   );
 
-  const SuggestionItem = ({ index, item }) => {
-    return (
-      <>
-        <UnderLineContent
-          value={`추천 스타일 No. ${index + 1}`}
-          fontSize={scale(22)}></UnderLineContent>
-        <TouchableOpacity
+  return (
+    <View style={styles.frame}>
+      <SimpleHeader title="스타일 추천서" goBack="Main" />
+      <Contour />
+      <ScrollView contentContainerStyle={{ alignItems: "center" }}>
+        <View
           style={{
-            borderColor: MAINCOLOR,
-            borderWidth: 1,
-            borderRadius: scale(16),
-            paddingHorizontal: scale(10),
-            paddingVertical: verticalScale(3),
-            marginTop: verticalScale(18),
-            alignSelf: "baseline",
-          }}
-          disabled>
-          <View style={{}}>
-            <Text style={{ color: MAINCOLOR }}>
-              {suggestionList[index].hairstyleName}
+            width: "88.8%",
+            paddingTop: verticalScale(22),
+            paddingBottom: verticalScale(30),
+          }}>
+          <View>
+            <Text
+              style={{
+                fontFamily: "Pretendard",
+                fontSize: 20,
+                fontWeight: "normal",
+                fontStyle: "normal",
+                lineHeight: 30,
+                textAlign: "left",
+                color: "#ffffff",
+              }}>
+              안녕하세요
+            </Text>
+            <View style={{ flexDirection: "row" }}>
+              <UnderLineContent
+                value={`헤어디자이너 ${designerName} `}
+                fontSize={scale(20)}
+              />
+              <Text>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: scale(20),
+                    fontWeight: "normal",
+                    fontStyle: "normal",
+                    lineHeight: 30,
+                    textAlign: "left",
+                    color: "#ffffff",
+                  }}>
+                  입니다.
+                </Text>
+              </Text>
+            </View>
+            <Text
+              style={{
+                marginTop: verticalScale(15),
+                fontFamily: "Pretendard",
+                fontSize: scale(14),
+                fontWeight: "normal",
+                fontStyle: "normal",
+                lineHeight: 20,
+                textAlign: "left",
+                color: "#eeeeee",
+              }}>
+              반갑습니다. 원하시는 헤어 커트는 저희가 제일 잘해요. 방문하시면
+              친절하게 시술 해드립니다.반갑습니다. 원하시는 헤어 커트는 저희가
+              제일 잘해요. 방문하시면 친절하게 시술 해드립니다.반갑습니다.
+              원하시는 헤어 커트는 저희가 제일 잘해요. 방문하시면 친절하게 시술
+              해드립니다.반갑습니다. 원하시는 헤어 커트는 저희가 제일 잘해요.
+              방문하시면 친절하게 시술 해드립니다.반갑습니다.
             </Text>
           </View>
-        </TouchableOpacity>
-        <Text style={styles.baseText}>{suggestionList[index].reason}</Text>
-        <View
-          style={{ flexDirection: "row", marginVertical: verticalScale(17) }}>
-          {suggestionList[index].imageUrl.map((item, innerIndex) => {
-            console.log(suggestionList[index].imageUrl[innerIndex]);
-            return (
+          <View style={{ marginTop: verticalScale(18) }}>
+            <UnderLineContent value={"추천 스타일"} fontSize={scale(20)} />
+            <Text
+              style={{
+                marginTop: verticalScale(15),
+                fontFamily: "Pretendard",
+                fontSize: scale(17),
+                fontWeight: "normal",
+                fontStyle: "normal",
+                lineHeight: 22,
+                textAlign: "left",
+                color: "#eeeeee",
+              }}>
+              "포마드"
+            </Text>
+            <Text
+              style={{
+                marginTop: verticalScale(7),
+                fontFamily: "Pretendard",
+                fontSize: scale(14),
+                fontWeight: "normal",
+                fontStyle: "normal",
+                lineHeight: 20,
+                textAlign: "left",
+                color: "#eeeeee",
+              }}>
+              고객님의 헤어를 분석한 결과, 포마드 헤어스타일이 잘 어울릴 것
+              같아요! 제가 시술한 헤어스타일들을 보시고, 괜찮으시면 저에게
+              연락주세요. 감사합니다.고객님의 헤어를 분석한 결과, 포마드
+              헤어스타일이 잘 어울릴 것 같아요! 제가 시술한 헤어스타일들을
+              보시고, 괜찮으시면 저에게 연락주세요. 감사합니다.고객님의 헤어를
+              분석한 결과, 포마드 헤어스타일이 잘 어울릴 것 같아요! 제가 시술한
+              헤어스타일들을 보시고, 괜찮으시면 저에게 연락주세요. 감사합니다.
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                marginTop: verticalScale(10),
+              }}>
               <Image
-                source={{ uri: suggestionList[index].imageUrl[innerIndex] }}
+                source={DefaultImg}
                 style={{
                   width: "30%",
                   aspectRatio: 1,
-                  marginHorizontal: verticalScale(6),
+                  marginHorizontal: verticalScale(4),
                   borderRadius: 10,
-
                   overflow: "hidden",
-                  borderWidth: 2,
+                  borderWidth: 1,
                   borderColor: "#373737",
                 }}
               />
-            );
-          })}
-        </View>
-        <Text style={styles.baseText}>
-          가격:{" "}
-          <Text style={{ color: MAINCOLOR }}>
-            {suggestionList[index].price} 원
-          </Text>
-        </Text>
-      </>
-    );
-  };
-
-  return (
-    <View style={styles.mainView}>
-      <Header contents={<HeaderContents></HeaderContents>}></Header>
-
-      <View style={{ flex: 9 }}>
-        <ScrollView>
-          <View style={{ flex: 1, paddingTop: 15 }}>
-            <View style={{ flex: 6 }}>
-              <Text
+              <Image
+                source={DefaultImg}
                 style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(22),
-                  color: "white",
-                }}>
-                안녕하세요?
-              </Text>
-              <View style={{ flexDirection: "row" }}>
-                <UnderLineContent
-                  value={`헤어디자이너 ${designerName}`}
-                  fontSize={scale(22)}></UnderLineContent>
-                <Text>
-                  <Text
-                    style={{
-                      fontFamily: "Pretendard-Regular",
-                      fontSize: scale(22),
-                      color: "white",
-                    }}>
-                    입니다.
-                  </Text>
-                </Text>
-              </View>
-
-              <Text style={styles.baseText}>{greeting}</Text>
-            </View>
-
-            {suggestionList.map((item, index) => {
-              return <SuggestionItem index={index}></SuggestionItem>;
-            })}
-          </View>
-        </ScrollView>
-      </View>
-
-      <View style={{ flex: 2 }}>
-        <TouchableOpacity
-          style={{
-            width: "100%",
-            height: verticalScale(55),
-            backgroundColor: "#fc2a5b",
-            borderRadius: 10,
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: verticalScale(30.5),
-          }}
-          onPress={() => {
-            navigation.navigate("DesignerProfile");
-          }}>
-          <View style={{ flexDirection: "row" }}>
-            <View style={{ flex: 1 }}></View>
-            <View
-              style={{
-                flex: 10,
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-              <Text
+                  width: "30%",
+                  aspectRatio: 1,
+                  marginHorizontal: verticalScale(4),
+                  borderRadius: 10,
+                  overflow: "hidden",
+                  borderWidth: 1,
+                  borderColor: "#373737",
+                }}
+              />
+              <Image
+                source={DefaultImg}
                 style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 16,
-                  fontWeight: "600",
-                  fontStyle: "normal",
-                  letterSpacing: -0.16,
-                  color: "#ffffff",
-                }}>
-                디자이너 프로필 보러가기
-              </Text>
-            </View>
-            <View
-              style={{
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
-              <Icon
-                name="chevron-forward-outline"
-                size={verticalScale(30)}
-                color="#fc7292"
+                  width: "30%",
+                  aspectRatio: 1,
+                  marginHorizontal: verticalScale(4),
+                  borderRadius: 10,
+                  overflow: "hidden",
+                  borderWidth: 1,
+                  borderColor: "#373737",
+                }}
               />
             </View>
           </View>
-        </TouchableOpacity>
+          <View style={{ marginTop: verticalScale(18) }}>
+            <UnderLineContent value={"시술 날짜"} fontSize={scale(20)} />
+            <Text
+              style={{
+                marginTop: verticalScale(15),
+                fontFamily: "Pretendard",
+                fontSize: scale(17),
+                fontWeight: "normal",
+                fontStyle: "normal",
+                lineHeight: 22,
+                textAlign: "left",
+                color: "#eeeeee",
+              }}>
+              2022. 09. 26 월요일 PM 12:00
+            </Text>
+          </View>
+          <View style={{ marginTop: verticalScale(18) }}>
+            <UnderLineContent value={"가격"} fontSize={scale(20)} />
+            <Text
+              style={{
+                marginTop: verticalScale(15),
+                fontFamily: "Pretendard",
+                fontSize: scale(17),
+                fontWeight: "normal",
+                fontStyle: "normal",
+                lineHeight: 22,
+                textAlign: "left",
+                color: "#eeeeee",
+              }}>
+              150,000원
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+        <View
+          style={{
+            width: scale(156),
+            height: verticalScale(60),
+            borderRadius: 15,
+            backgroundColor: "#00722d",
+            shadowColor: "rgba(0, 0, 0, 0.25)",
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
+            shadowRadius: 10,
+            shadowOpacity: 1,
+            borderStyle: "solid",
+            borderWidth: 1,
+            borderColor: "rgba(255, 255, 255, 0)",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontSize: scale(18),
+              fontWeight: "normal",
+              letterSpacing: 0,
+              textAlign: "left",
+              color: "#ffffff",
+            }}>
+            매칭 수락
+          </Text>
+        </View>
+        <View
+          style={{
+            width: scale(156),
+            height: verticalScale(60),
+            borderRadius: 15,
+            backgroundColor: "#a02323",
+            shadowColor: "rgba(0, 0, 0, 0.25)",
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
+            shadowRadius: 10,
+            shadowOpacity: 1,
+            borderStyle: "solid",
+            borderWidth: 1,
+            borderColor: "rgba(255, 255, 255, 0)",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontSize: scale(18),
+              fontWeight: "normal",
+              letterSpacing: 0,
+              textAlign: "left",
+              color: "#ffffff",
+            }}>
+            매칭 거절
+          </Text>
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  mainView: {
+  frame: {
     flex: 1,
-    paddingHorizontal: verticalScale(20),
-
     backgroundColor: "#191919",
+    shadowColor: "rgba(0, 0, 0, 0.25)",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowRadius: 4,
+    shadowOpacity: 1,
   },
 
   title: {
