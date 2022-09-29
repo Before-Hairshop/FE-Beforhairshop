@@ -13,7 +13,6 @@ import Loading from "../screens/Loading";
 import ServiceTerms from "../screens/ServiceTerms";
 import UserCheck from "../screens/UserCheck";
 import Location from "../screens/Location";
-import Loading2 from "../screens/Loading2";
 import CustomerList from "../screens/CustomerList";
 import Suggestion from "../screens/Suggestion";
 import DesignerRegistration from "../screens/DesignerRegistration";
@@ -30,9 +29,8 @@ export const RootNavigator = () => {
   return (
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="Answer">
+      initialRouteName="Loading">
       <mainStack.Screen name="Loading" component={Loading} />
-      <mainStack.Screen name="Loading2" component={Loading2} />
       <mainStack.Screen name="Main" component={Main} />
       <mainStack.Screen name="NewMain" component={NewMain} />
       <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />
