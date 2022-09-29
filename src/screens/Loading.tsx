@@ -29,33 +29,52 @@ const socialLoginURI = {
 
 const userAgent = "useragent";
 
-// const Logo = require("../assets/images/Logo.png");
-
-const useDidMountEffect = (func, deps) => {
-  const didMount = useRef(false);
-
-  useEffect(() => {
-    if (didMount.current) func();
-    else didMount.current = true;
-  }, deps);
-};
-
 const wait = (timeToDelay: number) => {
   return new Promise(resolve => setTimeout(resolve, timeToDelay));
 };
 
+const opacity = new Animated.Value(0);
+
 export default function Loading() {
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState("");
   const [socialLoginModalVisible, setSocialLoginModalVisible] = useState(false);
   const [loginType, setLoginType] = useState("");
 
   const navigation = useNavigation();
   const webViewRef = createRef<WebView>();
-  const opacity = new Animated.Value(0);
 
   const signIn = async (type: string) => {
     await setLoginType(type);
     setSocialLoginModalVisible(true);
+  };
+
+  const onNavigationStateChange = async (
+    navigationState: WebViewNavigation,
+  ) => {
+    // console.log(navigationState);
+    if (navigationState.url == "http://localhost:8080/") {
+      const cookies = await CookieManager.get("http://localhost:8080");
+      await storeData(cookies.JSESSIONID.value);
+      setSocialLoginModalVisible(false);
+      navigation.navigate("ServiceTerms");
+    }
+  };
+
+  const callAPI = async () => {
+    try {
+      const result = await getMemberInfo();
+      console.log(result.data);
+      if (result.data.result) {
+        navigation.navigate("NewMain");
+      } else {
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: false,
+        }).start();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -66,97 +85,32 @@ export default function Loading() {
     waitForSecond();
   }, []);
 
-  useDidMountEffect(() => {
-    if (isUserLoggedIn) {
-      navigation.navigate("Main");
-    } else {
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: false,
-      }).start();
-    }
-  }, [isUserLoggedIn]);
-
-  const onNavigationStateChange = async (
-    navigationState: WebViewNavigation,
-  ) => {
-    // console.log(navigationState);
-    if (navigationState.url == "http://localhost:8080/") {
-      const cookies = await CookieManager.get("http://localhost:8080");
-      storeData(cookies.JSESSIONID.value);
-      setSocialLoginModalVisible(false);
-      setIsUserLoggedIn(true);
-    }
-  };
-
-  const callAPI = async () => {
-    try {
-      const result = await getMemberInfo();
-      console.log(result.status);
-      if (result.data.result) {
-        setIsUserLoggedIn(true);
-        // setIsUserLoggedIn(false);
-      } else {
-        setIsUserLoggedIn(false);
-        // setIsUserLoggedIn(true);
-      }
-    } catch (error) {
-      setIsUserLoggedIn(false);
-    }
-  };
-
   return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#191919",
-      }}>
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "flex-end",
-        }}></View>
-      <View
-        style={{
-          flex: 1.5,
-          alignItems: "center",
-          justifyContent: "center",
-        }}>
+    <View style={styles.frame}>
+      <View style={styles.container} />
+      <View style={styles.text_animation_container}>
         <Animated.View
-          style={{
-            alignItems: "center",
-            bottom: opacity.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, verticalScale(200)],
-            }),
-          }}>
+          style={[
+            styles.text_animation,
+            {
+              bottom: opacity.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, verticalScale(200)],
+              }),
+            },
+          ]}>
           <Text style={styles.mainText}>BEFORE</Text>
           <Text style={styles.mainText}>HAIRSHOP</Text>
         </Animated.View>
       </View>
-      <View style={{ flex: 1 }}>
+      <View style={styles.icon_animation_container}>
         <Animated.View
           style={{
             opacity: opacity,
-
             alignItems: "center",
             justifyContent: "center",
           }}>
-          <Text
-            style={{
-              opacity: 0.5,
-
-              fontFamily: "Pretendard",
-
-              fontSize: 12,
-              color: "#ffffff",
-            }}>
-            SNS 계정으로 간편가입하기{" "}
-          </Text>
+          <Text style={styles.subText}>SNS 계정으로 간편가입하기 </Text>
           <View style={{ flexDirection: "row", margin: verticalScale(23) }}>
             <TouchableOpacity onPress={() => signIn("google")}>
               <GoogleLoginIcon />
@@ -180,16 +134,13 @@ export default function Loading() {
         <WebView
           ref={webViewRef}
           cacheEnabled={false}
-          // originWhitelist={["*"]}
           source={{
             uri: socialLoginURI[loginType],
-            // uri: socialLoginURI["logout"],
           }}
           userAgent={userAgent}
-          onNavigationStateChange={onNavigationStateChange} // WebView 로딩이 시작되거나 끝나면 호출해주는 것
+          onNavigationStateChange={onNavigationStateChange}
           sharedCookiesEnabled={true}
           thirdPartyCookiesEnabled={true}
-          // useWebKit={true}
           javaScriptEnabled={true}
           domStorageEnabled={true}
         />
@@ -199,10 +150,36 @@ export default function Loading() {
 }
 
 const styles = StyleSheet.create({
+  frame: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#191919",
+  },
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  text_animation_container: {
+    flex: 1.5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  text_animation: {
+    alignItems: "center",
+  },
+  icon_animation_container: { flex: 1 },
   mainText: {
     fontSize: scale(32),
     color: "#ffffff",
     fontFamily: "Pretendard-Bold",
+  },
+  subText: {
+    opacity: 0.5,
+    fontFamily: "Pretendard",
+    fontSize: 12,
+    color: "#ffffff",
   },
   iconStyle: {
     marginHorizontal: verticalScale(10.5),
