@@ -64,7 +64,11 @@ export default function Loading() {
       const result = await getMemberInfo();
       console.log(result.data);
       if (result.data.result) {
-        navigation.navigate("NewMain");
+        if (result.data.status == "BAD_REQUEST") {
+          navigation.navigate("ServiceTerms");
+        } else {
+          navigation.navigate("NewMain");
+        }
       } else {
         Animated.timing(opacity, {
           toValue: 1,
