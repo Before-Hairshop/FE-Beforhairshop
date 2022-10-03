@@ -1,6 +1,6 @@
 import { authInstance } from "./api";
 
-const postMemberType = async value => {
+const patchMemberType = async value => {
   try {
     const result = await authInstance.patch(
       "/api/v1/members/validation",
@@ -15,4 +15,4 @@ const postMemberType = async value => {
   }
 };
 
-export { postMemberType };
+export { patchMemberType };
