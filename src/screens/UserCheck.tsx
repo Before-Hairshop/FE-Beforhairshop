@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { scale, verticalScale } from "../utils/scale";
 import CheckIcon from "../assets/icons/check.svg";
-import { postMemberType } from "../api/postMemberType";
+import { patchMemberType } from "../api/patchMemberType";
 
 const { width, height } = Dimensions.get("window");
 
@@ -20,13 +20,14 @@ export default function UserCheck() {
   const selectAnswer = async (value: React.SetStateAction<undefined>) => {
     await setIsDesigner(value);
     await wait(200);
-    const result = await postMemberType(value);
+    const result = await patchMemberType(value);
     console.log(result);
     if (result.data.status == "OK") {
       if (isDesigner) {
         navigation.navigate("DesignerRegistration");
       } else {
-        navigation.navigate("UserProfile");
+        // navigation.navigate("UserProfile");
+        navigation.navigate("DesignerRegistration");
       }
     }
   };
