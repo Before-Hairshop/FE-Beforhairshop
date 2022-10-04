@@ -309,21 +309,49 @@ export default function DesignerRegistration() {
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
               <Text style={styles.itemTextStyle}>주요 헤어스타일(선택) </Text>
-
-              <View style={styles.userTextUnderline}>
+              <View
+                style={[
+                  styles.userTextUnderline,
+                  { flexDirection: "row", justifyContent: "space-between" },
+                ]}>
                 <TextInput
                   placeholder="#태그"
                   placeholderTextColor={GRAYCOLOR}
                   value={tagInput}
                   onChangeText={text => setTagInput(text)}
-                  onEndEditing={e => {
+                  // onEndEditing={e => {
+                  //   let newHairTagArray = [...hairTag];
+                  //   newHairTagArray.push({ tag: e.nativeEvent.text });
+                  //   setHairTag(newHairTagArray);
+                  //   setTagInput("");
+                  // }}
+                  autoCorrect={false}
+                  style={[styles.inputText]}
+                />
+                <TouchableOpacity
+                  style={{
+                    justifyContent: "center",
+                    paddingBottom: verticalScale(10),
+                    paddingTop: verticalScale(15),
+                  }}
+                  onPress={() => {
                     let newHairTagArray = [...hairTag];
-                    newHairTagArray.push({ tag: e.nativeEvent.text });
+                    newHairTagArray.push({ tag: tagInput });
                     setHairTag(newHairTagArray);
                     setTagInput("");
-                  }}
-                  autoCorrect={false}
-                  style={[styles.inputText]}></TextInput>
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(14),
+                      fontWeight: "bold",
+                      fontStyle: "normal",
+                      textAlign: "left",
+                      color: "#999999",
+                    }}>
+                    + 추가
+                  </Text>
+                </TouchableOpacity>
               </View>
 
               <ScrollView

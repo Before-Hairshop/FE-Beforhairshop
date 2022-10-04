@@ -21,13 +21,11 @@ export default function UserCheck() {
     await setIsDesigner(value);
     await wait(200);
     const result = await patchMemberType(value);
-    console.log(result);
     if (result.data.status == "OK") {
-      if (isDesigner) {
+      if (value) {
         navigation.navigate("DesignerRegistration");
       } else {
-        // navigation.navigate("UserProfile");
-        navigation.navigate("DesignerRegistration");
+        navigation.navigate("UserProfile");
       }
     }
   };
