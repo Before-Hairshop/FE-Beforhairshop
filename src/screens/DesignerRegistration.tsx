@@ -9,6 +9,7 @@ import {
   Modal,
   Platform,
   Linking,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 
@@ -201,8 +202,8 @@ export default function DesignerRegistration() {
       zipCode != "" &&
       specificLocation != "" &&
       schedule.length != 0 &&
-      phoneNumber != ""
-      // && profileImage
+      phoneNumber != "" &&
+      profileImage[0].blob
     ) {
       // 프로필 생성
       const result = await postDesignerProfile(
@@ -232,9 +233,10 @@ export default function DesignerRegistration() {
         }),
       );
       console.log(response);
-      // if (result.data.status == "OK") {
-      //   navigation.navigate("NewMain");
-      // }
+
+      navigation.navigate("NewMain");
+    } else {
+      Alert.alert("필수 항목을 모두 작성해주세요.");
     }
   };
 

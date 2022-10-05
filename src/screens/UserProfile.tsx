@@ -1,4 +1,5 @@
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -23,6 +24,8 @@ import WantedStyleUploadButton from "../components/common/WantedStyleUploadButto
 import WantedStyleButton from "../components/common/WantedStyleButton";
 import { Platform } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import ComplexityHeader from "../components/common/ComplexityHeader";
+import { postUserProfile } from "../api/postUserProfile";
 
 const numHairStatus = 3;
 const numHairTendency = 5;
@@ -30,36 +33,6 @@ const BASEWIDTH = 375;
 const BASEPADDING = 20;
 const numberOfLines = 4;
 const MAINCOLOR = "#fc2a5b";
-
-const HeaderContents = () => {
-  const navigation = useNavigation();
-  return (
-    <>
-      <View style={{ flex: 1 }}>
-        <GoBackIcon />
-      </View>
-      <View style={{ flex: 2, justifyContent: "center", alignItems: "center" }}>
-        <Text
-          style={{
-            fontFamily: "Pretendard-Bold",
-            fontSize: verticalScale(18),
-            fontWeight: "bold",
-            fontStyle: "normal",
-            letterSpacing: 0.07,
-            textAlign: "left",
-            color: "#ffffff",
-          }}>
-          프로필
-        </Text>
-      </View>
-      <View style={{ flex: 1, alignItems: "flex-end" }}>
-        <TouchableOpacity onPress={() => navigation.navigate("Main")}>
-          <Text style={{ color: MAINCOLOR }}>저장</Text>
-        </TouchableOpacity>
-      </View>
-    </>
-  );
-};
 
 export default function UserProfileLookup() {
   const [profileImage, setProfileImage] = useState(["", "", ""]);
@@ -80,240 +53,302 @@ export default function UserProfileLookup() {
   const hairTendency = ["심한 곱슬", "곱슬", "반곱슬", "반직모", "직모"];
   const profileExplanation = ["정면 (필수)", "측면 (선택)", "후면 (선택)"];
 
+  const navigation = useNavigation();
   const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
+
   useEffect(() => {
     setProfileImage([baseImageURL, baseImageURL, baseImageURL]);
-
     setWantHairImage([]);
   }, []);
 
-  return (
-    <View style={styles.mainView}>
-      <Header contents={<HeaderContents></HeaderContents>}></Header>
+  const saveProfile = async () => {
+    if (hairStatusIndex != -1) {
+      // 프로필 생성
+      const result = await postUserProfile();
+      console.log(result);
+      // presigned url
+      // const url = await postDesignerProfileImg();
+      // console.log(url);
+      // const response = await fetch(
+      //   new Request(url, {
+      //     method: "PUT",
+      //     body: profileImage[0].blob,
+      //     // headers: new Headers({
+      //     //   "Content-Type": "/image/jpg",
+      //     // }),
+      //   }),
+      // );
+      // console.log(response);
+      navigation.navigate("Location");
+    } else {
+      Alert.alert("필수 항목을 모두 작성해주세요.");
+    }
+  };
 
+  return (
+    <View style={styles.frame}>
+      <ComplexityHeader
+        title="프로필"
+        goBack="Main"
+        button={
+          <TouchableOpacity
+            onPress={() => {
+              saveProfile();
+            }}>
+            <Text
+              style={{
+                fontFamily: "Pretendard",
+                fontSize: scale(16),
+                fontWeight: "500",
+                fontStyle: "normal",
+                letterSpacing: -0.5,
+                textAlign: "left",
+                color: "#fc2a5b",
+              }}>
+              저장
+            </Text>
+          </TouchableOpacity>
+        }
+      />
       <ScrollView>
-        <View style={{ alignItems: "center", margin: verticalScale(10) }}>
-          <View style={{ flexDirection: "row" }}>
-            {profileImage.map((item, index) => {
-              return (
-                <View
+        <View
+          style={{ alignItems: "center", paddingBottom: verticalScale(120) }}>
+          <View style={{ width: "88.9%" }}>
+            <View style={{ alignItems: "center" }}>
+              <View style={{ flexDirection: "row" }}>
+                {profileImage.map((item, index) => {
+                  return (
+                    <View
+                      style={{
+                        width: "30%",
+                        alignItems: "center",
+                        margin: verticalScale(10),
+                      }}>
+                      <ProfileUploadButton
+                        index={index}
+                        toChangeArray={profileImage}
+                        toChangeFunction={setProfileImage}
+                        style={styles.userProfileImage}></ProfileUploadButton>
+
+                      <Text
+                        style={{
+                          color: "white",
+                          paddingTop: verticalScale(10),
+                        }}>
+                        {profileExplanation[index]}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+
+            <View style={{ marginTop: 12 }}>
+              <Text style={[styles.itemTextStyle]}>고객님의 모발 상태</Text>
+              <View style={{ flexDirection: "row" }}>
+                {hairStatus.map((item, index) => {
+                  return (
+                    <HairButton
+                      width={scale(
+                        (BASEWIDTH - BASEPADDING * 2) / numHairStatus,
+                      )}
+                      index={index}
+                      content={hairStatus[index]}
+                      isActive={index == hairStatusIndex}
+                      onPressActive={() => setHairStatusIndex(index)}
+                      onPressDeactive={() =>
+                        setHairStatusIndex(-1)
+                      }></HairButton>
+                  );
+                })}
+              </View>
+            </View>
+
+            <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+              <Text style={styles.itemTextStyle}>머리 성향</Text>
+
+              <View style={{ flexDirection: "row" }}>
+                {hairTendency.map((item, index) => {
+                  return (
+                    <HairButton
+                      width={scale(
+                        (BASEWIDTH - BASEPADDING * 2) / numHairTendency,
+                      )}
+                      index={index}
+                      content={hairTendency[index]}
+                      isActive={index == hairTendencyIndex}
+                      onPressActive={() => setHairTendencyIndex(index)}
+                      onPressDeactive={() =>
+                        setHairTendencyIndex(-1)
+                      }></HairButton>
+                  );
+                })}
+              </View>
+            </View>
+
+            <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+              <Text style={styles.itemTextStyle}>원하는 스타일 </Text>
+
+              <View style={styles.userTextUnderline}>
+                <TextInput
+                  onChangeText={text => setWantedStyle(text)}
+                  placeholder="예) 투블럭"
+                  placeholderTextColor={MAINCOLOR}
+                  value={wantedStyle}
+                  style={styles.highlightText}></TextInput>
+              </View>
+            </View>
+
+            <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+              <View
+                style={{ flexDirection: "row", marginTop: verticalScale(12) }}>
+                {wantHairImage.map((item, index) => {
+                  return (
+                    <WantedStyleButton
+                      index={index}
+                      array={wantHairImage}
+                      setArray={setWantHairImage}
+                      style={styles.wantStyleImage}></WantedStyleButton>
+                  );
+                })}
+
+                {wantHairImage.length < 3 ? (
+                  <WantedStyleUploadButton
+                    style={styles.wantStyleImage}
+                    array={wantHairImage}
+                    setArray={setWantHairImage}></WantedStyleUploadButton>
+                ) : null}
+              </View>
+            </View>
+
+            <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+              <Text style={styles.itemTextStyle}>
+                원하는 헤어스타일을 자세히 설명해주세요.
+              </Text>
+
+              <View style={styles.userTextUnderline}>
+                <TextInput
+                  value={wantedStyleDescription}
+                  onChangeText={text => setWantedStyleDescription(text)}
+                  placeholder="자유롭게 작성해주세요."
+                  placeholderTextColor={MAINCOLOR}
+                  multiline
+                  numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
+                  minHeight={
+                    Platform.OS === "ios" && numberOfLines
+                      ? 20 * numberOfLines
+                      : null
+                  }
+                  style={styles.highlightText}></TextInput>
+              </View>
+            </View>
+
+            <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+              <Text style={styles.itemTextStyle}> 원하는 스타일링 비용 </Text>
+
+              <View style={styles.userTextUnderline}>
+                <TextInput
+                  value={wantedStylingCost}
+                  onChangeText={text => setWantedStylingCost(text)}
+                  placeholder="예) 30000"
+                  placeholderTextColor={MAINCOLOR}
+                  keyboardType="number-pad"
+                  style={styles.highlightText}></TextInput>
+              </View>
+            </View>
+            <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+              <Text style={styles.itemTextStyle}>시술 일정</Text>
+              <View style={{ flexDirection: "row" }}>
+                <TouchableOpacity
                   style={{
                     width: "30%",
-                    alignItems: "center",
-                    margin: verticalScale(10),
+                    height: verticalScale(40),
+                    justifyContent: "center",
+                    borderBottomColor: "#373737",
+                    borderBottomWidth: 1,
+                  }}
+                  onPress={() => {
+                    setDatePickerIsVisible(true);
                   }}>
-                  <ProfileUploadButton
-                    index={index}
-                    toChangeArray={profileImage}
-                    toChangeFunction={setProfileImage}
-                    style={styles.userProfileImage}></ProfileUploadButton>
-
                   <Text
-                    style={{ color: "white", paddingTop: verticalScale(10) }}>
-                    {profileExplanation[index]}
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(16),
+                      fontWeight: "normal",
+                      fontStyle: "normal",
+                      textAlign: "left",
+                      color: "#555555",
+                    }}>
+                    {stylingDate != undefined
+                      ? `${stylingDate.getFullYear()}. ${stylingDate.getMonth()}. ${stylingDate.getDate()}`
+                      : "날짜"}
                   </Text>
-                </View>
-              );
-            })}
-          </View>
-        </View>
+                  <DateTimePickerModal
+                    isVisible={datePickerIsVisible}
+                    date={stylingDate}
+                    mode={"date"}
+                    onCancel={() => {
+                      setDatePickerIsVisible(false);
+                    }}
+                    onConfirm={val => {
+                      setStylingDate(val);
+                      setDatePickerIsVisible(false);
+                      console.log(val);
+                    }}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    width: "30%",
+                    height: verticalScale(40),
+                    justifyContent: "center",
+                    borderBottomColor: "#373737",
+                    borderBottomWidth: 1,
+                  }}
+                  onPress={() => {
+                    setTimePickerIsVisible(true);
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(16),
+                      fontWeight: "normal",
+                      fontStyle: "normal",
+                      textAlign: "left",
+                      color: "#555555",
+                    }}>
+                    {stylingTime != undefined
+                      ? `${stylingTime.getHours()}시 ${stylingTime.getMinutes()}분`
+                      : "날짜"}
+                  </Text>
+                  <DateTimePickerModal
+                    isVisible={timePickerIsVisible}
+                    date={stylingTime}
+                    mode={"time"}
+                    onCancel={() => {
+                      setTimePickerIsVisible(false);
+                    }}
+                    onConfirm={val => {
+                      setStylingTime(val);
+                      setTimePickerIsVisible(false);
+                      console.log(val);
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+              <Text style={styles.itemTextStyle}>전화번호</Text>
 
-        <View style={{ marginTop: 12 }}>
-          <Text style={[styles.itemTextStyle]}>고객님의 모발 상태</Text>
-
-          <View style={{ flexDirection: "row" }}>
-            {hairStatus.map((item, index) => {
-              return (
-                <HairButton
-                  width={scale((BASEWIDTH - BASEPADDING * 2) / numHairStatus)}
-                  index={index}
-                  content={hairStatus[index]}
-                  isActive={index == hairStatusIndex}
-                  onPressActive={() => setHairStatusIndex(index)}
-                  onPressDeactive={() => setHairStatusIndex(-1)}></HairButton>
-              );
-            })}
-          </View>
-        </View>
-
-        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}>머리 성향</Text>
-
-          <View style={{ flexDirection: "row" }}>
-            {hairTendency.map((item, index) => {
-              return (
-                <HairButton
-                  width={scale((BASEWIDTH - BASEPADDING * 2) / numHairTendency)}
-                  index={index}
-                  content={hairTendency[index]}
-                  isActive={index == hairTendencyIndex}
-                  onPressActive={() => setHairTendencyIndex(index)}
-                  onPressDeactive={() => setHairTendencyIndex(-1)}></HairButton>
-              );
-            })}
-          </View>
-        </View>
-
-        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}>원하는 스타일 </Text>
-
-          <View style={styles.userTextUnderline}>
-            <TextInput
-              onChangeText={text => setWantedStyle(text)}
-              placeholder="예) 투블럭"
-              placeholderTextColor={MAINCOLOR}
-              value={wantedStyle}
-              style={styles.highlightText}></TextInput>
-          </View>
-        </View>
-
-        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <View style={{ flexDirection: "row", marginTop: verticalScale(12) }}>
-            {wantHairImage.map((item, index) => {
-              return (
-                <WantedStyleButton
-                  index={index}
-                  array={wantHairImage}
-                  setArray={setWantHairImage}
-                  style={styles.wantStyleImage}></WantedStyleButton>
-              );
-            })}
-
-            {wantHairImage.length < 3 ? (
-              <WantedStyleUploadButton
-                style={styles.wantStyleImage}
-                array={wantHairImage}
-                setArray={setWantHairImage}></WantedStyleUploadButton>
-            ) : null}
-          </View>
-        </View>
-
-        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}>
-            원하는 헤어스타일을 자세히 설명해주세요.
-          </Text>
-
-          <View style={styles.userTextUnderline}>
-            <TextInput
-              value={wantedStyleDescription}
-              onChangeText={text => setWantedStyleDescription(text)}
-              placeholder="자유롭게 작성해주세요."
-              placeholderTextColor={MAINCOLOR}
-              multiline
-              numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
-              minHeight={
-                Platform.OS === "ios" && numberOfLines
-                  ? 20 * numberOfLines
-                  : null
-              }
-              style={styles.highlightText}></TextInput>
-          </View>
-        </View>
-
-        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}> 원하는 스타일링 비용 </Text>
-
-          <View style={styles.userTextUnderline}>
-            <TextInput
-              value={wantedStylingCost}
-              onChangeText={text => setWantedStylingCost(text)}
-              placeholder="예) 30000"
-              placeholderTextColor={MAINCOLOR}
-              keyboardType="number-pad"
-              style={styles.highlightText}></TextInput>
-          </View>
-        </View>
-        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}>시술 일정</Text>
-          <View style={{ flexDirection: "row" }}>
-            <TouchableOpacity
-              style={{
-                width: "30%",
-                height: verticalScale(40),
-                justifyContent: "center",
-                borderBottomColor: "#373737",
-                borderBottomWidth: 1,
-              }}
-              onPress={() => {
-                setDatePickerIsVisible(true);
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(16),
-                  fontWeight: "normal",
-                  fontStyle: "normal",
-                  textAlign: "left",
-                  color: "#555555",
-                }}>
-                {stylingDate != undefined
-                  ? `${stylingDate.getFullYear()}. ${stylingDate.getMonth()}. ${stylingDate.getDate()}`
-                  : "날짜"}
-              </Text>
-              <DateTimePickerModal
-                isVisible={datePickerIsVisible}
-                date={stylingDate}
-                mode={"date"}
-                onCancel={() => {
-                  setDatePickerIsVisible(false);
-                }}
-                onConfirm={val => {
-                  setStylingDate(val);
-                  setDatePickerIsVisible(false);
-                  console.log(val);
-                }}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                width: "30%",
-                height: verticalScale(40),
-                justifyContent: "center",
-                borderBottomColor: "#373737",
-                borderBottomWidth: 1,
-              }}
-              onPress={() => {
-                setTimePickerIsVisible(true);
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(16),
-                  fontWeight: "normal",
-                  fontStyle: "normal",
-                  textAlign: "left",
-                  color: "#555555",
-                }}>
-                {stylingTime != undefined
-                  ? `${stylingTime.getHours()}시 ${stylingTime.getMinutes()}분`
-                  : "날짜"}
-              </Text>
-              <DateTimePickerModal
-                isVisible={timePickerIsVisible}
-                date={stylingTime}
-                mode={"time"}
-                onCancel={() => {
-                  setTimePickerIsVisible(false);
-                }}
-                onConfirm={val => {
-                  setStylingTime(val);
-                  setTimePickerIsVisible(false);
-                  console.log(val);
-                }}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}>전화번호</Text>
-
-          <View style={styles.userTextUnderline}>
-            <TextInput
-              onChangeText={num => setPhoneNumber(num)}
-              placeholder="예) 01012345678"
-              placeholderTextColor={MAINCOLOR}
-              value={phoneNumber}
-              style={styles.highlightText}></TextInput>
+              <View style={styles.userTextUnderline}>
+                <TextInput
+                  onChangeText={num => setPhoneNumber(num)}
+                  placeholder="예) 01012345678"
+                  placeholderTextColor={MAINCOLOR}
+                  value={phoneNumber}
+                  style={styles.highlightText}></TextInput>
+              </View>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -322,6 +357,17 @@ export default function UserProfileLookup() {
 }
 
 const styles = StyleSheet.create({
+  frame: {
+    flex: 1,
+    backgroundColor: "#191919",
+    shadowColor: "rgba(0, 0, 0, 0.25)",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowRadius: 4,
+    shadowOpacity: 1,
+  },
   mainView: {
     flex: 1,
     paddingHorizontal: 20,
