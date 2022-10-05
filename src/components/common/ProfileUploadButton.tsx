@@ -11,12 +11,17 @@ export default function ProfileUploadButton(props) {
         console.log(props);
         const result = await launchImageLibrary();
         let newArray = [...props.toChangeArray];
-        newArray[props.index] = result.assets[0].uri;
-        console.log(props.index);
+        const res = await fetch(result.assets[0].uri);
+        const blob = await res.blob();
+        newArray[props.index] = {
+          uri: result.assets[0].uri,
+          blob: blob,
+        };
+        console.log(newArray);
         props.toChangeFunction(newArray);
       }}>
       <Image
-        source={{ uri: props.toChangeArray[props.index] }}
+        source={{ uri: props.toChangeArray[props.index].uri }}
         style={{ width: "100%", aspectRatio: 1 }}
       />
     </TouchableOpacity>
