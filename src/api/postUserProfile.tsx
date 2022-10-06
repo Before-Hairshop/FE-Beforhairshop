@@ -16,20 +16,20 @@ const postUserProfile = async (
       name: nickname,
       hairCondition: hairStatusIndex,
       hairTendency: hairTendencyIndex,
+      desiredHairstyle: wantedStyle,
       desiredHairstyleDescription: wantedStyleDescription,
       payableAmount: wantedStylingCost,
       phoneNumber: phoneNumber,
       treatmentDate:
         stylingDate.getFullYear() +
         "-" +
-        stylingDate.getMonth() +
+        ("0" + stylingDate.getMonth()).slice(-2) +
         "-" +
-        stylingDate.getDate() +
+        ("0" + stylingDate.getDate()).slice(-2) +
         "T" +
-        stylingTime.getHours() +
+        ("0" + stylingTime.getHours()).slice(-2) +
         ":" +
-        stylingTime.getMinutes(),
-      desiredHairstyleList: wantedStyle,
+        ("0" + stylingTime.getMinutes()).slice(-2),
     };
     console.log(body);
     const result = await authInstance.post(
