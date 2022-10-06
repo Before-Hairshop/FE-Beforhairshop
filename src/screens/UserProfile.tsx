@@ -26,6 +26,8 @@ import { Platform } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ComplexityHeader from "../components/common/ComplexityHeader";
 import { postUserProfile } from "../api/postUserProfile";
+import { postUserProfileImg } from "../api/postUserProfileImg";
+import { putS3Img } from "../api/putS3Img";
 
 const numHairStatus = 3;
 const numHairTendency = 5;
@@ -42,12 +44,12 @@ export default function UserProfileLookup() {
   const [wantedStylingCost, setWantedStylingCost] = useState(0);
   const [hairStatusIndex, setHairStatusIndex] = useState(-1);
   const [hairTendencyIndex, setHairTendencyIndex] = useState(-1);
-  const [numWantedStyle, setNumWantedStyle] = useState(0);
   const [datePickerIsVisible, setDatePickerIsVisible] = useState(false);
   const [timePickerIsVisible, setTimePickerIsVisible] = useState(false);
   const [stylingDate, setStylingDate] = useState(new Date());
   const [stylingTime, setStylingTime] = useState(new Date());
   const [phoneNumber, setPhoneNumber] = useState(undefined);
+  const [nickname, setNickname] = useState("");
 
   const hairStatus = ["많이 상했어요", "보통이에요", "매우 건강해요"];
   const hairTendency = ["심한 곱슬", "곱슬", "반곱슬", "반직모", "직모"];
@@ -56,29 +58,41 @@ export default function UserProfileLookup() {
   const navigation = useNavigation();
   const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
 
-  useEffect(() => {
-    setProfileImage([baseImageURL, baseImageURL, baseImageURL]);
-    setWantHairImage([]);
-  }, []);
+  // useEffect(() => {
+  //   setProfileImage([baseImageURL, baseImageURL, baseImageURL]);
+  //   setWantHairImage([]);
+  // }, []);
 
   const saveProfile = async () => {
+    console.log(nickname); // 닉네임
+    console.log(hairStatusIndex); // 모발상태
+    console.log(hairTendencyIndex); // 머리성향
+    console.log(wantedStyle); // 원하는 스타일
+    console.log(wantedStyleDescription); // 원하는 헤어스타일 설명
+    console.log(wantedStylingCost); // 원하는 스타일링 비용
+    console.log(stylingDate); // 원하는 시술 날짜
+    console.log(stylingTime); // 원하는 시술 시간
+    console.log(phoneNumber); // 전화번호
     if (hairStatusIndex != -1) {
       // 프로필 생성
-      const result = await postUserProfile();
+      const result = await postUserProfile(
+        nickname,
+        hairStatusIndex,
+        hairTendencyIndex,
+        wantedStyle,
+        wantedStyleDescription,
+        wantedStylingCost,
+        stylingDate,
+        stylingTime,
+        phoneNumber,
+      );
       console.log(result);
       // presigned url
-      // const url = await postDesignerProfileImg();
-      // console.log(url);
-      // const response = await fetch(
-      //   new Request(url, {
-      //     method: "PUT",
-      //     body: profileImage[0].blob,
-      //     // headers: new Headers({
-      //     //   "Content-Type": "/image/jpg",
-      //     // }),
-      //   }),
-      // );
-      // console.log(response);
+      const url = await postUserProfileImg();
+      console.log(url);
+      console.log(profileImage[0]);
+      const response = await putS3Img(url, profileImage[0].blob);
+      console.log(response);
       navigation.navigate("Location");
     } else {
       Alert.alert("필수 항목을 모두 작성해주세요.");
@@ -128,8 +142,8 @@ export default function UserProfileLookup() {
                         index={index}
                         toChangeArray={profileImage}
                         toChangeFunction={setProfileImage}
-                        style={styles.userProfileImage}></ProfileUploadButton>
-
+                        style={styles.userProfileImage}
+                      />
                       <Text
                         style={{
                           color: "white",
@@ -140,6 +154,22 @@ export default function UserProfileLookup() {
                     </View>
                   );
                 })}
+              </View>
+            </View>
+
+            <View style={{ marginTop: 12 }}>
+              <Text style={styles.itemTextStyle}>닉네임</Text>
+              <View style={styles.userTextUnderline}>
+                <TextInput
+                  placeholder="사용할 닉네임을 작성해주세요."
+                  placeholderTextColor="#555555"
+                  defaultValue={nickname}
+                  onEndEditing={e => {
+                    setNickname(e.nativeEvent.text);
+                  }}
+                  autoCorrect={false}
+                  style={styles.itemTextStyle}
+                />
               </View>
             </View>
 
@@ -166,7 +196,6 @@ export default function UserProfileLookup() {
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
               <Text style={styles.itemTextStyle}>머리 성향</Text>
-
               <View style={{ flexDirection: "row" }}>
                 {hairTendency.map((item, index) => {
                   return (
@@ -178,17 +207,15 @@ export default function UserProfileLookup() {
                       content={hairTendency[index]}
                       isActive={index == hairTendencyIndex}
                       onPressActive={() => setHairTendencyIndex(index)}
-                      onPressDeactive={() =>
-                        setHairTendencyIndex(-1)
-                      }></HairButton>
+                      onPressDeactive={() => setHairTendencyIndex(-1)}
+                    />
                   );
                 })}
               </View>
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>원하는 스타일 </Text>
-
+              <Text style={styles.itemTextStyle}>원하는 스타일</Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
                   onChangeText={text => setWantedStyle(text)}
@@ -225,7 +252,6 @@ export default function UserProfileLookup() {
               <Text style={styles.itemTextStyle}>
                 원하는 헤어스타일을 자세히 설명해주세요.
               </Text>
-
               <View style={styles.userTextUnderline}>
                 <TextInput
                   value={wantedStyleDescription}
@@ -244,8 +270,7 @@ export default function UserProfileLookup() {
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}> 원하는 스타일링 비용 </Text>
-
+              <Text style={styles.itemTextStyle}>원하는 스타일링 비용</Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
                   value={wantedStylingCost}
@@ -338,7 +363,9 @@ export default function UserProfileLookup() {
               </View>
             </View>
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>전화번호</Text>
+              <Text style={styles.itemTextStyle}>
+                전화번호 (매칭 성공시 디자이너에게 전달됩니다)
+              </Text>
 
               <View style={styles.userTextUnderline}>
                 <TextInput

@@ -24,7 +24,6 @@ import { Dropdown } from "react-native-element-dropdown";
 import Icon from "react-native-vector-icons/Ionicons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useNavigation } from "@react-navigation/native";
-import { getGeocoding } from "../api/getGeocoding";
 import { postDesignerProfileImg } from "../api/postDesignerProfileImg";
 import { putS3Img } from "../api/putS3Img";
 import axios from "axios";
@@ -223,17 +222,8 @@ export default function DesignerRegistration() {
       const url = await postDesignerProfileImg();
       console.log(url);
       console.log(profileImage[0]);
-      const response = await fetch(
-        new Request(url, {
-          method: "PUT",
-          body: profileImage[0].blob,
-          // headers: new Headers({
-          //   "Content-Type": "/image/jpg",
-          // }),
-        }),
-      );
+      const response = await putS3Img(url, profileImage[0].blob);
       console.log(response);
-
       navigation.navigate("NewMain");
     } else {
       Alert.alert("필수 항목을 모두 작성해주세요.");
