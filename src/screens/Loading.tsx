@@ -53,7 +53,7 @@ export default function Loading() {
     // console.log(navigationState);
     if (navigationState.url == "http://localhost:8080/") {
       const cookies = await CookieManager.get("http://localhost:8080");
-      await storeData(cookies.JSESSIONID.value);
+      await storeData("@SESSION_ID", cookies.JSESSIONID.value);
       setSocialLoginModalVisible(false);
       navigation.navigate("ServiceTerms");
     }
@@ -62,15 +62,6 @@ export default function Loading() {
   const callAPI = async () => {
     try {
       const result = await getMemberInfo();
-      // if (result?.data.status == "BAD_REQUEST") {
-      //   Animated.timing(opacity, {
-      //     toValue: 1,
-      //     duration: 1000,
-      //     useNativeDriver: false,
-      //   }).start();
-      // } else {
-      //   navigation.navigate("NewMain");
-      // }
       if (result?.data.result) {
         if (result?.data.status == "BAD_REQUEST") {
           // navigation.navigate("ServiceTerms");
@@ -80,6 +71,10 @@ export default function Loading() {
             useNativeDriver: false,
           }).start();
         } else {
+          await storeData(
+            "@DESIGNER_FLAG",
+            String(result.data.result.designerFlag),
+          );
           navigation.navigate("NewMain");
         }
         // Animated.timing(opacity, {
