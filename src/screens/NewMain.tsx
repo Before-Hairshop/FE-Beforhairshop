@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { scale, verticalScale } from "../utils/scale";
 import DefaultPerson from "../assets/images/main/default_person.png";
@@ -16,6 +16,19 @@ import ChatIcon from "../assets/icons/main/chat.svg";
 import RightArrowIcon from "../assets/icons/common/arrow.svg";
 import DesignerIcon from "../assets/icons/main/designer.svg";
 import BigContour from "../components/common/BigContour";
+import { readData } from "../utils/asyncStorage";
+import { useNavigation } from "@react-navigation/native";
+import { getMemberProfile } from "../api/getMemberProfile";
+
+const hairConditionType = ["", "많이 상했어요", "보통이에요", "매우 건강해요"];
+const hairTendencyType = [
+  "",
+  "악성 곱슬",
+  "심한 곱슬",
+  "반곱슬",
+  "약간 직모",
+  "직모",
+];
 
 const Header = () => (
   <View
@@ -68,7 +81,7 @@ const Header = () => (
   </View>
 );
 
-const MainProfile = () => (
+const MainProfile = props => (
   <TouchableOpacity style={{ alignItems: "center" }}>
     <View
       style={{
@@ -76,6 +89,7 @@ const MainProfile = () => (
         paddingTop: verticalScale(20),
         paddingBottom: verticalScale(20),
       }}>
+      {}
       <Text
         style={{
           fontFamily: "Pretendard",
@@ -85,6 +99,7 @@ const MainProfile = () => (
           textAlign: "left",
           color: "#ffffff",
         }}>
+        {}
         홍길동
       </Text>
       <View
@@ -191,9 +206,14 @@ const MainProfile = () => (
 );
 
 export default function NewMain() {
-  const [toggle, setToggle] = useState(false);
+  const [toggle, setToggle] = useState(undefined);
+  const [designerFlag, setDesignerFlag] = useState(undefined);
+  const [profileData, setProfileData] = useState(undefined);
+  const [profileImg, setProfileImg] = useState();
 
-  const SubProfile = () => (
+  const navigation = useNavigation();
+
+  const SubProfile = props => (
     <View style={{ alignItems: "center" }}>
       <View
         style={{
@@ -214,31 +234,31 @@ export default function NewMain() {
             }}>
             원하는 헤어 스타일
           </Text>
-          <View style={{ flexDirection: "row" }}>
-            <View
+          {/* <View style={{ flexDirection: "row" }}> */}
+          <View
+            style={{
+              borderRadius: 100,
+              backgroundColor: "#ff2b64",
+              paddingTop: verticalScale(4),
+              paddingBottom: verticalScale(4),
+              paddingLeft: scale(7),
+              paddingRight: scale(7),
+              justifyContent: "center",
+            }}>
+            <Text
               style={{
-                borderRadius: 100,
-                backgroundColor: "#ff2b64",
-                paddingTop: verticalScale(4),
-                paddingBottom: verticalScale(4),
-                paddingLeft: scale(7),
-                paddingRight: scale(7),
-                justifyContent: "center",
+                fontFamily: "Pretendard",
+                fontSize: scale(12),
+                fontWeight: "500",
+                fontStyle: "normal",
+                letterSpacing: -0.5,
+                textAlign: "center",
+                color: "#ffffff",
               }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(12),
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "center",
-                  color: "#ffffff",
-                }}>
-                CS 컬펌
-              </Text>
-            </View>
-            <View
+              {props.profileData.desiredHairstyle}
+            </Text>
+          </View>
+          {/* <View
               style={{
                 borderRadius: 100,
                 backgroundColor: "#ff2b64",
@@ -260,8 +280,8 @@ export default function NewMain() {
                 }}>
                 세팅펌
               </Text>
-            </View>
-          </View>
+            </View> */}
+          {/* </View> */}
         </View>
       </View>
       <View
@@ -288,7 +308,7 @@ export default function NewMain() {
               textAlign: "left",
               color: "#c8c8c8",
             }}>
-            원하는 헤어 스타일
+            지불 가능 비용
           </Text>
           <Text
             style={{
@@ -300,7 +320,7 @@ export default function NewMain() {
               textAlign: "right",
               color: "#c8c8c8",
             }}>
-            159,000원
+            {props.profileData.payableAmount.toLocaleString()}원
           </Text>
         </View>
       </View>
@@ -331,7 +351,7 @@ export default function NewMain() {
             매칭 제안 받기
           </Text>
           <ToggleSwitch
-            isOn={toggle}
+            isOn={props.toggle}
             onColor="green"
             offColor="red"
             size="medium"
@@ -352,12 +372,28 @@ export default function NewMain() {
     </View>
   );
 
+  useEffect(() => {
+    async function fetchData() {
+      setDesignerFlag(await readData("@DESIGNER_FLAG"));
+      const result = await getMemberProfile();
+      console.log(result?.data.result.memberProfileDto);
+      setProfileData(result?.data.result.memberProfileDto);
+      setToggle(result.data.result.matchingActivationFlag == 1 ? true : false);
+    }
+    fetchData();
+  }, []);
+
   return (
     <View style={styles.frame}>
       <Header />
-      <MainProfile />
+      {profileData != undefined && <MainProfile />}
       <BigContour />
-      <SubProfile />
+      {designerFlag != undefined &&
+        profileData != undefined &&
+        toggle != undefined &&
+        designerFlag == "0" && (
+          <SubProfile profileData={profileData} toggle={toggle} />
+        )}
       <View style={{ alignItems: "center", marginTop: verticalScale(20) }}>
         <TouchableOpacity
           style={{
@@ -376,6 +412,9 @@ export default function NewMain() {
             borderWidth: 1,
             borderColor: "rgba(255, 255, 255, 0)",
             alignItems: "center",
+          }}
+          onPress={() => {
+            navigation.navigate("RecommendList");
           }}>
           <View
             style={{
@@ -401,7 +440,9 @@ export default function NewMain() {
                   textAlign: "left",
                   color: "rgba(255, 255, 255, 0.5)",
                 }}>
-                헤어 디자이너들의
+                {designerFlag != undefined && designerFlag == "1"
+                  ? "고객에게 제안한"
+                  : "헤어 디자이너들의"}
               </Text>
               <Text
                 style={{
@@ -445,6 +486,13 @@ export default function NewMain() {
             borderColor: "rgba(255, 255, 255, 0)",
             alignItems: "center",
             marginTop: verticalScale(10),
+          }}
+          onPress={() => {
+            if (designerFlag == "1") {
+              navigation.navigate("CustomerList");
+            } else {
+              navigation.navigate("DesignerList");
+            }
           }}>
           <View
             style={{
@@ -470,7 +518,9 @@ export default function NewMain() {
                   textAlign: "left",
                   color: "rgba(255, 255, 255, 0.5)",
                 }}>
-                믿을 수 있는
+                {designerFlag != undefined && designerFlag == "1"
+                  ? "맞춤형 서비스를 위한"
+                  : "믿을 수 있는"}
               </Text>
               <Text
                 style={{
@@ -482,7 +532,9 @@ export default function NewMain() {
                   textAlign: "left",
                   color: "#ffffff",
                 }}>
-                주변 디자이너 조회
+                {designerFlag != undefined && designerFlag == "1"
+                  ? "주변 고객 조회"
+                  : "주변 디자이너 조회"}
               </Text>
             </View>
             <View
