@@ -12,12 +12,14 @@ export default function WantedStyleUploadButton(props) {
       style={props.style}
       onPress={async () => {
         console.log(props);
-
         const result = await launchImageLibrary();
-
         let newArray = [...props.array];
-        newArray.push(result.assets[0].uri);
-
+        const res = await fetch(result.assets[0].uri);
+        const blob = await res.blob();
+        newArray.push({
+          uri: result.assets[0].uri,
+          blob: blob,
+        });
         props.setArray(newArray);
       }}>
       <Image

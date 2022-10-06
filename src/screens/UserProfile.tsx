@@ -41,7 +41,7 @@ export default function UserProfileLookup() {
   const [wantHairImage, setWantHairImage] = useState([]);
   const [wantedStyle, setWantedStyle] = useState("");
   const [wantedStyleDescription, setWantedStyleDescription] = useState("");
-  const [wantedStylingCost, setWantedStylingCost] = useState(0);
+  const [wantedStylingCost, setWantedStylingCost] = useState("");
   const [hairStatusIndex, setHairStatusIndex] = useState(-1);
   const [hairTendencyIndex, setHairTendencyIndex] = useState(-1);
   const [datePickerIsVisible, setDatePickerIsVisible] = useState(false);
@@ -73,26 +73,34 @@ export default function UserProfileLookup() {
     console.log(stylingDate); // 원하는 시술 날짜
     console.log(stylingTime); // 원하는 시술 시간
     console.log(phoneNumber); // 전화번호
-    if (hairStatusIndex != -1) {
+    console.log(wantHairImage);
+    if (
+      nickname != "" &&
+      hairStatusIndex != -1 &&
+      hairTendencyIndex != -1 &&
+      wantedStyleDescription != "" &&
+      wantedStylingCost != "" &&
+      phoneNumber != undefined &&
+      profileImage[0] != ""
+    ) {
       // 프로필 생성
       const result = await postUserProfile(
         nickname,
-        hairStatusIndex,
-        hairTendencyIndex,
+        hairStatusIndex + 1,
+        hairTendencyIndex + 1,
         wantedStyle,
         wantedStyleDescription,
-        wantedStylingCost,
+        parseInt(wantedStylingCost),
         stylingDate,
         stylingTime,
         phoneNumber,
       );
       console.log(result);
-      // presigned url
-      const url = await postUserProfileImg();
+      // 이미지 업로드
+      console.log(profileImage);
+      console.log(wantHairImage);
+      const url = await postUserProfileImg(profileImage, wantHairImage);
       console.log(url);
-      console.log(profileImage[0]);
-      const response = await putS3Img(url, profileImage[0].blob);
-      console.log(response);
       navigation.navigate("Location");
     } else {
       Alert.alert("필수 항목을 모두 작성해주세요.");
@@ -215,7 +223,7 @@ export default function UserProfileLookup() {
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>원하는 스타일</Text>
+              <Text style={styles.itemTextStyle}>원하는 스타일(선택)</Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
                   onChangeText={text => setWantedStyle(text)}
@@ -243,7 +251,8 @@ export default function UserProfileLookup() {
                   <WantedStyleUploadButton
                     style={styles.wantStyleImage}
                     array={wantHairImage}
-                    setArray={setWantHairImage}></WantedStyleUploadButton>
+                    setArray={setWantHairImage}
+                  />
                 ) : null}
               </View>
             </View>
@@ -305,7 +314,9 @@ export default function UserProfileLookup() {
                       color: "#555555",
                     }}>
                     {stylingDate != undefined
-                      ? `${stylingDate.getFullYear()}. ${stylingDate.getMonth()}. ${stylingDate.getDate()}`
+                      ? `${stylingDate.getFullYear()}. ${
+                          stylingDate.getMonth() + 1
+                        }. ${stylingDate.getDate()}`
                       : "날짜"}
                   </Text>
                   <DateTimePickerModal
@@ -318,7 +329,7 @@ export default function UserProfileLookup() {
                     onConfirm={val => {
                       setStylingDate(val);
                       setDatePickerIsVisible(false);
-                      console.log(val);
+                      // console.log(val);
                     }}
                   />
                 </TouchableOpacity>
@@ -356,7 +367,7 @@ export default function UserProfileLookup() {
                     onConfirm={val => {
                       setStylingTime(val);
                       setTimePickerIsVisible(false);
-                      console.log(val);
+                      // console.log(val);
                     }}
                   />
                 </TouchableOpacity>
