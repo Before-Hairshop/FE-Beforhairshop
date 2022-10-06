@@ -11,7 +11,7 @@ export default function WantedStyleButton(props) {
         props.setArray(newArray);
       }}>
       <Image
-        source={{ uri: props.array[props.index] }}
+        source={{ uri: props.array[props.index].uri }}
         style={{ width: "100%", aspectRatio: 1 }}
       />
     </TouchableOpacity>

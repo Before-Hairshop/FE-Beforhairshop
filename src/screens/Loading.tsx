@@ -62,13 +62,31 @@ export default function Loading() {
   const callAPI = async () => {
     try {
       const result = await getMemberInfo();
-      console.log(result.data);
-      if (result.data.result) {
-        if (result.data.status == "BAD_REQUEST") {
-          navigation.navigate("ServiceTerms");
+      // if (result?.data.status == "BAD_REQUEST") {
+      //   Animated.timing(opacity, {
+      //     toValue: 1,
+      //     duration: 1000,
+      //     useNativeDriver: false,
+      //   }).start();
+      // } else {
+      //   navigation.navigate("NewMain");
+      // }
+      if (result?.data.result) {
+        if (result?.data.status == "BAD_REQUEST") {
+          // navigation.navigate("ServiceTerms");
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: false,
+          }).start();
         } else {
           navigation.navigate("NewMain");
         }
+        // Animated.timing(opacity, {
+        //   toValue: 1,
+        //   duration: 1000,
+        //   useNativeDriver: false,
+        // }).start();
       } else {
         Animated.timing(opacity, {
           toValue: 1,

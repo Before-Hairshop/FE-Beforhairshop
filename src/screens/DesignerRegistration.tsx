@@ -9,6 +9,7 @@ import {
   Modal,
   Platform,
   Linking,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 
@@ -23,7 +24,9 @@ import { Dropdown } from "react-native-element-dropdown";
 import Icon from "react-native-vector-icons/Ionicons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useNavigation } from "@react-navigation/native";
-import { getGeocoding } from "../api/getGeocoding";
+import { postDesignerProfileImg } from "../api/postDesignerProfileImg";
+import { putS3Img } from "../api/putS3Img";
+import axios from "axios";
 // import Postcode from "@actbase/react-daum-postcode";
 
 const BASEWIDTH = 375;
@@ -188,6 +191,7 @@ export default function DesignerRegistration() {
     console.log(specificLocation);
     console.log(schedule);
     console.log(phoneNumber);
+    // console.log(profileImage);
     if (
       name != "" &&
       description != "" &&
@@ -197,8 +201,10 @@ export default function DesignerRegistration() {
       zipCode != "" &&
       specificLocation != "" &&
       schedule.length != 0 &&
-      phoneNumber != ""
+      phoneNumber != "" &&
+      profileImage[0].blob
     ) {
+      // 프로필 생성
       const result = await postDesignerProfile(
         name,
         description,
@@ -212,9 +218,15 @@ export default function DesignerRegistration() {
         phoneNumber,
       );
       console.log(result);
-      // if (result.data.status == "OK") {
-      //   navigation.navigate("DesignerRegistration");
-      // }
+      // presigned url
+      const url = await postDesignerProfileImg();
+      console.log(url);
+      console.log(profileImage[0]);
+      const response = await putS3Img(url, profileImage[0].blob);
+      console.log(response);
+      navigation.navigate("NewMain");
+    } else {
+      Alert.alert("필수 항목을 모두 작성해주세요.");
     }
   };
 
