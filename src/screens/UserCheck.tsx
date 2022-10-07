@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { scale, verticalScale } from "../utils/scale";
 import CheckIcon from "../assets/icons/check.svg";
 import { patchMemberType } from "../api/patchMemberType";
+import { storeData } from "../utils/asyncStorage";
 
 const { width, height } = Dimensions.get("window");
 
@@ -24,8 +25,10 @@ export default function UserCheck() {
     console.log(result);
     if (result.data.status == "OK") {
       if (value) {
+        storeData("@DESIGNER_FLAG", "1");
         navigation.navigate("DesignerRegistration");
       } else {
+        storeData("@DESIGNER_FLAG", "0");
         navigation.navigate("UserProfile");
       }
     }
