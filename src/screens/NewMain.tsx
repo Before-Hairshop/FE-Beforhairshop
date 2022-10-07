@@ -18,7 +18,7 @@ import DesignerIcon from "../assets/icons/main/designer.svg";
 import BigContour from "../components/common/BigContour";
 import { readData } from "../utils/asyncStorage";
 import { useNavigation } from "@react-navigation/native";
-import { getMemberProfile } from "../api/getMemberProfile";
+import { getUserProfile } from "../api/getUserProfile";
 
 const hairConditionType = ["", "많이 상했어요", "보통이에요", "매우 건강해요"];
 const hairTendencyType = [
@@ -89,7 +89,6 @@ const MainProfile = props => (
         paddingTop: verticalScale(20),
         paddingBottom: verticalScale(20),
       }}>
-      {}
       <Text
         style={{
           fontFamily: "Pretendard",
@@ -375,7 +374,7 @@ export default function NewMain() {
   useEffect(() => {
     async function fetchData() {
       setDesignerFlag(await readData("@DESIGNER_FLAG"));
-      const result = await getMemberProfile();
+      const result = await getUserProfile();
       console.log(result?.data.result.memberProfileDto);
       setProfileData(result?.data.result.memberProfileDto);
       setToggle(result.data.result.matchingActivationFlag == 1 ? true : false);
