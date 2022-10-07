@@ -1,6 +1,6 @@
 import { authInstance } from "./api";
 
-const getMemberProfile = async () => {
+const getUserProfile = async () => {
   try {
     const result = await authInstance.get("/api/v1/members/profiles");
     return result;
@@ -9,4 +9,4 @@ const getMemberProfile = async () => {
   }
 };
 
-export { getMemberProfile };
+export { getUserProfile };

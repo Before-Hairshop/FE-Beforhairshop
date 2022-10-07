@@ -19,6 +19,8 @@ import BigContour from "../components/common/BigContour";
 import { readData } from "../utils/asyncStorage";
 import { useNavigation } from "@react-navigation/native";
 import { getUserProfile } from "../api/getUserProfile";
+import { patchUserMatchingActive } from "../api/patchUserMatchingActive";
+import { patchUserMatchingDeactive } from "../api/patchUserMatchingDeactive";
 
 const hairConditionType = ["", "많이 상했어요", "보통이에요", "매우 건강해요"];
 const hairTendencyType = [
@@ -212,6 +214,17 @@ export default function NewMain() {
 
   const navigation = useNavigation();
 
+  function changeToggleStatus(value) {
+    setToggle(value);
+    if (value) {
+      const result = patchUserMatchingActive();
+      console.log(result);
+    } else {
+      const result = patchUserMatchingDeactive();
+      console.log(result);
+    }
+  }
+
   const SubProfile = props => (
     <View style={{ alignItems: "center" }}>
       <View
@@ -351,12 +364,12 @@ export default function NewMain() {
           </Text>
           <ToggleSwitch
             isOn={props.toggle}
-            onColor="green"
-            offColor="red"
+            onColor="#FF2B64"
+            offColor="#0C0C0C"
             size="medium"
-            onToggle={() => {
-              console.log("change state");
-              setToggle(!toggle);
+            onToggle={value => {
+              console.log(value);
+              changeToggleStatus(value);
             }}
           />
         </View>

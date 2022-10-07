@@ -21,6 +21,7 @@ export default function UserCheck() {
     await setIsDesigner(value);
     await wait(200);
     const result = await patchMemberType(value);
+    console.log(result);
     if (result.data.status == "OK") {
       if (value) {
         navigation.navigate("DesignerRegistration");
