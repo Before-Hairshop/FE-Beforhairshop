@@ -2,6 +2,7 @@ import axios from "axios";
 import { readData } from "../utils/asyncStorage";
 
 const BASEURL = "http://localhost:8080";
+// const BASEURL = "http://10.0.2.2:8080";
 
 const axiosApi = () => {
   const instance = axios.create({
