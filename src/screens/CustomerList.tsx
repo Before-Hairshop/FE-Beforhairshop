@@ -27,7 +27,7 @@ export default function CustomerList() {
   const fetchCustomerList = async () => {
     try {
       const { data } = await getCustomerList(pageNum);
-      console.log(data);
+      console.log(data.result);
       setCustomerList([...customerList, ...data.result]);
       setPageNum(pageNum + 1);
     } catch (error) {
@@ -47,7 +47,12 @@ export default function CustomerList() {
         alignItems: "center",
         marginTop: verticalScale(21),
       }}
-      onPress={() => navigation.navigate("UserProfileLookup")}>
+      // onPress={() => navigation.navigate("UserProfileLookup")}
+      onPress={() =>
+        navigation.navigate({
+          name: "UserProfileLookup",
+        })
+      }>
       <View>
         <Image
           source={{ uri: item.frontImageUrl }}

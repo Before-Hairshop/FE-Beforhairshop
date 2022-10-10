@@ -17,4 +17,13 @@ const readData = async (key: string) => {
   }
 };
 
-export { storeData, readData };
+const removeData = async (key: string) => {
+  try {
+    const value = await AsyncStorage.removeItem(key);
+    return value;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { storeData, readData, removeData };
