@@ -22,7 +22,7 @@ export default function RecommendList() {
 
   return (
     <View style={styles.frame}>
-      <SimpleHeader title="내가 제안한 스타일 추천서" goBack="Main" />
+      <SimpleHeader title="스타일 추천서" goBack="Main" />
       <Contour />
       <ScrollView>
         <TouchableOpacity

@@ -23,7 +23,7 @@ const postUserProfile = async (
       treatmentDate:
         stylingDate.getFullYear() +
         "-" +
-        ("0" + stylingDate.getMonth()).slice(-2) +
+        ("0" + (stylingDate.getMonth() + 1)).slice(-2) +
         "-" +
         ("0" + stylingDate.getDate()).slice(-2) +
         "T" +

@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { scale, verticalScale } from "../utils/scale";
 import DefaultPerson from "../assets/images/main/default_person.png";
@@ -16,8 +16,25 @@ import ChatIcon from "../assets/icons/main/chat.svg";
 import RightArrowIcon from "../assets/icons/common/arrow.svg";
 import DesignerIcon from "../assets/icons/main/designer.svg";
 import BigContour from "../components/common/BigContour";
+import { readData } from "../utils/asyncStorage";
+import { useNavigation } from "@react-navigation/native";
+import { getUserProfile } from "../api/getUserProfile";
+import { getDesignerProfile } from "../api/getDesignerProfile";
+import { patchUserMatchingActive } from "../api/patchUserMatchingActive";
+import { patchUserMatchingDeactive } from "../api/patchUserMatchingDeactive";
+import { getMemberInfo } from "../api/getMemberInfo";
 
-const Header = () => (
+const hairConditionType = ["", "많이 상했어요", "보통이에요", "매우 건강해요"];
+const hairTendencyType = [
+  "",
+  "악성 곱슬",
+  "심한 곱슬",
+  "반곱슬",
+  "약간 직모",
+  "직모",
+];
+
+const Header = props => (
   <View
     style={{
       marginTop: Platform.OS === "ios" ? verticalScale(40) : verticalScale(0),
@@ -47,7 +64,9 @@ const Header = () => (
       </View>
       <TouchableOpacity>
         <Image
-          source={DefaultPerson}
+          source={{
+            uri: props.profileImg,
+          }}
           style={{
             width: scale(40),
             height: scale(40),
@@ -68,8 +87,16 @@ const Header = () => (
   </View>
 );
 
-const MainProfile = () => (
-  <TouchableOpacity style={{ alignItems: "center" }}>
+const MainProfile = props => (
+  <TouchableOpacity
+    style={{ alignItems: "center" }}
+    onPress={() => {
+      if (props.designerFlag == "1") {
+        props.navigation.navigate("DesignerProfile");
+      } else {
+        props.navigation.navigate("UserProfileLookup");
+      }
+    }}>
     <View
       style={{
         width: "89.4%",
@@ -85,7 +112,18 @@ const MainProfile = () => (
           textAlign: "left",
           color: "#ffffff",
         }}>
-        홍길동
+        {props.profileData.name}
+        <Text
+          style={{
+            fontFamily: "Pretendard",
+            fontSize: verticalScale(15),
+            fontWeight: "bold",
+            fontStyle: "normal",
+            textAlign: "left",
+            color: "#ffffff",
+          }}>
+          {props.designerFlag == "1" ? " 디자이너 " : ""}
+        </Text>
       </Text>
       <View
         style={{
@@ -95,17 +133,21 @@ const MainProfile = () => (
         }}>
         <View style={{ width: "27%" }}>
           <Image
-            source={DefaultPerson}
-            style={{ width: scale(70), height: scale(70) }}
+            source={{
+              uri: props.profileImg,
+            }}
+            style={{
+              width: scale(70),
+              height: scale(70),
+              borderRadius: scale(35),
+              borderWidth: scale(1),
+              borderColor: "#323232",
+            }}
           />
         </View>
         <View style={{ width: "73%", justifyContent: "space-around" }}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}>
-            <View style={{ justifyContent: "center" }}>
+          {props.designerFlag == "1" ? (
+            <>
               <Text
                 style={{
                   fontFamily: "Pretendard",
@@ -113,41 +155,11 @@ const MainProfile = () => (
                   fontWeight: "500",
                   fontStyle: "normal",
                   letterSpacing: 0,
-                  textAlign: "center",
+                  textAlign: "left",
                   color: "#c8c8c8",
                 }}>
-                모 발
+                {props.profileData.hairShopName}
               </Text>
-            </View>
-            <View
-              style={{
-                borderRadius: 100,
-                backgroundColor: "#383838",
-                paddingTop: verticalScale(4),
-                paddingBottom: verticalScale(4),
-                paddingLeft: scale(7),
-                paddingRight: scale(7),
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(12),
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "center",
-                  color: "#ffffff",
-                }}>
-                매우 건강
-              </Text>
-            </View>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}>
-            <View style={{ justifyContent: "center" }}>
               <Text
                 style={{
                   fontFamily: "Pretendard",
@@ -155,35 +167,102 @@ const MainProfile = () => (
                   fontWeight: "500",
                   fontStyle: "normal",
                   letterSpacing: 0,
-                  textAlign: "center",
+                  textAlign: "left",
                   color: "#c8c8c8",
                 }}>
-                머리성향
+                {props.profileData.zipAddress}
               </Text>
-            </View>
-            <View
-              style={{
-                borderRadius: 100,
-                backgroundColor: "#383838",
-                paddingTop: verticalScale(4),
-                paddingBottom: verticalScale(4),
-                paddingLeft: scale(7),
-                paddingRight: scale(7),
-              }}>
-              <Text
+            </>
+          ) : (
+            <>
+              <View
                 style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(12),
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "center",
-                  color: "#ffffff",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }}>
-                곱슬
-              </Text>
-            </View>
-          </View>
+                <View style={{ justifyContent: "center" }}>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(15),
+                      fontWeight: "500",
+                      fontStyle: "normal",
+                      letterSpacing: 0,
+                      textAlign: "center",
+                      color: "#c8c8c8",
+                    }}>
+                    모 발
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    borderRadius: 100,
+                    backgroundColor: "#383838",
+                    paddingTop: verticalScale(4),
+                    paddingBottom: verticalScale(4),
+                    paddingLeft: scale(7),
+                    paddingRight: scale(7),
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(12),
+                      fontWeight: "500",
+                      fontStyle: "normal",
+                      letterSpacing: -0.5,
+                      textAlign: "center",
+                      color: "#ffffff",
+                    }}>
+                    {hairConditionType[props.profileData.hairCondition]}
+                    {/* 매우 건강 */}
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}>
+                <View style={{ justifyContent: "center" }}>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(15),
+                      fontWeight: "500",
+                      fontStyle: "normal",
+                      letterSpacing: 0,
+                      textAlign: "center",
+                      color: "#c8c8c8",
+                    }}>
+                    머리성향
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    borderRadius: 100,
+                    backgroundColor: "#383838",
+                    paddingTop: verticalScale(4),
+                    paddingBottom: verticalScale(4),
+                    paddingLeft: scale(7),
+                    paddingRight: scale(7),
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(12),
+                      fontWeight: "500",
+                      fontStyle: "normal",
+                      letterSpacing: -0.5,
+                      textAlign: "center",
+                      color: "#ffffff",
+                    }}>
+                    {hairTendencyType[props.profileData.hairTendency]}
+                    {/* 곱슬 */}
+                  </Text>
+                </View>
+              </View>
+            </>
+          )}
         </View>
       </View>
     </View>
@@ -191,9 +270,25 @@ const MainProfile = () => (
 );
 
 export default function NewMain() {
-  const [toggle, setToggle] = useState(false);
+  const [toggle, setToggle] = useState(undefined);
+  const [designerFlag, setDesignerFlag] = useState(undefined);
+  const [profileData, setProfileData] = useState(undefined);
+  const [profileImg, setProfileImg] = useState(undefined);
 
-  const SubProfile = () => (
+  const navigation = useNavigation();
+
+  function changeToggleStatus(value) {
+    setToggle(value);
+    if (value) {
+      const result = patchUserMatchingActive();
+      console.log(result);
+    } else {
+      const result = patchUserMatchingDeactive();
+      console.log(result);
+    }
+  }
+
+  const SubProfile = props => (
     <View style={{ alignItems: "center" }}>
       <View
         style={{
@@ -214,31 +309,31 @@ export default function NewMain() {
             }}>
             원하는 헤어 스타일
           </Text>
-          <View style={{ flexDirection: "row" }}>
-            <View
+          {/* <View style={{ flexDirection: "row" }}> */}
+          <View
+            style={{
+              borderRadius: 100,
+              backgroundColor: "#ff2b64",
+              paddingTop: verticalScale(4),
+              paddingBottom: verticalScale(4),
+              paddingLeft: scale(7),
+              paddingRight: scale(7),
+              justifyContent: "center",
+            }}>
+            <Text
               style={{
-                borderRadius: 100,
-                backgroundColor: "#ff2b64",
-                paddingTop: verticalScale(4),
-                paddingBottom: verticalScale(4),
-                paddingLeft: scale(7),
-                paddingRight: scale(7),
-                justifyContent: "center",
+                fontFamily: "Pretendard",
+                fontSize: scale(12),
+                fontWeight: "500",
+                fontStyle: "normal",
+                letterSpacing: -0.5,
+                textAlign: "center",
+                color: "#ffffff",
               }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(12),
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "center",
-                  color: "#ffffff",
-                }}>
-                CS 컬펌
-              </Text>
-            </View>
-            <View
+              {props.profileData.desiredHairstyle}
+            </Text>
+          </View>
+          {/* <View
               style={{
                 borderRadius: 100,
                 backgroundColor: "#ff2b64",
@@ -260,8 +355,8 @@ export default function NewMain() {
                 }}>
                 세팅펌
               </Text>
-            </View>
-          </View>
+            </View> */}
+          {/* </View> */}
         </View>
       </View>
       <View
@@ -288,7 +383,7 @@ export default function NewMain() {
               textAlign: "left",
               color: "#c8c8c8",
             }}>
-            원하는 헤어 스타일
+            지불 가능 비용
           </Text>
           <Text
             style={{
@@ -300,7 +395,7 @@ export default function NewMain() {
               textAlign: "right",
               color: "#c8c8c8",
             }}>
-            159,000원
+            {props.profileData.payableAmount.toLocaleString()}원
           </Text>
         </View>
       </View>
@@ -332,12 +427,12 @@ export default function NewMain() {
           </Text>
           <ToggleSwitch
             isOn={toggle}
-            onColor="green"
-            offColor="red"
+            onColor="#FF2B64"
+            offColor="#0C0C0C"
             size="medium"
-            onToggle={() => {
-              console.log("change state");
-              setToggle(!toggle);
+            onToggle={value => {
+              console.log(value);
+              changeToggleStatus(value);
             }}
           />
         </View>
@@ -352,12 +447,53 @@ export default function NewMain() {
     </View>
   );
 
+  useEffect(() => {
+    async function fetchData() {
+      setDesignerFlag(await readData("@DESIGNER_FLAG"));
+      const { data } = await getMemberInfo();
+      setProfileImg(data.result.imageUrl);
+      console.log(data.result.designerFlag);
+      if (data.result.designerFlag == 1) {
+        const result = await getDesignerProfile(data.result.id);
+        console.log(result);
+        setProfileData(result?.data.result.hairDesignerProfileDto);
+      } else {
+        const result = await getUserProfile();
+        console.log(result?.data.result.memberProfileDto);
+        setProfileData(result?.data.result.memberProfileDto);
+        setToggle(
+          result.data.result.memberProfileDto.matchingActivationFlag == 1
+            ? true
+            : false,
+        );
+      }
+    }
+    fetchData();
+  }, []);
+
   return (
     <View style={styles.frame}>
-      <Header />
-      <MainProfile />
-      <BigContour />
-      <SubProfile />
+      <Header profileImg={profileImg} />
+      {designerFlag != undefined &&
+        profileData != undefined &&
+        profileImg != undefined && (
+          <MainProfile
+            designerFlag={designerFlag}
+            profileData={profileData}
+            profileImg={profileImg}
+            navigation={navigation}
+          />
+        )}
+      {designerFlag != undefined && designerFlag == "0" && <BigContour />}
+      {designerFlag != undefined && designerFlag == "1" && (
+        <BigContour style={{ height: verticalScale(2) }} />
+      )}
+      {designerFlag != undefined &&
+        profileData != undefined &&
+        toggle != undefined &&
+        designerFlag == "0" && (
+          <SubProfile profileData={profileData} toggle={toggle} />
+        )}
       <View style={{ alignItems: "center", marginTop: verticalScale(20) }}>
         <TouchableOpacity
           style={{
@@ -376,6 +512,9 @@ export default function NewMain() {
             borderWidth: 1,
             borderColor: "rgba(255, 255, 255, 0)",
             alignItems: "center",
+          }}
+          onPress={() => {
+            navigation.navigate("RecommendList");
           }}>
           <View
             style={{
@@ -401,7 +540,9 @@ export default function NewMain() {
                   textAlign: "left",
                   color: "rgba(255, 255, 255, 0.5)",
                 }}>
-                헤어 디자이너들의
+                {designerFlag != undefined && designerFlag == "1"
+                  ? "고객에게 제안한"
+                  : "헤어 디자이너들의"}
               </Text>
               <Text
                 style={{
@@ -445,6 +586,13 @@ export default function NewMain() {
             borderColor: "rgba(255, 255, 255, 0)",
             alignItems: "center",
             marginTop: verticalScale(10),
+          }}
+          onPress={() => {
+            if (designerFlag == "1") {
+              navigation.navigate("CustomerList");
+            } else {
+              navigation.navigate("DesignerList");
+            }
           }}>
           <View
             style={{
@@ -470,7 +618,9 @@ export default function NewMain() {
                   textAlign: "left",
                   color: "rgba(255, 255, 255, 0.5)",
                 }}>
-                믿을 수 있는
+                {designerFlag != undefined && designerFlag == "1"
+                  ? "맞춤형 서비스를 위한"
+                  : "믿을 수 있는"}
               </Text>
               <Text
                 style={{
@@ -482,7 +632,9 @@ export default function NewMain() {
                   textAlign: "left",
                   color: "#ffffff",
                 }}>
-                주변 디자이너 조회
+                {designerFlag != undefined && designerFlag == "1"
+                  ? "주변 고객 조회"
+                  : "주변 디자이너 조회"}
               </Text>
             </View>
             <View

@@ -47,39 +47,27 @@ export default function Loading() {
     setSocialLoginModalVisible(true);
   };
 
-  const onNavigationStateChange = async (
-    navigationState: WebViewNavigation,
-  ) => {
-    // console.log(navigationState);
+  async function onNavigationStateChange(navigationState: WebViewNavigation) {
     if (navigationState.url == "http://localhost:8080/") {
       const cookies = await CookieManager.get("http://localhost:8080");
-      await storeData(cookies.JSESSIONID.value);
-      setSocialLoginModalVisible(false);
-      navigation.navigate("ServiceTerms");
+      await storeData("@SESSION_ID", cookies.SESSION.value);
+      await setSocialLoginModalVisible(false);
     }
-  };
+  }
 
   const callAPI = async () => {
     try {
       const result = await getMemberInfo();
-      // if (result?.data.status == "BAD_REQUEST") {
-      //   Animated.timing(opacity, {
-      //     toValue: 1,
-      //     duration: 1000,
-      //     useNativeDriver: false,
-      //   }).start();
-      // } else {
-      //   navigation.navigate("NewMain");
-      // }
-      if (result?.data.result) {
-        if (result?.data.status == "BAD_REQUEST") {
-          // navigation.navigate("ServiceTerms");
-          Animated.timing(opacity, {
-            toValue: 1,
-            duration: 1000,
-            useNativeDriver: false,
-          }).start();
+      console.log(result);
+      if (result.data.result != null) {
+        console.log("yes cookie");
+        if (result.data.status == "BAD_REQUEST") {
+          navigation.navigate("ServiceTerms");
         } else {
+          await storeData(
+            "@DESIGNER_FLAG",
+            String(result.data.result.designerFlag),
+          );
           navigation.navigate("NewMain");
         }
         // Animated.timing(opacity, {
@@ -88,6 +76,7 @@ export default function Loading() {
         //   useNativeDriver: false,
         // }).start();
       } else {
+        console.log("no cookie");
         Animated.timing(opacity, {
           toValue: 1,
           duration: 1000,
@@ -101,11 +90,11 @@ export default function Loading() {
 
   useEffect(() => {
     async function waitForSecond() {
-      await wait(2000);
+      await wait(1500);
       await callAPI();
     }
     waitForSecond();
-  }, []);
+  }, [socialLoginModalVisible]);
 
   return (
     <View style={styles.frame}>

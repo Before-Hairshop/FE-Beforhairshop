@@ -15,6 +15,7 @@ import NaverMapView, { Marker } from "react-native-nmap";
 import { scale, verticalScale } from "../utils/scale";
 import LocationHeader from "../components/location/LocationHeader";
 import { getReverseGeocoding } from "../api/getReverseGeocoding";
+import { patchUserLocation } from "../api/patchUserLocation";
 
 const { width, height } = Dimensions.get("window");
 
@@ -24,6 +25,7 @@ export default function Location() {
     latitude: 37.56661020000001,
     longitude: 126.97838810000002,
   });
+  const [zipCode, setZipCode] = useState(undefined);
   const [address, setAddress] = useState([]);
   const [addressDetail, setAddressDetail] = useState([]);
 
@@ -47,6 +49,18 @@ export default function Location() {
     }
   }
 
+  async function finishSetting(zip: any, addr: any, lati: any, longi: any) {
+    console.log(zip);
+    console.log(addr);
+    console.log(lati);
+    console.log(longi);
+    if (zip != undefined) {
+      const response = await patchUserLocation(zip, addr, lati, longi);
+      console.log(response);
+      navigation.navigate("NewMain");
+    }
+  }
+
   useEffect(() => {
     async function fetchAddress() {
       const { results } = await getReverseGeocoding(
@@ -57,6 +71,7 @@ export default function Location() {
       if (results[0] === undefined) {
         setAddress(["잘못된 위치"]);
         setAddressDetail(["다른 지점을 선택해주세요"]);
+        setZipCode(undefined);
       } else {
         setAddress([
           results[0].region.area1.name,
@@ -69,6 +84,7 @@ export default function Location() {
           results[0].land.number1,
           results[0].land.number2,
         ]);
+        setZipCode(results[0].land.addition1.value);
       }
     }
     fetchAddress();
@@ -163,7 +179,16 @@ export default function Location() {
         <Text style={styles.detail_address_text}>
           {addressDetail.join(" ")}
         </Text>
-        <TouchableOpacity style={styles.button_container}>
+        <TouchableOpacity
+          style={styles.button_container}
+          onPress={() => {
+            finishSetting(
+              zipCode,
+              address.join(" ") + addressDetail.join(" "),
+              coords.latitude,
+              coords.longitude,
+            );
+          }}>
           <Text style={styles.button_text}>이 위치로 주소 설정</Text>
         </TouchableOpacity>
       </View>
