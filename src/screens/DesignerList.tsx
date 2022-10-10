@@ -26,7 +26,7 @@ import axios from "axios";
 import ComplexityHeader from "../components/common/ComplexityHeader";
 import Contour from "../components/common/Contour";
 import { getDesignerListThroughLocation } from "../api/getDesignerListThroughLocation";
-import { getDesignerProfileThroughName } from "../api/getDesignerListThroughName";
+import { getDesignerListThroughName } from "../api/getDesignerListThroughName";
 
 const HeaderContents = () => (
   <>
@@ -189,7 +189,7 @@ export default function DesignerList() {
 
   const fetchDesignerListThroughName = async (keyw, prev, page) => {
     try {
-      const { data } = await getDesignerProfileThroughName(keyw, page);
+      const { data } = await getDesignerListThroughName(keyw, page);
       console.log(data);
       console.log([...prev, ...data.result]);
       setDesignerList([...prev, ...data.result]);
@@ -341,7 +341,7 @@ export default function DesignerList() {
           if (keyword == "") {
             fetchDesignerList(designerList, pageNum);
           } else {
-            fetchDesignerListThroughName();
+            fetchDesignerListThroughName(keyword, designerList, pageNum);
           }
         }}
         // onEndReachedThreshold={1} //위로 올렸을 때 새로 로딩할지
