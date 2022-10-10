@@ -25,7 +25,8 @@ import DefaultDesignerImg from "../assets/images/default_designer.png";
 import axios from "axios";
 import ComplexityHeader from "../components/common/ComplexityHeader";
 import Contour from "../components/common/Contour";
-import { getDesignerList } from "../api/getDesignerList";
+import { getDesignerListThroughLocation } from "../api/getDesignerListThroughLocation";
+import { getDesignerProfileThroughName } from "../api/getDesignerListThroughName";
 
 const HeaderContents = () => (
   <>
@@ -65,7 +66,7 @@ const TagItem = (props: { value: string }) => (
   </View>
 );
 
-const DesignerItem = data => (
+const DesignerItem = ({ item }) => (
   <View>
     <TouchableOpacity
       style={{
@@ -75,9 +76,12 @@ const DesignerItem = data => (
         paddingLeft: scale(22),
         flexDirection: "row",
         alignItems: "center",
+      }}
+      onPress={() => {
+        console.log(item);
       }}>
       <Image
-        source={DefaultDesignerImg}
+        source={{ uri: item.imageUrl }}
         style={{
           width: "21%",
           height: verticalScale(70),
@@ -104,7 +108,7 @@ const DesignerItem = data => (
               color: "#FFFFFF",
               marginRight: scale(5),
             }}>
-            이안
+            {item.name}
           </Text>
           <Text
             style={{
@@ -115,7 +119,7 @@ const DesignerItem = data => (
               textAlign: "left",
               color: "#737373",
             }}>
-            헤어샵 이름
+            {item.hairShopName}
           </Text>
         </View>
         <Text
@@ -128,7 +132,7 @@ const DesignerItem = data => (
             color: "rgba(255, 255, 255, 0.7)",
             marginBottom: verticalScale(8),
           }}>
-          울산 남구 수암로 148 홈플러스 울산남구점 옥상층(5층)
+          {item.zipAddress + " " + item.detailAddress}
         </Text>
         <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
           <TagItem value="다운펌" />
@@ -147,7 +151,7 @@ const DesignerItem = data => (
             textAlign: "left",
             color: "rgba(255, 255, 255, 0.7);",
           }}>
-          4.7
+          0.0
         </Text>
       </View>
     </TouchableOpacity>
@@ -166,29 +170,56 @@ export default function DesignerList() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [pageNum, setPageNum] = useState(0);
+  const [keyword, setKeyword] = useState("");
 
-  const fetchDesignerList = async () => {
+  const fetchDesignerList = async (prev, page) => {
     try {
       // setError(null);
       // setLoading(true);
-      const { data } = await getDesignerList(pageNum);
-      console.log(data);
-      console.log([...designerList, ...data.result]);
-      setDesignerList([...designerList, ...data.result]);
-      setPageNum(pageNum + 1);
+      const { data } = await getDesignerListThroughLocation(page);
+      console.log(pageNum);
+      console.log([...prev, ...data.result]);
+      setDesignerList([...prev, ...data.result]);
+      setPageNum(page + 1);
     } catch (e) {
       setError(e);
     }
     setLoading(false);
   };
 
+  const fetchDesignerListThroughName = async (keyw, prev, page) => {
+    try {
+      const { data } = await getDesignerProfileThroughName(keyw, page);
+      console.log(data);
+      console.log([...prev, ...data.result]);
+      setDesignerList([...prev, ...data.result]);
+      setPageNum(page + 1);
+    } catch (e) {
+      setError(e);
+    }
+    setLoading(false);
+  };
+
+  // useEffect(() => {
+  //   fetchDesignerList();
+  // }, []);
+
   useEffect(() => {
-    fetchDesignerList();
-  }, []);
+    // setDesignerList([]);
+    // setPageNum(0);
+    console.log(keyword, keyword.length);
+    if (keyword == "") {
+      console.log("no", keyword);
+      fetchDesignerList([], 0);
+    } else {
+      console.log("yes", keyword);
+      fetchDesignerListThroughName(keyword, [], 0);
+    }
+  }, [keyword]);
 
   return (
     <View style={styles.frame}>
-      <ComplexityHeader
+      {/* <ComplexityHeader
         title="헤어 디자이너 목록"
         goBack="NewMain"
         button={
@@ -199,9 +230,9 @@ export default function DesignerList() {
             <GoHomeIcon />
           </TouchableOpacity>
         }
-      />
-      <View style={{ width: width, backgroundColor: "#191919" }}>
-        {/* <View
+      /> */}
+      {/* <View style={{ width: width, backgroundColor: "#191919" }}> */}
+      {/* <View
         style={{
           position: "relative",
           paddingTop:
@@ -227,12 +258,12 @@ export default function DesignerList() {
         }}>
         <Header contents={<HeaderContents />} />
       </View> */}
-        <View
+      {/* <View
           style={{
             width: "100%",
             alignItems: "center",
             justifyContent: "center",
-            // marginTop: verticalScale(24),
+            marginTop: verticalScale(24),
             paddingTop: verticalScale(10),
             paddingBottom: verticalScale(10),
           }}>
@@ -250,19 +281,74 @@ export default function DesignerList() {
             <SearchIcon style={{ marginRight: scale(10) }} />
             <Text style={{ color: "#C8C8C8" }}>키워드를 검색해 주세요</Text>
           </View>
-        </View>
-        <View>
-          <FlatList
-            data={designerList}
-            renderItem={DesignerItem}
-            keyExtractor={(item, index) => item.id}
-            onEndReached={() => {
-              fetchDesignerList();
-            }}
-            onEndReachedThreshold={1}
-          />
-        </View>
-      </View>
+        </View> */}
+      {/* <View style={{ flex: 1 }}> */}
+      <FlatList
+        ListHeaderComponent={
+          <>
+            <ComplexityHeader
+              title="헤어 디자이너 목록"
+              goBack="NewMain"
+              button={
+                <TouchableOpacity
+                  onPress={() => {
+                    console.log();
+                  }}>
+                  <GoHomeIcon />
+                </TouchableOpacity>
+              }
+            />
+            <View
+              style={{
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "center",
+                // marginTop: verticalScale(24),
+                paddingTop: verticalScale(10),
+                paddingBottom: verticalScale(10),
+              }}>
+              <View
+                style={{
+                  width: "89%",
+                  height: verticalScale(45),
+                  backgroundColor: "#272728",
+                  borderRadius: 15,
+                  flexDirection: "row",
+                  paddingTop: verticalScale(13),
+                  paddingBottom: verticalScale(13),
+                  paddingLeft: scale(18),
+                }}>
+                <SearchIcon style={{ marginRight: scale(10) }} />
+                {/* <Text style={{ color: "#C8C8C8" }}>키워드를 검색해 주세요</Text> */}
+                <TextInput
+                  placeholder="키워드를 검색해 주세요"
+                  placeholderTextColor="#C8C8C8"
+                  value={keyword}
+                  onChangeText={text => {
+                    setKeyword(text);
+                  }}
+                  keyboardType="phone-pad"
+                  style={{ color: "#cccccc" }}
+                />
+              </View>
+            </View>
+          </>
+        }
+        data={designerList}
+        renderItem={DesignerItem}
+        keyExtractor={(item, index) => item.id}
+        onEndReached={() => {
+          if (keyword == "") {
+            fetchDesignerList(designerList, pageNum);
+          } else {
+            fetchDesignerListThroughName();
+          }
+        }}
+        // onEndReachedThreshold={1} //위로 올렸을 때 새로 로딩할지
+        contentContainerStyle={{ paddingBottom: 100 }}
+      />
+      {/* </View> */}
+      {/* </View> */}
     </View>
   );
 }

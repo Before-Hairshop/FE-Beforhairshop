@@ -63,11 +63,6 @@ export default function Loading() {
         console.log("yes cookie");
         if (result.data.status == "BAD_REQUEST") {
           navigation.navigate("ServiceTerms");
-          // Animated.timing(opacity, {
-          //   toValue: 1,
-          //   duration: 1000,
-          //   useNativeDriver: false,
-          // }).start();
         } else {
           await storeData(
             "@DESIGNER_FLAG",
