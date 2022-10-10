@@ -14,7 +14,7 @@ import CookieManager from "@react-native-cookies/cookies";
 
 import { scale, verticalScale } from "../utils/scale";
 import { getMemberInfo } from "../api/getMemberInfo";
-import { storeData } from "../utils/asyncStorage";
+import { removeData, storeData } from "../utils/asyncStorage";
 import GoogleLoginIcon from "../components/loading/GoogleLoginIcon";
 import KakaoLoginIcon from "../components/loading/KakaoLoginIcon";
 import NaverLoginIcon from "../components/loading/NaverLoginIcon";
@@ -63,6 +63,11 @@ export default function Loading() {
         console.log("yes cookie");
         if (result.data.status == "BAD_REQUEST") {
           navigation.navigate("ServiceTerms");
+          // Animated.timing(opacity, {
+          //   toValue: 1,
+          //   duration: 1000,
+          //   useNativeDriver: false,
+          // }).start();
         } else {
           await storeData(
             "@DESIGNER_FLAG",

@@ -7,31 +7,55 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import { scale, verticalScale } from "../utils/scale";
 import GoBackIcon from "../assets/icons/goBack.svg";
 import DefaultCustomerImg from "../assets/images/customerList/default_customer_profile.png";
 import HashTag from "../components/customerList/HashTag";
+import SimpleHeader from "../components/common/SimpleHeader";
+import { getCustomerList } from "../api/getCustomerList";
+import { readData } from "../utils/asyncStorage";
 
 export default function CustomerList() {
-  const [data, setData] = useState([{}, {}, {}, {}, {}, {}, {}]);
+  const [pageNum, setPageNum] = useState(0);
+  const [customerList, setCustomerList] = useState([]);
 
   const navigation = useNavigation();
 
-  // const keyExtractor = item => item.id;
+  const fetchCustomerList = async () => {
+    try {
+      const { data } = await getCustomerList(pageNum);
+      console.log(data.result);
+      setCustomerList([...customerList, ...data.result]);
+      setPageNum(pageNum + 1);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  const CustomerItem = () => (
-    <View
+  useEffect(() => {
+    console.log(readData("@SESSION_ID"));
+    fetchCustomerList();
+  }, []);
+
+  const CustomerItem = ({ item }) => (
+    <TouchableOpacity
       style={{
         width: "50%",
         alignItems: "center",
         marginTop: verticalScale(21),
-      }}>
+      }}
+      // onPress={() => navigation.navigate("UserProfileLookup")}
+      onPress={() =>
+        navigation.navigate({
+          name: "UserProfileLookup",
+        })
+      }>
       <View>
         <Image
-          source={DefaultCustomerImg}
+          source={{ uri: item.frontImageUrl }}
           style={{
             width: scale(160),
             height: scale(160),
@@ -47,7 +71,7 @@ export default function CustomerList() {
             borderColor: "#222222",
           }}
         />
-        <View style={{ marginLeft: scale(6) }}>
+        <View style={{ marginLeft: scale(3) }}>
           <Text
             style={{
               fontFamily: "Pretendard",
@@ -59,7 +83,7 @@ export default function CustomerList() {
               color: "#737373",
               marginTop: verticalScale(7),
             }}>
-            강남구 역삼동
+            {item.zipAddress}
           </Text>
           <Text
             style={{
@@ -89,16 +113,16 @@ export default function CustomerList() {
               color: "#fc2a5b",
               marginTop: verticalScale(7),
             }}>
-            30,000원
+            {item.payableAmount.toLocaleString()}원
           </Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
     <View style={styles.frame}>
-      <View
+      {/* <View
         style={{
           marginTop:
             Platform.OS === "ios" ? verticalScale(40) : verticalScale(0),
@@ -143,17 +167,34 @@ export default function CustomerList() {
           opacity: 0.2,
           backgroundColor: "#eeeeee",
         }}
-      />
+      /> */}
       <FlatList
-        data={data}
+        ListHeaderComponent={
+          <>
+            <SimpleHeader title="내 주변 고객 목록" />
+            <View
+              style={{
+                width: "100%",
+                height: verticalScale(1),
+                opacity: 0.2,
+                backgroundColor: "#eeeeee",
+              }}
+            />
+          </>
+        }
+        data={customerList}
         renderItem={CustomerItem}
-        // keyExtractor={keyExtractor}
+        keyExtractor={(item, index) => item.id}
         numColumns={2}
         style={{
           flexDirection: "column",
         }}
+        onEndReached={() => {
+          fetchCustomerList();
+        }}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        // contentContainerStyle={{ paddingBottom: 100 }}
       />
     </View>
   );

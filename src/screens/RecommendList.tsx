@@ -4,8 +4,9 @@ import {
   View,
   Text,
   ScrollView,
+  FlatList,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { scale, verticalScale } from "../utils/scale";
 import SimpleHeader from "../components/common/SimpleHeader";
@@ -14,11 +15,26 @@ import ListContour from "../components/recommendList/Contour";
 import DownArrowIcon from "../assets/icons/common/down_arrow.svg";
 import UpArrowIcon from "../assets/icons/common/up_arrow.svg";
 import Recommendation from "../components/recommendList/Recommendation";
+import { getRecommendList } from "../api/getRecommendList";
 
 export default function RecommendList() {
   const [approveIsOpen, setApproveIsOpen] = useState(false);
   const [pendingIsOpen, setPendingIsOpen] = useState(false);
   const [rejectIsOpen, setRejectIsOpen] = useState(false);
+  const [recommendList, setRecommendList] = useState([]);
+  const [approveList, setApproveList] = useState([1, 2]);
+  const [pendingList, setPendingList] = useState([1, 2]);
+  const [rejectList, setRejectList] = useState([1, 2]);
+  const [pageNum, setPageNum] = useState(0);
+
+  async function fetchRecommendList() {
+    const response = await getRecommendList(pageNum);
+    console.log(response);
+  }
+
+  useEffect(() => {
+    fetchRecommendList();
+  }, []);
 
   return (
     <View style={styles.frame}>
@@ -69,6 +85,8 @@ export default function RecommendList() {
           </View>
         </TouchableOpacity>
         {approveIsOpen && <Recommendation />}
+        {/* {approveIsOpen &&
+          approveList.map((data, index) => <Recommendation data={data} />)} */}
         <ListContour />
         <TouchableOpacity
           style={{ height: verticalScale(65), alignItems: "center" }}

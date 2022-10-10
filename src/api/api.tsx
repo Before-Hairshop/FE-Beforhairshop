@@ -15,7 +15,7 @@ const axiosAuthApi = () => {
   const instance = axios.create({
     baseURL: BASEURL,
     headers: {
-      Cookies: `JSESSIONID=${readData("@SESSION_ID")}`,
+      Cookie: `SESSION=${readData("@SESSION_ID")}`,
     },
   });
   return instance;

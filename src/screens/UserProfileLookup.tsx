@@ -55,15 +55,13 @@ const HeaderContents = () => {
 
 export default function UserProfileLookup() {
   const [profileImage, setProfileImage] = useState(["", "", ""]);
-
   const [wantHairImage, setWantHairImage] = useState([]);
-
   const [wantedStyle, setWantedStyle] = useState("");
   const [wantedStyleDescription, setWantedStyleDescription] = useState("");
   const [wantedStylingCost, setWantedStylingCost] = useState(0);
-
   const [hairStatusIndex, setHairStatusIndex] = useState(-1);
   const [hairTendencyIndex, setHairTendencyIndex] = useState(-1);
+  const [profileData, setProfileData] = useState();
 
   const hairStatus = ["많이 상했어요", "보통이에요", "매우 건강해요"];
   const hairTendency = ["심한 곱슬", "곱슬", "반곱슬", "반직모", "직모"];
@@ -71,6 +69,7 @@ export default function UserProfileLookup() {
 
   const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
   const navigation = useNavigation();
+
   useEffect(() => {
     setProfileImage([
       "https://picsum.photos/200/300",

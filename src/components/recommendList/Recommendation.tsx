@@ -7,7 +7,7 @@ import DefaultDesignerImg from "../../assets/images/default_designer_profile.png
 
 export default function Recommendation(props) {
   return (
-    <View style={{ alignItems: "center", marginVertical: verticalScale(10) }}>
+    <View style={{ alignItems: "center", marginBottom: verticalScale(10) }}>
       <TouchableOpacity
         style={{
           width: "93%",
