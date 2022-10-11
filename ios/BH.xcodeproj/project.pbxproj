@@ -22,6 +22,7 @@
 		8F7D8E0FF6E04B8A9B5B977D /* Pretendard-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 21259D5592F048C1AB9CE0F4 /* Pretendard-SemiBold.ttf */; };
 		A6DD760648104CB69395F559 /* Pretendard-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A95B07158C5344358C9DAC40 /* Pretendard-Light.ttf */; };
 		A76048E0F61540D3BF722706 /* Pretendard-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EBEDDB7D657C481ABC4229BD /* Pretendard-ExtraBold.ttf */; };
+		B0C99ACF28F52CCA0063AF8F /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C99ACE28F52CCA0063AF8F /* SwiftBridge.swift */; };
 		C82D250DE8664103A298C50A /* Pretendard-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7781AF732FB74A9C9436302F /* Pretendard-Black.ttf */; };
 /* End PBXBuildFile section */
 
@@ -58,6 +59,8 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = BH/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A547D8837D8F82A24E9D1328 /* Pods-BH-BHTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BH-BHTests.release.xcconfig"; path = "Target Support Files/Pods-BH-BHTests/Pods-BH-BHTests.release.xcconfig"; sourceTree = "<group>"; };
 		A95B07158C5344358C9DAC40 /* Pretendard-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-Light.ttf"; path = "../src/assets/fonts/Pretendard-Light.ttf"; sourceTree = "<group>"; };
+		B0C99ACD28F52CC90063AF8F /* BH-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BH-Bridging-Header.h"; sourceTree = "<group>"; };
+		B0C99ACE28F52CCA0063AF8F /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
 		C1759E8CBC9C00A343F16574 /* Pods-BH.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BH.debug.xcconfig"; path = "Target Support Files/Pods-BH/Pods-BH.debug.xcconfig"; sourceTree = "<group>"; };
 		D46D6140FEB04A3CBD809170 /* Pretendard-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-ExtraLight.ttf"; path = "../src/assets/fonts/Pretendard-ExtraLight.ttf"; sourceTree = "<group>"; };
 		EBEDDB7D657C481ABC4229BD /* Pretendard-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-ExtraBold.ttf"; path = "../src/assets/fonts/Pretendard-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -112,6 +115,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				B0C99ACE28F52CCA0063AF8F /* SwiftBridge.swift */,
+				B0C99ACD28F52CC90063AF8F /* BH-Bridging-Header.h */,
 			);
 			name = BH;
 			sourceTree = "<group>";
@@ -252,7 +257,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1340;
 					};
 				};
 			};
@@ -468,6 +473,7 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				B0C99ACF28F52CCA0063AF8F /* SwiftBridge.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -486,6 +492,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 06163065B108288EA4ED4549 /* Pods-BH-BHTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -514,6 +521,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A547D8837D8F82A24E9D1328 /* Pods-BH-BHTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -554,8 +562,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bh;
 				PRODUCT_NAME = BH;
+				SWIFT_OBJC_BRIDGING_HEADER = "BH-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -580,8 +589,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bh;
 				PRODUCT_NAME = BH;
+				SWIFT_OBJC_BRIDGING_HEADER = "BH-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
