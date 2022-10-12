@@ -459,6 +459,7 @@ export default function NewMain() {
     async function fetchData() {
       setDesignerFlag(await readData("@DESIGNER_FLAG"));
       const { data } = await getMemberInfo();
+      console.log(data);
       setProfileImg(data.result.imageUrl);
       console.log(data.result.designerFlag);
       if (data.result.designerFlag == 1) {

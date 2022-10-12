@@ -19,6 +19,8 @@ import GoogleLoginIcon from "../components/loading/GoogleLoginIcon";
 import KakaoLoginIcon from "../components/loading/KakaoLoginIcon";
 import NaverLoginIcon from "../components/loading/NaverLoginIcon";
 import AppleLoginIcon from "../components/loading/AppleLoginIcon";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const socialLoginURI = {
   google: "http://localhost:8080/oauth2/authorization/google",
@@ -48,10 +50,31 @@ export default function Loading() {
   };
 
   async function onNavigationStateChange(navigationState: WebViewNavigation) {
-    if (navigationState.url == "http://localhost:8080/") {
-      const cookies = await CookieManager.get("http://localhost:8080");
-      await storeData("@SESSION_ID", cookies.SESSION.value);
-      await setSocialLoginModalVisible(false);
+    console.log(navigationState);
+    if (navigationState.url == "http://localhost:8080/#") {
+      const cookies = await CookieManager.get("http://localhost:8080#");
+      console.log(cookies);
+      storeData("@SESSION_ID", cookies.SESSION.value);
+      setSocialLoginModalVisible(false);
+      try {
+        console.log(cookies.SESSION.value);
+        axios
+          .get("http://localhost:8080/api/v1/members", {
+            headers: {
+              Cookies: `SESSION=${cookies.SESSION.value}`,
+            },
+          })
+          .then(result => {
+            console.log(result);
+            // if (result.data.status == "BAD_REQUEST") {
+            //   navigation.navigate("ServiceTerms");
+            // } else {
+            //   navigation.navigate("NewMain");
+            // }
+          });
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 
@@ -59,15 +82,22 @@ export default function Loading() {
     try {
       const result = await getMemberInfo();
       console.log(result);
-      if (result.data.result != null) {
+      if (result.data.result == null) {
+        console.log("no cookie");
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: false,
+        }).start();
+      } else {
         console.log("yes cookie");
         if (result.data.status == "BAD_REQUEST") {
-          navigation.navigate("ServiceTerms");
           // Animated.timing(opacity, {
           //   toValue: 1,
           //   duration: 1000,
           //   useNativeDriver: false,
           // }).start();
+          navigation.navigate("ServiceTerms");
         } else {
           await storeData(
             "@DESIGNER_FLAG",
@@ -80,13 +110,6 @@ export default function Loading() {
         //   duration: 1000,
         //   useNativeDriver: false,
         // }).start();
-      } else {
-        console.log("no cookie");
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: false,
-        }).start();
       }
     } catch (error) {
       console.log(error);
@@ -94,12 +117,13 @@ export default function Loading() {
   };
 
   useEffect(() => {
+    // AsyncStorage.clear();
     async function waitForSecond() {
       await wait(1500);
       await callAPI();
     }
     waitForSecond();
-  }, [socialLoginModalVisible]);
+  }, []);
 
   return (
     <View style={styles.frame}>

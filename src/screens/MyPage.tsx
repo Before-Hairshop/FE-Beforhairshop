@@ -8,14 +8,29 @@ import DefaultProfileImg from "../assets/images/mypage/default_profile.png";
 import RightArrowIcon from "../assets/icons/common/arrow.svg";
 import BigContour from "../components/common/BigContour";
 import MypageItem from "../components/mypage/MypageItem";
+import { useNavigation } from "@react-navigation/native";
+import { readData } from "../utils/asyncStorage";
 
 export default function Mypage() {
+  const navigation = useNavigation();
+
+  async function moveProfilePage() {
+    if ((await readData("@DESIGNER_FLAG")) == "1") {
+      navigation.navigate("DesignerProfile");
+    } else {
+      navigation.navigate("UserProfileLookup");
+    }
+  }
+
   return (
     <View style={styles.frame}>
       <SimpleHeader title="마이페이지" goBack="Main" />
       <Contour style={{ opacity: 0.1 }} />
       <TouchableOpacity
-        style={{ height: verticalScale(120), alignItems: "center" }}>
+        style={{ height: verticalScale(120), alignItems: "center" }}
+        onPress={() => {
+          moveProfilePage();
+        }}>
         <View
           style={{
             width: "88.8%",
