@@ -1,4 +1,5 @@
 import {
+  Alert,
   FlatList,
   Image,
   Platform,
@@ -16,7 +17,6 @@ import DefaultCustomerImg from "../assets/images/customerList/default_customer_p
 import HashTag from "../components/customerList/HashTag";
 import SimpleHeader from "../components/common/SimpleHeader";
 import { getCustomerList } from "../api/getCustomerList";
-import { readData } from "../utils/asyncStorage";
 
 export default function CustomerList() {
   const [pageNum, setPageNum] = useState(0);
@@ -27,16 +27,20 @@ export default function CustomerList() {
   const fetchCustomerList = async () => {
     try {
       const { data } = await getCustomerList(pageNum);
-      console.log(data.result);
-      setCustomerList([...customerList, ...data.result]);
-      setPageNum(pageNum + 1);
+      console.log(data);
+      if (data.status == "BAD_REQUEST") {
+        Alert.alert("프로필을 먼저 등록해주세요.");
+        navigation.goBack();
+      } else {
+        setCustomerList([...customerList, ...data.result]);
+        setPageNum(pageNum + 1);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    console.log(readData("@SESSION_ID"));
     fetchCustomerList();
   }, []);
 

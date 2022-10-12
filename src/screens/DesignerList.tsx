@@ -81,7 +81,7 @@ const DesignerItem = ({ item }) => (
         console.log(item);
       }}>
       <Image
-        source={{ uri: item.imageUrl }}
+        source={{ uri: item.hairDesignerProfileDto.imageUrl }}
         style={{
           width: "21%",
           height: verticalScale(70),
@@ -108,7 +108,7 @@ const DesignerItem = ({ item }) => (
               color: "#FFFFFF",
               marginRight: scale(5),
             }}>
-            {item.name}
+            {item.hairDesignerProfileDto.name}
           </Text>
           <Text
             style={{
@@ -119,7 +119,7 @@ const DesignerItem = ({ item }) => (
               textAlign: "left",
               color: "#737373",
             }}>
-            {item.hairShopName}
+            {item.hairDesignerProfileDto.hairShopName}
           </Text>
         </View>
         <Text
@@ -132,12 +132,22 @@ const DesignerItem = ({ item }) => (
             color: "rgba(255, 255, 255, 0.7)",
             marginBottom: verticalScale(8),
           }}>
-          {item.zipAddress + " " + item.detailAddress}
+          {item.hairDesignerProfileDto.zipAddress +
+            " " +
+            item.hairDesignerProfileDto.detailAddress}
         </Text>
         <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
-          <TagItem value="다운펌" />
-          <TagItem value="남성컷" />
-          <TagItem value="커트" />
+          {item.hairDesignerHashtagDtoList.length == 0 ? (
+            <TagItem value="등록된 태그가 없습니다." />
+          ) : (
+            <>
+              {item.hairDesignerHashtagDtoList.map(
+                (hashtag: { tag: string }, index: any) => (
+                  <TagItem value={hashtag.tag} />
+                ),
+              )}
+            </>
+          )}
         </View>
       </View>
       <View style={{ width: "5%", paddingTop: verticalScale(3), top: -25 }}>
@@ -151,7 +161,7 @@ const DesignerItem = ({ item }) => (
             textAlign: "left",
             color: "rgba(255, 255, 255, 0.7);",
           }}>
-          0.0
+          {item.averageStarRating == null ? "0.0" : item.averageStarRating}
         </Text>
       </View>
     </TouchableOpacity>
@@ -172,7 +182,7 @@ export default function DesignerList() {
   const [pageNum, setPageNum] = useState(0);
   const [keyword, setKeyword] = useState("");
 
-  const fetchDesignerList = async (prev, page) => {
+  const fetchDesignerList = async (prev: never[], page: number) => {
     try {
       // setError(null);
       // setLoading(true);
@@ -187,7 +197,11 @@ export default function DesignerList() {
     setLoading(false);
   };
 
-  const fetchDesignerListThroughName = async (keyw, prev, page) => {
+  const fetchDesignerListThroughName = async (
+    keyw: string,
+    prev: never[],
+    page: number,
+  ) => {
     try {
       const { data } = await getDesignerListThroughName(keyw, page);
       console.log(data);
