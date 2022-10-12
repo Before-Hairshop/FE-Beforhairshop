@@ -11,7 +11,7 @@ export default function MypageItem(props) {
     <TouchableOpacity
       style={{ height: verticalScale(50), alignItems: "center" }}
       onPress={() => {
-        Alert.alert("준비중 페이지");
+        Alert.alert("준비중");
         // navigation.navigate(props.navigate);
       }}>
       <View
