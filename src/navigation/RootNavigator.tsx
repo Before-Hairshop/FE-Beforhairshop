@@ -23,6 +23,7 @@ import NewMain from "../screens/NewMain";
 import Mypage from "../screens/MyPage";
 import RecommendList from "../screens/RecommendList";
 import KakaoSocialLogin from "../screens/KakaoSocialLogin";
+import AppleSocialLogin from "../screens/AppleSocialLogin";
 
 const mainStack = createNativeStackNavigator();
 
@@ -30,7 +31,7 @@ export const RootNavigator = () => {
   return (
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="KakaoSocialLogin">
+      initialRouteName="AppleSocialLogin">
       <mainStack.Screen name="Loading" component={Loading} />
       <mainStack.Screen name="Main" component={Main} />
       <mainStack.Screen name="NewMain" component={NewMain} />
@@ -51,6 +52,7 @@ export const RootNavigator = () => {
       <mainStack.Screen name="Mypage" component={Mypage} />
       <mainStack.Screen name="RecommendList" component={RecommendList} />
       <mainStack.Screen name="KakaoSocialLogin" component={KakaoSocialLogin} />
+      <mainStack.Screen name="AppleSocialLogin" component={AppleSocialLogin} />
       <mainStack.Screen
         name="UserProfileLookup"
         component={UserProfileLookup}
