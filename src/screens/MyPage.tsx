@@ -1,4 +1,11 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React from "react";
 
 import { scale, verticalScale } from "../utils/scale";
@@ -23,7 +30,7 @@ export default function Mypage() {
   }
 
   return (
-    <View style={styles.frame}>
+    <SafeAreaView style={styles.frame}>
       <SimpleHeader title="마이페이지" goBack="Main" />
       <Contour style={{ opacity: 0.1 }} />
       <TouchableOpacity
@@ -136,7 +143,7 @@ export default function Mypage() {
       <MypageItem title="고객센터" navigate="Main" />
       <MypageItem title="로그아웃" navigate="Main" />
       <MypageItem title="회원탈퇴" navigate="Main" />
-    </View>
+    </SafeAreaView>
   );
 }
 

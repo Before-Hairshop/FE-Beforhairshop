@@ -3,6 +3,7 @@ import {
   FlatList,
   Image,
   Platform,
+  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -125,7 +126,7 @@ export default function CustomerList() {
   );
 
   return (
-    <View style={styles.frame}>
+    <SafeAreaView style={styles.frame}>
       {/* <View
         style={{
           marginTop:
@@ -200,7 +201,7 @@ export default function CustomerList() {
         showsHorizontalScrollIndicator={false}
         // contentContainerStyle={{ paddingBottom: 100 }}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

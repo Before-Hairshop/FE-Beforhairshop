@@ -5,6 +5,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -68,7 +69,7 @@ export default function ProfileSelection(props) {
   );
 
   return (
-    <View style={styles.frame}>
+    <SafeAreaView style={styles.frame}>
       <SimpleHeader title="스타일 추천서" goBack="Main" />
       <Contour />
       <ScrollView contentContainerStyle={{ alignItems: "center" }}>
@@ -305,7 +306,7 @@ export default function ProfileSelection(props) {
           </Text>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

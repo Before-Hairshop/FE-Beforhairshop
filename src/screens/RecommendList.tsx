@@ -5,6 +5,7 @@ import {
   Text,
   ScrollView,
   FlatList,
+  SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 
@@ -37,7 +38,7 @@ export default function RecommendList() {
   }, []);
 
   return (
-    <View style={styles.frame}>
+    <SafeAreaView style={styles.frame}>
       <SimpleHeader title="스타일 추천서" goBack="Main" />
       <Contour />
       <ScrollView>
@@ -178,7 +179,7 @@ export default function RecommendList() {
         </TouchableOpacity>
         {rejectIsOpen && <Recommendation />}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
