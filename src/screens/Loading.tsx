@@ -5,6 +5,7 @@ import {
   Animated,
   TouchableOpacity,
   Modal,
+  SafeAreaView,
 } from "react-native";
 import React, { createRef, useEffect, useRef } from "react";
 import { useState } from "react";
@@ -51,11 +52,15 @@ export default function Loading() {
 
   async function onNavigationStateChange(navigationState: WebViewNavigation) {
     console.log(navigationState);
-    if (navigationState.url == "http://localhost:8080/#") {
+    if (
+      navigationState.url == "http://localhost:8080/#" ||
+      navigationState.url == "http://localhost:8080/"
+    ) {
       const cookies = await CookieManager.get("http://localhost:8080#");
       console.log(cookies);
       storeData("@SESSION_ID", cookies.SESSION.value);
       setSocialLoginModalVisible(false);
+      await wait(1500);
       try {
         console.log(cookies.SESSION.value);
         axios
@@ -66,11 +71,11 @@ export default function Loading() {
           })
           .then(result => {
             console.log(result);
-            // if (result.data.status == "BAD_REQUEST") {
-            //   navigation.navigate("ServiceTerms");
-            // } else {
-            //   navigation.navigate("NewMain");
-            // }
+            if (result.data.status == "BAD_REQUEST") {
+              navigation.navigate("ServiceTerms");
+            } else {
+              navigation.navigate("NewMain");
+            }
           });
       } catch (error) {
         console.log(error);
@@ -171,19 +176,21 @@ export default function Loading() {
         animationType="slide"
         transparent={true}
         visible={socialLoginModalVisible}>
-        <WebView
-          ref={webViewRef}
-          cacheEnabled={false}
-          source={{
-            uri: socialLoginURI[loginType],
-          }}
-          userAgent={userAgent}
-          onNavigationStateChange={onNavigationStateChange}
-          sharedCookiesEnabled={true}
-          thirdPartyCookiesEnabled={true}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-        />
+        <SafeAreaView style={{ flex: 1 }}>
+          <WebView
+            ref={webViewRef}
+            cacheEnabled={false}
+            source={{
+              uri: socialLoginURI[loginType],
+            }}
+            userAgent={userAgent}
+            onNavigationStateChange={onNavigationStateChange}
+            sharedCookiesEnabled={true}
+            thirdPartyCookiesEnabled={true}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+          />
+        </SafeAreaView>
       </Modal>
     </View>
   );
