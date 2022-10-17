@@ -26,7 +26,7 @@ const postDesignerProfile = async (
       longitude: parseFloat(data.addresses[0].x),
       detailAddress: specificLocation,
       phoneNumber: phoneNumber,
-      hashTagList: hairTag,
+      hashtagList: hairTag,
       workingDayList: schedule,
       priceList: menuInfo,
     };

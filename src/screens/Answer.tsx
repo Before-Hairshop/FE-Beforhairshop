@@ -21,10 +21,7 @@ import { postRecommendation } from "../api/postRecommendation";
 
 const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
 
-const memberId = 1;
-const treatmentDate = "";
-
-export default function Answer() {
+export default function Answer({ route }) {
   const [suggestionList, setSuggestionList] = useState([
     {
       hairstyleName: "",
@@ -43,12 +40,12 @@ export default function Answer() {
     if (greetings != "") {
       suggestionList.map((data, index) => {
         const result = postRecommendation(
-          memberId,
+          route.params.memberId,
           greetings,
           data.hairstyleName,
           data.reason,
           data.price,
-          treatmentDate,
+          route.params.treatmentDate,
         );
       });
     } else {
@@ -279,6 +276,7 @@ export default function Answer() {
           }}
           onPress={() => {
             console.log(suggestionList);
+            sendRecommendation();
           }}>
           <Text style={{ fontSize: scale(16), color: "#ffffff" }}>보내기</Text>
         </TouchableOpacity>

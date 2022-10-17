@@ -62,7 +62,7 @@ export default function Map() {
       <Marker
         coordinate={P0}
         // onClick={() => console.warn("onClick! p0")}
-        caption={{ text: "test caption", align: Align.Top }}
+        // caption={{ text: "test caption", align: Align.Top }}
       />
       {/* <Marker
         coordinate={P1}

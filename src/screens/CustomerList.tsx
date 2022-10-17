@@ -48,14 +48,11 @@ export default function CustomerList() {
   const CustomerItem = ({ item }) => (
     <TouchableOpacity
       style={{
-        width: "50%",
-        alignItems: "center",
-        marginTop: verticalScale(21),
+        padding: scale(14),
       }}
-      // onPress={() => navigation.navigate("UserProfileLookup")}
       onPress={() =>
-        navigation.navigate({
-          name: "UserProfileLookup",
+        navigation.navigate("UserProfileLookup", {
+          data: item,
         })
       }>
       <View>
@@ -88,7 +85,9 @@ export default function CustomerList() {
               color: "#737373",
               marginTop: verticalScale(7),
             }}>
-            {item.zipAddress}
+            {item.zipAddress.length > 16
+              ? item.zipAddress.substring(0, 15) + "..."
+              : item.zipAddress}
           </Text>
           <Text
             style={{
@@ -101,12 +100,12 @@ export default function CustomerList() {
               color: "#ffffff",
               marginTop: verticalScale(7),
             }}>
-            짱구
+            {item.name}
           </Text>
           <View style={{ flexDirection: "row", marginTop: verticalScale(7) }}>
-            <HashTag />
-            <HashTag />
-            <HashTag />
+            <HashTag value={item.desiredHairstyle} />
+            {/* <HashTag />
+            <HashTag /> */}
           </View>
           <Text
             style={{
@@ -189,17 +188,14 @@ export default function CustomerList() {
         }
         data={customerList}
         renderItem={CustomerItem}
-        keyExtractor={(item, index) => item.id}
+        keyExtractor={item => item.id}
         numColumns={2}
-        style={{
-          flexDirection: "column",
-        }}
         onEndReached={() => {
           fetchCustomerList();
         }}
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        // contentContainerStyle={{ paddingBottom: 100 }}
+        columnWrapperStyle={{
+          justifyContent: "space-between",
+        }}
       />
     </SafeAreaView>
   );

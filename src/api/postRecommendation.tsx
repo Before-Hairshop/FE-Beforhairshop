@@ -24,8 +24,12 @@ const postRecommendation = async (
         params: {
           member_profile_id: id,
         },
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
     );
+    console.log(result);
     return result;
   } catch (error) {
     console.log(error);

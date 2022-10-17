@@ -3,7 +3,7 @@ import React from "react";
 
 import { scale, verticalScale } from "../../utils/scale";
 
-export default function HashTag() {
+export default function HashTag(props) {
   return (
     <View
       style={{
@@ -27,7 +27,7 @@ export default function HashTag() {
           textAlign: "center",
           color: "#fc2a5b",
         }}>
-        투블럭
+        {props.value}
       </Text>
     </View>
   );

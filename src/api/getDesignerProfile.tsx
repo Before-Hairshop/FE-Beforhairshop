@@ -1,12 +1,8 @@
 import { authInstance } from "./api";
 
-const getDesignerProfile = async (id: any) => {
+const getDesignerProfile = async () => {
   try {
-    const result = await authInstance.get("/api/v1/hair_designers/id", {
-      params: {
-        hair_designer_id: id,
-      },
-    });
+    const result = await authInstance.get("/api/v1/hair_designers", {});
     return result;
   } catch (error) {
     console.log(error);

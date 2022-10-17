@@ -62,7 +62,12 @@ const Header = props => (
           BEFORE HAIRSHOP
         </Text>
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          props.navigation.navigate("Mypage", {
+            data: props.profileData,
+          });
+        }}>
         <Image
           source={{
             uri: props.profileImg,
@@ -98,7 +103,9 @@ const MainProfile = props => (
           if (props.designerFlag == "1") {
             props.navigation.navigate("DesignerProfile");
           } else {
-            props.navigation.navigate("UserProfileLookup");
+            props.navigation.navigate("UserProfileLookup", {
+              data: props.profileData,
+            });
           }
         }}>
         <View
@@ -463,10 +470,11 @@ export default function NewMain() {
       setProfileImg(data.result.imageUrl);
       console.log(data.result.designerFlag);
       if (data.result.designerFlag == 1) {
-        const result = await getDesignerProfile(data.result.id);
+        const result = await getDesignerProfile();
         console.log(result);
         if (result.data.status != "BAD_REQUEST") {
-          setProfileData(result?.data.result.hairDesignerProfileDto);
+          console.log(result.data.status);
+          setProfileData(result.data.result);
         }
       } else {
         const result = await getUserProfile();
@@ -484,7 +492,13 @@ export default function NewMain() {
 
   return (
     <View style={styles.frame}>
-      <Header profileImg={profileImg} />
+      {profileImg != undefined && profileData != undefined && (
+        <Header
+          profileImg={profileImg}
+          profileData={profileData}
+          navigation={navigation}
+        />
+      )}
       <MainProfile
         designerFlag={designerFlag}
         profileData={profileData}
