@@ -40,6 +40,7 @@ import DeleteIcon from "../assets/icons/delete.svg";
 import { useNavigation } from "@react-navigation/native";
 import { getDesignerProfileById } from "../api/getDesignerProfileById";
 import { UnderLineContent } from "../components/designerProfile/UnderLineContent";
+import { getReviewList } from "../api/getReviewList";
 
 const workingdayDict = {};
 workingdayDict["MON"] = "월요일";
@@ -49,6 +50,8 @@ workingdayDict["THU"] = "목요일";
 workingdayDict["FRI"] = "금요일";
 workingdayDict["SAT"] = "토요일";
 workingdayDict["SUN"] = "일요일";
+
+const ratingDict = ["", "나쁨", "보통", "좋음"];
 
 const DashedLineContent = () => (
   <View
@@ -148,6 +151,7 @@ function numberWithCommas(x: number) {
 export default function DesignerProfile({ route }) {
   const [profileData, setProfileData] = useState(undefined);
   const [reviewData, setReviewData] = useState(undefined);
+  const [reviewPageNum, setReviewPageNum] = useState(0);
   const [yellowStar, setYellowStar] = useState([]);
   const [grayStar, setGrayStar] = useState([]);
 
@@ -205,7 +209,7 @@ export default function DesignerProfile({ route }) {
 
   const fetchStar = (value: any) => {
     console.log(value);
-    if (isNaN(value)) {
+    if (value == null) {
       let newStar = [];
       for (let i = 0; i < 5; i++) {
         newStar.push(<GreyStar />);
@@ -213,12 +217,12 @@ export default function DesignerProfile({ route }) {
       setGrayStar(newStar);
     } else {
       let newStar = [];
-      for (let i = 0; i < value; i++) {
+      for (let i = 0; i < Math.round(value); i++) {
         newStar.push(<YellowStar />);
       }
       setYellowStar(newStar);
       let newStar2 = [];
-      for (let i = 0; i < 5 - value; i++) {
+      for (let i = 0; i < 5 - Math.round(value); i++) {
         newStar2.push(<GreyStar />);
       }
       setGrayStar(newStar2);
@@ -232,7 +236,14 @@ export default function DesignerProfile({ route }) {
       const response = await getDesignerProfileById(route.params.designerId);
       console.log(response.data.result);
       setProfileData(response.data.result);
-      fetchStar(parseInt(response.data.result.averageStarRating));
+      fetchStar(response.data.result.averageStarRating);
+      const response2 = await getReviewList(
+        reviewPageNum,
+        response.data.result.hairDesignerProfileDto.id,
+        // route.params.designerId,
+      );
+      console.log(response2);
+      setReviewData(response2.data.result);
     } catch (e) {
       setError(e);
     }
@@ -300,7 +311,7 @@ export default function DesignerProfile({ route }) {
     </View>
   );
 
-  const ReviewItem = () => (
+  const ReviewItem = props => (
     <View
       style={{
         paddingTop: verticalScale(40),
@@ -323,45 +334,53 @@ export default function DesignerProfile({ route }) {
             textAlign: "left",
             color: "#999999",
           }}>
-          22.07.15
+          {props.data.reviewDto.createDate.substring(0, 4) +
+            "." +
+            props.data.reviewDto.createDate.substring(5, 7) +
+            "." +
+            props.data.reviewDto.createDate.substring(8, 10)}
         </Text>
         <TouchableOpacity
+          style={{ height: verticalScale(24), justifyContent: "center" }}
           onPress={() => {
             setIsReviewModalVisible(true);
           }}>
           <MeatballIcon />
         </TouchableOpacity>
       </View>
-      <Text style={styles.user_name}>겁나 빠른 황소</Text>
+      <Text style={styles.user_name}>{props.data.name}</Text>
       <View style={styles.review_star_container}>
-        <YellowStar />
-        <YellowStar />
-        <YellowStar />
-        <YellowStar />
-        <GreyStar />
+        {props.tempY}
+        {props.tempG}
       </View>
       <View style={styles.review_preference_container}>
         <View style={styles.review_preference_element}>
           <Text style={styles.review_preference}>스타일</Text>
-          <Text style={styles.review_preference_contents}>좋음</Text>
+          <Text style={styles.review_preference_contents}>
+            {ratingDict[props.data.reviewDto.styleRating]}
+          </Text>
         </View>
         <View style={styles.review_preference_element}>
           <Text style={styles.review_preference}>서비스</Text>
-          <Text style={styles.review_preference_contents}>보통</Text>
+          <Text style={styles.review_preference_contents}>
+            {ratingDict[props.data.reviewDto.serviceRating]}
+          </Text>
         </View>
       </View>
       <ReviewPhoto />
-      <Text style={styles.review_contents}>
-        진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추!
-        진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추!{" "}
-      </Text>
+      <Text style={styles.review_contents}>{props.data.reviewDto.content}</Text>
       <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
-        <View style={styles.review_tag}>
+        {props.data.hashtagDtoList.map((item, index) => (
+          <View style={styles.review_tag}>
+            <Text style={styles.review_tag_text}>#{item.hashtag}</Text>
+          </View>
+        ))}
+        {/* <View style={styles.review_tag}>
           <Text style={styles.review_tag_text}>#다움펌</Text>
         </View>
         <View style={styles.review_tag}>
           <Text style={styles.review_tag_text}>#남성컷</Text>
-        </View>
+        </View> */}
       </View>
     </View>
   );
@@ -424,6 +443,10 @@ export default function DesignerProfile({ route }) {
                   paddingTop: verticalScale(20),
                   paddingBottom: verticalScale(20),
                   paddingLeft: scale(25),
+                }}
+                onPress={() => {
+                  setIsDesignerModalVisible(false);
+                  navigation.navigate("DesignerModify");
                 }}>
                 <View
                   style={{
@@ -606,11 +629,11 @@ export default function DesignerProfile({ route }) {
             <View>
               <TouchableOpacity
                 onPress={() => {
-                  // Linking.openURL(`tel:${phoneNumber}`).catch(err =>
-                  //   console.error("An error occurred", err),
-                  // );
-                  console.log(yellowStar);
-                  console.log(grayStar);
+                  if (profileData != undefined) {
+                    Linking.openURL(
+                      `tel:${profileData.hairDesignerProfileDto.phoneNumber}`,
+                    ).catch(err => console.error("An error occurred", err));
+                  }
                 }}>
                 <View style={styles.action_icon}>
                   <CallIcon width={scale(19.1)} height={verticalScale(19.1)} />
@@ -632,7 +655,11 @@ export default function DesignerProfile({ route }) {
               </TouchableOpacity>
             </View>
             <View>
-              <TouchableOpacity style={styles.action_icon}>
+              <TouchableOpacity
+                style={styles.action_icon}
+                onPress={() => {
+                  Alert.alert("준비중");
+                }}>
                 <LoveIcon width={scale(19.1)} height={verticalScale(19.1)} />
               </TouchableOpacity>
               <View style={{ alignItems: "center" }}>
@@ -646,7 +673,7 @@ export default function DesignerProfile({ route }) {
                     textAlign: "left",
                     color: "#ffffff",
                   }}>
-                  찜하기
+                  추천서요청
                 </Text>
               </View>
             </View>
@@ -840,7 +867,14 @@ export default function DesignerProfile({ route }) {
               borderRadius: 10,
               marginBottom: verticalScale(20),
             }}>
-            <Map />
+            {profileData != undefined && (
+              <Map
+                coord={{
+                  latitude: profileData.hairDesignerProfileDto.latitude,
+                  longitude: profileData.hairDesignerProfileDto.longitude,
+                }}
+              />
+            )}
           </View>
           <Text
             style={{
@@ -1042,7 +1076,48 @@ export default function DesignerProfile({ route }) {
             <UnderLineContent value="디자이너 리뷰" />
           </View>
           <View style={{ marginBottom: verticalScale(30) }}>
-            <ReviewItem />
+            {reviewData != undefined && (
+              <>
+                {reviewData.map((review, index) => {
+                  console.log(review.reviewDto.totalRating);
+                  let tempY = [];
+                  for (
+                    let i = 0;
+                    i < Math.round(review.reviewDto.totalRating);
+                    i++
+                  ) {
+                    tempY.push(<YellowStar />);
+                  }
+                  let tempG = [];
+                  for (
+                    let i = 0;
+                    i < 5 - Math.round(review.reviewDto.totalRating);
+                    i++
+                  ) {
+                    tempG.push(<GreyStar />);
+                  }
+                  return (
+                    <ReviewItem data={review} tempY={tempY} tempG={tempG} />
+                  );
+                })}
+              </>
+            )}
+            {reviewData != undefined && reviewData.length == 0 && (
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: scale(15),
+                  fontWeight: "bold",
+                  fontStyle: "normal",
+                  lineHeight: 28,
+                  letterSpacing: 0.6,
+                  textAlign: "left",
+                  color: "#888888",
+                }}>
+                등록된 리뷰가 없습니다.
+              </Text>
+            )}
+            {/* <ReviewItem />
             <View style={{ width: "100%", alignItems: "center" }}>
               <View
                 style={{
@@ -1062,7 +1137,7 @@ export default function DesignerProfile({ route }) {
                 }}
               />
             </View>
-            <ReviewItem />
+            <ReviewItem /> */}
           </View>
         </View>
       </ScrollView>
@@ -1125,6 +1200,7 @@ const styles = StyleSheet.create({
     padding: verticalScale(3),
   },
   action_icon: {
+    alignItems: "center",
     padding: verticalScale(11),
   },
   introduction: {

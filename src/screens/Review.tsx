@@ -121,7 +121,7 @@ export default function Review({ route }) {
             alignItems: "center",
             justifyContent: "space-evenly",
           }}>
-          <Text style={{ color: MAINCOLOR }}>{hairTag[index].tag}</Text>
+          <Text style={{ color: MAINCOLOR }}>{hairTag[index].hashtag}</Text>
           <Icon
             name="close-outline"
             color={MAINCOLOR}
@@ -163,9 +163,10 @@ export default function Review({ route }) {
     console.log(result);
     const res = await postReviewImg(result.data.result.id, hairImage);
     console.log(res);
-    navigation.navigate("DesignerProfile", {
-      designerId: route.params.designerId,
-    });
+    navigation.navigate("DesignerList");
+    // navigation.navigate("DesignerProfile", {
+    //   designerId: route.params.designerId,
+    // });
   }
 
   return (
@@ -341,7 +342,7 @@ export default function Review({ route }) {
                   }}
                   onPress={() => {
                     let newHairTagArray = [...hairTag];
-                    newHairTagArray.push({ tag: tagInput });
+                    newHairTagArray.push({ hashtag: tagInput });
                     setHairTag(newHairTagArray);
                     setTagInput("");
                   }}>

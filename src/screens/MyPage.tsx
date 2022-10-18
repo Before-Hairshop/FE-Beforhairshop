@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   SafeAreaView,
   StyleSheet,
@@ -16,7 +17,8 @@ import RightArrowIcon from "../assets/icons/common/arrow.svg";
 import BigContour from "../components/common/BigContour";
 import MypageItem from "../components/mypage/MypageItem";
 import { useNavigation } from "@react-navigation/native";
-import { readData } from "../utils/asyncStorage";
+import { readData, removeData } from "../utils/asyncStorage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Mypage({ route }) {
   const [designerFlag, setDesignerFlag] = useState(undefined);
@@ -32,6 +34,16 @@ export default function Mypage({ route }) {
         data: route.params.data,
       });
     }
+  }
+
+  function logout() {
+    AsyncStorage.clear().then(() => {
+      navigation.navigate("Loading", {
+        reload: true,
+      });
+    });
+    // await removeData("@SESSION_ID");
+    // console.log(await readData("@SESSION_ID"));
   }
 
   useEffect(() => {
@@ -202,11 +214,41 @@ export default function Mypage({ route }) {
         </View>
       </TouchableOpacity>
       <BigContour />
-      <MypageItem title="찜 목록" navigate="Main" />
-      <MypageItem title="공지사항" navigate="Main" />
-      <MypageItem title="고객센터" navigate="Main" />
-      <MypageItem title="로그아웃" navigate="Main" />
-      <MypageItem title="회원탈퇴" navigate="Main" />
+      <MypageItem
+        title="찜 목록"
+        navigate="Main"
+        action={() => {
+          Alert.alert("준비중");
+        }}
+      />
+      <MypageItem
+        title="공지사항"
+        navigate="Main"
+        action={() => {
+          Alert.alert("준비중");
+        }}
+      />
+      <MypageItem
+        title="고객센터"
+        navigate="Main"
+        action={() => {
+          Alert.alert("준비중");
+        }}
+      />
+      <MypageItem
+        title="로그아웃"
+        navigate="Main"
+        action={() => {
+          logout();
+        }}
+      />
+      <MypageItem
+        title="회원탈퇴"
+        navigate="Main"
+        action={() => {
+          Alert.alert("준비중");
+        }}
+      />
     </SafeAreaView>
   );
 }

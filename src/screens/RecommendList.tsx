@@ -16,21 +16,28 @@ import ListContour from "../components/recommendList/Contour";
 import DownArrowIcon from "../assets/icons/common/down_arrow.svg";
 import UpArrowIcon from "../assets/icons/common/up_arrow.svg";
 import Recommendation from "../components/recommendList/Recommendation";
-import { getRecommendList } from "../api/getRecommendList";
+import { getRecommendListByUser } from "../api/getRecommendListByUser";
+import { readData } from "../utils/asyncStorage";
+import { getRecommendListByDesigner } from "../api/getRecommendListByDesigner";
 
 export default function RecommendList() {
   const [approveIsOpen, setApproveIsOpen] = useState(false);
   const [pendingIsOpen, setPendingIsOpen] = useState(false);
   const [rejectIsOpen, setRejectIsOpen] = useState(false);
-  const [recommendList, setRecommendList] = useState([]);
-  const [approveList, setApproveList] = useState([1, 2]);
-  const [pendingList, setPendingList] = useState([1, 2]);
-  const [rejectList, setRejectList] = useState([1, 2]);
-  const [pageNum, setPageNum] = useState(0);
+  const [recommendList, setRecommendList] = useState(undefined);
+  const [designerFlag, setDesignerFlag] = useState(undefined);
 
   async function fetchRecommendList() {
-    const response = await getRecommendList(pageNum);
-    console.log(response);
+    setDesignerFlag(await readData("@DESIGNER_FLAG"));
+    if ((await readData("@DESIGNER_FLAG")) == "0") {
+      const response = await getRecommendListByUser();
+      setRecommendList(response.data.result);
+      console.log(response.data.result);
+    } else {
+      const response = await getRecommendListByDesigner();
+      setRecommendList(response.data.result);
+      console.log(response.data.result);
+    }
   }
 
   useEffect(() => {
@@ -39,7 +46,12 @@ export default function RecommendList() {
 
   return (
     <SafeAreaView style={styles.frame}>
-      <SimpleHeader title="스타일 추천서" goBack="Main" />
+      {recommendList != undefined && (
+        <SimpleHeader
+          title={"스타일 추천서 " + "(" + recommendList.length + ")"}
+          goBack="Main"
+        />
+      )}
       <Contour />
       <ScrollView>
         <TouchableOpacity
@@ -65,7 +77,12 @@ export default function RecommendList() {
                     textAlign: "left",
                     color: "#94D774",
                   }}>
-                  수락된{" "}
+                  {designerFlag != undefined &&
+                    designerFlag == "1" &&
+                    "수락된 "}
+                  {designerFlag != undefined &&
+                    designerFlag == "0" &&
+                    "수락한 "}
                 </Text>
                 <Text
                   style={{
@@ -85,7 +102,15 @@ export default function RecommendList() {
             </View>
           </View>
         </TouchableOpacity>
-        {approveIsOpen && <Recommendation />}
+        {approveIsOpen && recommendList != undefined && (
+          <>
+            {recommendList
+              .filter(item => item.recommendStatus == 2)
+              .map((res, index) => (
+                <Recommendation data={res} />
+              ))}
+          </>
+        )}
         {/* {approveIsOpen &&
           approveList.map((data, index) => <Recommendation data={data} />)} */}
         <ListContour />
@@ -132,7 +157,16 @@ export default function RecommendList() {
             </View>
           </View>
         </TouchableOpacity>
-        {pendingIsOpen && <Recommendation />}
+        {pendingIsOpen && recommendList != undefined && (
+          <>
+            {recommendList
+              .filter(item => item.recommendStatus == 1)
+              .map((res, index) => (
+                <Recommendation data={res} />
+              ))}
+          </>
+        )}
+        {/* {pendingIsOpen && <Recommendation />} */}
         <ListContour />
         <TouchableOpacity
           style={{ height: verticalScale(65), alignItems: "center" }}
@@ -157,7 +191,12 @@ export default function RecommendList() {
                     textAlign: "left",
                     color: "#9D2323",
                   }}>
-                  거절된{" "}
+                  {designerFlag != undefined &&
+                    designerFlag == "1" &&
+                    "거절된 "}
+                  {designerFlag != undefined &&
+                    designerFlag == "0" &&
+                    "거절한 "}
                 </Text>
                 <Text
                   style={{
@@ -177,7 +216,16 @@ export default function RecommendList() {
             </View>
           </View>
         </TouchableOpacity>
-        {rejectIsOpen && <Recommendation />}
+        {rejectIsOpen && recommendList != undefined && (
+          <>
+            {recommendList
+              .filter(item => item.recommendStatus == 0)
+              .map((res, index) => (
+                <Recommendation data={res} />
+              ))}
+          </>
+        )}
+        {/* {rejectIsOpen && <Recommendation />} */}
       </ScrollView>
     </SafeAreaView>
   );

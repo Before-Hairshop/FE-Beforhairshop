@@ -15,6 +15,7 @@ import { scale, verticalScale } from "../utils/scale";
 import SimpleHeader from "../components/common/SimpleHeader";
 import Contour from "../components/common/Contour";
 import DefaultImg from "../assets/images/default_designer_profile.png";
+import { getRecommendation } from "../api/getRecommendation";
 
 const MAINCOLOR = "#fc2a5b";
 const GRAYCOLOR = "#555555";
@@ -22,7 +23,8 @@ const GRAYCOLOR = "#555555";
 const thumbnail =
   "https://via.placeholder.com/300.png/09f/fffC/O%20https://placeholder.com/";
 
-export default function ProfileSelection(props) {
+export default function Suggestion({ route }) {
+  const [recommendData, setRecommendData] = useState(undefined);
   const navigation = useNavigation();
   const [designerName, setDesignerName] = useState("adasdfdsdf");
   const [greeting, setGreeting] = useState("");
@@ -43,12 +45,20 @@ export default function ProfileSelection(props) {
     },
   ]);
 
+  async function fetchData() {
+    const result = await getRecommendation(route.params.recommendId);
+    console.log(result);
+    setRecommendData(result.data.result);
+  }
+
   useEffect(() => {
+    console.log(route.params);
+    fetchData();
     setDesignerName("이안");
     setGreeting(
       "반갑습니다. 원하시는 헤어 커트는 저희가 제일 잘해요>...어쩌구어쩌구 방문하세요",
     );
-  });
+  }, []);
 
   const UnderLineContent = ({ value, fontSize }) => (
     <HighlightText
@@ -123,12 +133,14 @@ export default function ProfileSelection(props) {
                 textAlign: "left",
                 color: "#eeeeee",
               }}>
-              반갑습니다. 원하시는 헤어 커트는 저희가 제일 잘해요. 방문하시면
+              {recommendData != undefined &&
+                recommendData.recommendDto.greeting}
+              {/* 반갑습니다. 원하시는 헤어 커트는 저희가 제일 잘해요. 방문하시면
               친절하게 시술 해드립니다.반갑습니다. 원하시는 헤어 커트는 저희가
               제일 잘해요. 방문하시면 친절하게 시술 해드립니다.반갑습니다.
               원하시는 헤어 커트는 저희가 제일 잘해요. 방문하시면 친절하게 시술
               해드립니다.반갑습니다. 원하시는 헤어 커트는 저희가 제일 잘해요.
-              방문하시면 친절하게 시술 해드립니다.반갑습니다.
+              방문하시면 친절하게 시술 해드립니다.반갑습니다. */}
             </Text>
           </View>
           <View style={{ marginTop: verticalScale(18) }}>
@@ -144,7 +156,10 @@ export default function ProfileSelection(props) {
                 textAlign: "left",
                 color: "#eeeeee",
               }}>
-              "포마드"
+              "
+              {recommendData != undefined &&
+                recommendData.recommendDto.hairstyle}
+              "
             </Text>
             <Text
               style={{
@@ -157,13 +172,14 @@ export default function ProfileSelection(props) {
                 textAlign: "left",
                 color: "#eeeeee",
               }}>
-              고객님의 헤어를 분석한 결과, 포마드 헤어스타일이 잘 어울릴 것
+              {recommendData != undefined && recommendData.recommendDto.reason}
+              {/* 고객님의 헤어를 분석한 결과, 포마드 헤어스타일이 잘 어울릴 것
               같아요! 제가 시술한 헤어스타일들을 보시고, 괜찮으시면 저에게
               연락주세요. 감사합니다.고객님의 헤어를 분석한 결과, 포마드
               헤어스타일이 잘 어울릴 것 같아요! 제가 시술한 헤어스타일들을
               보시고, 괜찮으시면 저에게 연락주세요. 감사합니다.고객님의 헤어를
               분석한 결과, 포마드 헤어스타일이 잘 어울릴 것 같아요! 제가 시술한
-              헤어스타일들을 보시고, 괜찮으시면 저에게 연락주세요. 감사합니다.
+              헤어스타일들을 보시고, 괜찮으시면 저에게 연락주세요. 감사합니다. */}
             </Text>
             <View
               style={{
@@ -209,7 +225,7 @@ export default function ProfileSelection(props) {
             </View>
           </View>
           <View style={{ marginTop: verticalScale(18) }}>
-            <UnderLineContent value={"시술 날짜"} fontSize={scale(20)} />
+            <UnderLineContent value="시술 날짜" fontSize={scale(20)} />
             <Text
               style={{
                 marginTop: verticalScale(15),
@@ -221,7 +237,18 @@ export default function ProfileSelection(props) {
                 textAlign: "left",
                 color: "#eeeeee",
               }}>
-              2022. 09. 26 월요일 PM 12:00
+              {recommendData != undefined &&
+                // recommendData.recommendDto.treatmentDate +
+                recommendData.recommendDto.treatmentDate.substring(0, 4) +
+                  "년 " +
+                  recommendData.recommendDto.treatmentDate.substring(5, 7) +
+                  "월 " +
+                  recommendData.recommendDto.treatmentDate.substring(8, 10) +
+                  "일 " +
+                  recommendData.recommendDto.treatmentDate.substring(11, 13) +
+                  "시 " +
+                  recommendData.recommendDto.treatmentDate.substring(14, 16) +
+                  "분"}
             </Text>
           </View>
           <View style={{ marginTop: verticalScale(18) }}>
@@ -237,7 +264,9 @@ export default function ProfileSelection(props) {
                 textAlign: "left",
                 color: "#eeeeee",
               }}>
-              150,000원
+              {recommendData != undefined &&
+                recommendData.recommendDto.price != null &&
+                recommendData.recommendDto.price.toLocaleString() + "원"}
             </Text>
           </View>
         </View>

@@ -16,7 +16,7 @@ import ChatIcon from "../assets/icons/main/chat.svg";
 import RightArrowIcon from "../assets/icons/common/arrow.svg";
 import DesignerIcon from "../assets/icons/main/designer.svg";
 import BigContour from "../components/common/BigContour";
-import { readData } from "../utils/asyncStorage";
+import { readData, storeData } from "../utils/asyncStorage";
 import { useNavigation } from "@react-navigation/native";
 import { getUserProfile } from "../api/getUserProfile";
 import { getDesignerProfile } from "../api/getDesignerProfile";
@@ -286,7 +286,7 @@ const MainProfile = props => (
   </>
 );
 
-export default function NewMain() {
+export default function NewMain({ route }) {
   const [toggle, setToggle] = useState(undefined);
   const [designerFlag, setDesignerFlag] = useState(undefined);
   const [profileData, setProfileData] = useState(undefined);
@@ -471,6 +471,7 @@ export default function NewMain() {
       console.log(data);
       setProfileImg(data.result.imageUrl);
       console.log(data.result.designerFlag);
+      storeData("@MEMBER_ID", String(data.result.id));
       if (data.result.designerFlag == 1) {
         const result = await getDesignerProfile();
         console.log(result);
@@ -490,7 +491,7 @@ export default function NewMain() {
       }
     }
     fetchData();
-  }, []);
+  }, [route]);
 
   return (
     <View style={styles.frame}>

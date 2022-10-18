@@ -15,23 +15,20 @@ import CookieManager from "@react-native-cookies/cookies";
 
 import { scale, verticalScale } from "../utils/scale";
 import { getMemberInfo } from "../api/getMemberInfo";
-import { removeData, storeData } from "../utils/asyncStorage";
+import { readData, removeData, storeData } from "../utils/asyncStorage";
 import GoogleLoginIcon from "../components/loading/GoogleLoginIcon";
 import KakaoLoginIcon from "../components/loading/KakaoLoginIcon";
 import NaverLoginIcon from "../components/loading/NaverLoginIcon";
 import AppleLoginIcon from "../components/loading/AppleLoginIcon";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASEURL } from "../api/baseUrl";
 
 const socialLoginURI = {
-  google: "http://localhost:8080/oauth2/authorization/google",
-  kakao: "http://localhost:8080/oauth2/authorization/kakao",
-  naver: "http://localhost:8080/oauth2/authorization/naver",
-  logout: "http://localhost:8080/logout",
-  // google: "https://dev.beforehairshop.com/oauth2/authorization/google",
-  // kakao: "https://dev.beforehairshop.com/oauth2/authorization/kakao",
-  // naver: "https://dev.beforehairshop.com/oauth2/authorization/naver",
-  // logout: "https://dev.beforehairshop.com/logout",
+  google: `${BASEURL}/oauth2/authorization/google`,
+  kakao: `${BASEURL}/oauth2/authorization/kakao`,
+  naver: `${BASEURL}/oauth2/authorization/naver`,
+  logout: `${BASEURL}/logout`,
 };
 
 const userAgent = "useragent";
@@ -42,7 +39,7 @@ const wait = (timeToDelay: number) => {
 
 const opacity = new Animated.Value(0);
 
-export default function Loading() {
+export default function Loading({ route }) {
   const [socialLoginModalVisible, setSocialLoginModalVisible] = useState(false);
   const [loginType, setLoginType] = useState("");
 
@@ -57,31 +54,22 @@ export default function Loading() {
   async function onNavigationStateChange(navigationState: WebViewNavigation) {
     console.log(navigationState);
     if (
-      navigationState.url == "http://localhost:8080/#" ||
-      navigationState.url == "http://localhost:8080/"
-      // navigationState.url == "https://dev.beforehairshop.com/#" ||
-      // navigationState.url == "https://dev.beforehairshop.com/"
+      navigationState.url == `${BASEURL}/#` ||
+      navigationState.url == `${BASEURL}/`
     ) {
-      const cookies = await CookieManager.get(
-        "http://localhost:8080#",
-        // "https://dev.beforehairshop.com#",
-      );
+      const cookies = await CookieManager.get(`${BASEURL}#`);
       console.log(cookies);
       storeData("@SESSION_ID", cookies.SESSION.value);
       setSocialLoginModalVisible(false);
-      await wait(1500);
+      await wait(1000);
       try {
         console.log(cookies.SESSION.value);
         axios
-          .get(
-            "http://localhost:8080/api/v1/members",
-            // "https://dev.beforehairshop.com/api/v1/members",
-            {
-              headers: {
-                Cookies: `SESSION=${cookies.SESSION.value}`,
-              },
+          .get(`${BASEURL}/api/v1/members`, {
+            headers: {
+              Cookies: `SESSION=${cookies.SESSION.value}`,
             },
-          )
+          })
           .then(result => {
             console.log(result);
             if (result.data.status == "BAD_REQUEST") {
@@ -102,36 +90,44 @@ export default function Loading() {
 
   const callAPI = async () => {
     try {
-      const result = await getMemberInfo();
-      console.log(result);
-      if (result.data.result == null) {
-        console.log("no cookie");
+      if ((await readData("@SESSION_ID")) == null) {
         Animated.timing(opacity, {
           toValue: 1,
           duration: 1000,
           useNativeDriver: false,
         }).start();
       } else {
-        console.log("yes cookie");
-        if (result.data.status == "BAD_REQUEST") {
+        const result = await getMemberInfo();
+        console.log(result);
+        if (result.data.result == null) {
+          console.log("no cookie");
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: false,
+          }).start();
+        } else {
+          console.log("yes cookie");
+          if (result.data.status == "BAD_REQUEST") {
+            // Animated.timing(opacity, {
+            //   toValue: 1,
+            //   duration: 1000,
+            //   useNativeDriver: false,
+            // }).start();
+            navigation.navigate("ServiceTerms");
+          } else {
+            await storeData(
+              "@DESIGNER_FLAG",
+              String(result.data.result.designerFlag),
+            );
+            navigation.navigate("NewMain");
+          }
           // Animated.timing(opacity, {
           //   toValue: 1,
           //   duration: 1000,
           //   useNativeDriver: false,
           // }).start();
-          navigation.navigate("ServiceTerms");
-        } else {
-          await storeData(
-            "@DESIGNER_FLAG",
-            String(result.data.result.designerFlag),
-          );
-          navigation.navigate("NewMain");
         }
-        // Animated.timing(opacity, {
-        //   toValue: 1,
-        //   duration: 1000,
-        //   useNativeDriver: false,
-        // }).start();
       }
     } catch (error) {
       console.log(error);
@@ -139,13 +135,14 @@ export default function Loading() {
   };
 
   useEffect(() => {
+    console.log("loading page");
     // AsyncStorage.clear();
     async function waitForSecond() {
       await wait(1500);
       await callAPI();
     }
     waitForSecond();
-  }, []);
+  }, [route]);
 
   return (
     <View style={styles.frame}>

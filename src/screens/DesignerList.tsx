@@ -175,7 +175,9 @@ export default function DesignerList() {
               textAlign: "left",
               color: "rgba(255, 255, 255, 0.7);",
             }}>
-            {item.averageStarRating == null ? "0.0" : item.averageStarRating}
+            {item.averageStarRating == null
+              ? "0.0"
+              : item.averageStarRating.toFixed(1)}
           </Text>
         </View>
       </TouchableOpacity>

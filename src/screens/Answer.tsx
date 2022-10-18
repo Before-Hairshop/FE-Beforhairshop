@@ -34,9 +34,11 @@ export default function Answer({ route }) {
 
   const navigation = useNavigation();
 
-  const sendRecommendation = () => {
+  async function sendRecommendation() {
     console.log(greetings);
     console.log(suggestionList);
+    console.log(route.params);
+    console.log(route.params.treatmentDate.substring(0, 16));
     if (greetings != "") {
       suggestionList.map((data, index) => {
         const result = postRecommendation(
@@ -45,13 +47,15 @@ export default function Answer({ route }) {
           data.hairstyleName,
           data.reason,
           data.price,
-          route.params.treatmentDate,
+          route.params.treatmentDate.substring(0, 16),
         );
+        console.log(result);
       });
+      navigation.navigate("RecommendList");
     } else {
       Alert.alert("필수 항목을 모두 작성해주세요.");
     }
-  };
+  }
 
   const SuggestionItem = props => {
     return (
@@ -241,7 +245,14 @@ export default function Answer({ route }) {
             <Text style={styles.itemTextStyle}>시술 일정</Text>
             <View style={styles.userTextUnderline}>
               <Text style={[styles.highlightText, { color: "#555555" }]}>
-                2022년 5월 30일 PM 1:00
+                {route.params.treatmentDate.substring(0, 4) +
+                  "년 " +
+                  route.params.treatmentDate.substring(5, 7) +
+                  "월 " +
+                  route.params.treatmentDate.substring(8, 10) +
+                  "일 " +
+                  route.params.treatmentDate.substring(11, 16)}
+                {/* 2022년 5월 30일 PM 1:00 */}
               </Text>
             </View>
             <View style={{ width: "100%" }}>
@@ -287,7 +298,6 @@ export default function Answer({ route }) {
             borderRadius: 10,
           }}
           onPress={() => {
-            console.log(suggestionList);
             sendRecommendation();
           }}>
           <Text style={{ fontSize: scale(16), color: "#ffffff" }}>보내기</Text>

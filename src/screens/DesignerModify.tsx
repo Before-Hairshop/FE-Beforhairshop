@@ -6,12 +6,10 @@ import {
   ScrollView,
   Image,
   TextInput,
-  Modal,
   Platform,
-  Linking,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import PlusIcon from "../assets/icons/plus.png";
 import { verticalScale, scale } from "../utils/scale";
@@ -19,15 +17,15 @@ import ProfileUploadButton from "../components/common/ProfileUploadButton";
 import PostcodeModal from "../components/designerRegistration/PostcodeModal";
 import ComplexityHeader from "../components/common/ComplexityHeader";
 import { postDesignerProfile } from "../api/postDesignerProfile";
+import { postDesignerProfileImg } from "../api/postDesignerProfileImg";
+import { patchDesignerProfile } from "../api/patchDesignerProfile";
+import { getDesignerProfileById } from "../api/getDesignerProfileById";
+import { readData } from "../utils/asyncStorage";
 
 import { Dropdown } from "react-native-element-dropdown";
 import Icon from "react-native-vector-icons/Ionicons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useNavigation } from "@react-navigation/native";
-import { postDesignerProfileImg } from "../api/postDesignerProfileImg";
-import { putS3Img } from "../api/putS3Img";
-import axios from "axios";
-// import Postcode from "@actbase/react-daum-postcode";
 
 const BASEWIDTH = 375;
 const BASEPADDING = 20;
@@ -46,7 +44,7 @@ workingdayDict["FRI"] = "금요일";
 workingdayDict["SAT"] = "토요일";
 workingdayDict["SUN"] = "일요일";
 
-export default function DesignerRegistration() {
+export default function DesignerModify() {
   const [profileImage, setProfileImage] = useState([""]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -191,7 +189,7 @@ export default function DesignerRegistration() {
     console.log(specificLocation);
     console.log(schedule);
     console.log(phoneNumber);
-    // console.log(profileImage);
+    console.log(profileImage);
     if (
       name != "" &&
       description != "" &&
@@ -201,11 +199,11 @@ export default function DesignerRegistration() {
       zipCode != "" &&
       specificLocation != "" &&
       schedule.length != 0 &&
-      phoneNumber != "" &&
-      profileImage[0].blob
+      phoneNumber != ""
+      // && profileImage[0].blob
     ) {
       // 프로필 생성
-      const result = await postDesignerProfile(
+      const result = await patchDesignerProfile(
         name,
         description,
         hairTag,
@@ -219,16 +217,67 @@ export default function DesignerRegistration() {
       );
       console.log(result);
       // presigned url
-      const url = await postDesignerProfileImg();
-      console.log(url);
-      console.log(profileImage[0]);
-      const response = await putS3Img(url, profileImage[0].blob);
-      console.log(response);
-      navigation.navigate("NewMain");
+      // const url = await postDesignerProfileImg();
+      // console.log(url);
+      // console.log(profileImage[0]);
+      // const response = await putS3Img(url, profileImage[0].blob);
+      // console.log(response);
+      navigation.navigate("NewMain", {
+        reload: true,
+      });
     } else {
       Alert.alert("필수 항목을 모두 작성해주세요.");
     }
   };
+
+  async function fetchData() {
+    const { data } = await getDesignerProfileById(await readData("@MEMBER_ID"));
+    console.log(data.result);
+    setName(data.result.hairDesignerProfileDto.name);
+    setDescription(data.result.hairDesignerProfileDto.description);
+    data.result.hairDesignerHashtagDtoList.map((item, index) => {
+      setHairTag(prev => [
+        ...prev,
+        {
+          tag: item.tag,
+        },
+      ]);
+    });
+    data.result.hairDesignerPriceDtoList.map((item, index) => {
+      setMenuInfo(prev => [
+        ...prev,
+        {
+          hairCategory: item.hairCategory,
+          hairStyleName: item.hairStyleName,
+          price: item.price,
+        },
+      ]);
+    });
+    setShopName(data.result.hairDesignerProfileDto.hairShopName);
+    setLocation(data.result.hairDesignerProfileDto.zipAddress);
+    setSpecificLocation(data.result.hairDesignerProfileDto.detailAddress);
+    setZipCode(data.result.hairDesignerProfileDto.zipCode);
+    data.result.hairDesignerWorkingDayDtoList.map((item, index) => {
+      setSchedule(prev => [
+        ...prev,
+        {
+          workingDay: item.workingDay,
+          startTime: item.startTime,
+          endTime: item.endTime,
+        },
+      ]);
+    });
+    setPhoneNumber(data.result.hairDesignerProfileDto.phoneNumber);
+    setProfileImage([
+      {
+        uri: data.result.hairDesignerProfileDto.imageUrl,
+      },
+    ]);
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <View style={styles.frame}>
@@ -289,8 +338,8 @@ export default function DesignerRegistration() {
                   placeholder="이름을 작성해주세요."
                   placeholderTextColor={GRAYCOLOR}
                   defaultValue={name}
-                  onEndEditing={e => {
-                    setName(e.nativeEvent.text);
+                  onChangeText={text => {
+                    setName(text);
                   }}
                   autoCorrect={false}
                   style={styles.inputText}
@@ -308,8 +357,8 @@ export default function DesignerRegistration() {
                   placeholder="프로필에 들어갈 자기소개를 작성해주세요."
                   placeholderTextColor={GRAYCOLOR}
                   defaultValue={description}
-                  onEndEditing={e => {
-                    setDescription(e.nativeEvent.text);
+                  onChangeText={text => {
+                    setDescription(text);
                   }}
                   multiline
                   numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
@@ -546,7 +595,6 @@ export default function DesignerRegistration() {
               <Text style={styles.itemTextStyle}>
                 상세 주소 입력<Text style={{ color: "red" }}> *</Text>
               </Text>
-
               <View style={styles.userTextUnderline}>
                 <TextInput
                   placeholder="상세 주소를 입력해주세요."

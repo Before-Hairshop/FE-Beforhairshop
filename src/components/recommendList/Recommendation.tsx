@@ -4,8 +4,13 @@ import React from "react";
 import { scale, verticalScale } from "../../utils/scale";
 import RightArrowIcon from "../../assets/icons/common/right_arrow.svg";
 import DefaultDesignerImg from "../../assets/images/default_designer_profile.png";
+import { useNavigation } from "@react-navigation/native";
+
+const statusDict = ["거절", "대기", "수락"];
 
 export default function Recommendation(props) {
+  const navigation = useNavigation();
+
   return (
     <View style={{ alignItems: "center", marginBottom: verticalScale(10) }}>
       <TouchableOpacity
@@ -24,6 +29,12 @@ export default function Recommendation(props) {
           borderStyle: "solid",
           borderWidth: 1,
           borderColor: "#191919",
+        }}
+        onPress={() => {
+          navigation.navigate("Suggestion", {
+            recommendId: props.data.id,
+            data: props.data,
+          });
         }}>
         <View style={{ alignItems: "center" }}>
           <View
@@ -94,7 +105,7 @@ export default function Recommendation(props) {
                       textAlign: "left",
                       color: "#c8c8c8",
                     }}>
-                    CS컬펌
+                    {props.data.hairstyle}
                   </Text>
                 </View>
                 <View style={{ flexDirection: "row" }}>
@@ -119,7 +130,9 @@ export default function Recommendation(props) {
                       textAlign: "left",
                       color: "#676767",
                     }}>
-                    159,000원
+                    {props.data.price != null
+                      ? props.data.price.toLocaleString() + "원"
+                      : "없음"}
                   </Text>
                 </View>
                 <View style={{ flexDirection: "row" }}>
@@ -140,7 +153,12 @@ export default function Recommendation(props) {
                         width: scale(44),
                         height: verticalScale(16),
                         borderRadius: 100,
-                        backgroundColor: "#00722d",
+                        backgroundColor:
+                          props.data.recommendStatus == 2
+                            ? "#00722d"
+                            : props.data.recommendStatus == 1
+                            ? "#616161"
+                            : "#a02323",
                         alignItems: "center",
                         justifyContent: "center",
                       }}>
@@ -153,7 +171,7 @@ export default function Recommendation(props) {
                           textAlign: "left",
                           color: "#ffffff",
                         }}>
-                        수락됨
+                        {statusDict[props.data.recommendStatus]}
                       </Text>
                     </View>
                   </View>
