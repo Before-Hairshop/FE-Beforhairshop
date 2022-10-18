@@ -1,14 +1,14 @@
 import { authInstance } from "./api";
 
-const patchUserMatchingDeactive = async () => {
+const getRecommendListByUser = async () => {
   try {
     const result = await (
       await authInstance
-    ).patch("/api/v1/members/profiles/deactivate_matching");
+    ).get("/api/v1/recommend/list_by_location");
     return result;
   } catch (error) {
     console.log(error);
   }
 };
 
-export { patchUserMatchingDeactive };
+export { getRecommendListByUser };

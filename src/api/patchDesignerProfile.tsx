@@ -1,7 +1,7 @@
 import { authInstance } from "./api";
 import { getGeocoding } from "./getGeocoding";
 
-const postDesignerProfile = async (
+const patchDesignerProfile = async (
   name: any,
   description: any,
   hairTag: any,
@@ -26,14 +26,14 @@ const postDesignerProfile = async (
       longitude: parseFloat(data.addresses[0].x),
       detailAddress: specificLocation,
       phoneNumber: phoneNumber,
-      hashtagList: hairTag,
-      workingDayList: schedule,
-      priceList: menuInfo,
+      hashtagPatchRequestDtoList: hairTag,
+      workingDayPatchRequestDtoList: schedule,
+      pricePatchRequestDtoList: menuInfo,
     };
     console.log(body);
     const result = await (
       await authInstance
-    ).post("/api/v1/hair_designers", JSON.stringify(body), {
+    ).patch("/api/v1/hair_designers", JSON.stringify(body), {
       headers: {
         "Content-Type": "application/json",
       },
@@ -44,4 +44,4 @@ const postDesignerProfile = async (
   }
 };
 
-export { postDesignerProfile };
+export { patchDesignerProfile };

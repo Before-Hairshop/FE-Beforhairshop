@@ -32,15 +32,13 @@ const postUserProfile = async (
         ("0" + stylingTime.getMinutes()).slice(-2),
     };
     console.log(body);
-    const result = await authInstance.post(
-      "/api/v1/members/profiles",
-      JSON.stringify(body),
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
+    const result = await (
+      await authInstance
+    ).post("/api/v1/members/profiles", JSON.stringify(body), {
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+    });
     return result;
   } catch (error) {
     console.log(error);

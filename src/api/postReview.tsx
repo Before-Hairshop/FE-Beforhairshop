@@ -18,15 +18,13 @@ const postReview = async (
       hashtagList: hairTag,
     };
     console.log(body);
-    const result = await authInstance.post(
-      "/api/v1/reviews",
-      JSON.stringify(body),
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
+    const result = await (
+      await authInstance
+    ).post("/api/v1/reviews", JSON.stringify(body), {
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+    });
     return result;
   } catch (error) {
     console.log(error);

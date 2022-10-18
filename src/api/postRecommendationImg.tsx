@@ -2,7 +2,9 @@ import { authInstance } from "./api";
 
 const postRecommendationImg = async () => {
   try {
-    const result = await authInstance.post("/api/v1/recommend/image", null, {
+    const result = await (
+      await authInstance
+    ).post("/api/v1/recommend/image", null, {
       params: {
         recommend_id: "",
         image_count: "",

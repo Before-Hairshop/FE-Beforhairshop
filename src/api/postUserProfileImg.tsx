@@ -3,18 +3,16 @@ import { putS3Img } from "./putS3Img";
 
 const postUserProfileImg = async (profileImg: any, desiredHairImg: any) => {
   try {
-    const result = await authInstance.post(
-      "/api/v1/members/profiles/image",
-      null,
-      {
-        params: {
-          front_image_flag: profileImg[0] == "" ? 0 : 1,
-          side_image_flag: profileImg[1] == "" ? 0 : 1,
-          back_image_flag: profileImg[2] == "" ? 0 : 1,
-          desired_hairstyle_image_count: desiredHairImg.length,
-        },
+    const result = await (
+      await authInstance
+    ).post("/api/v1/members/profiles/image", null, {
+      params: {
+        front_image_flag: profileImg[0] == "" ? 0 : 1,
+        side_image_flag: profileImg[1] == "" ? 0 : 1,
+        back_image_flag: profileImg[2] == "" ? 0 : 1,
+        desired_hairstyle_image_count: desiredHairImg.length,
       },
-    );
+    });
     console.log(result.data);
     if (result.data.result.frontPreSignedUrl != null) {
       putS3Img(result.data.result.frontPreSignedUrl, profileImg[0].blob);

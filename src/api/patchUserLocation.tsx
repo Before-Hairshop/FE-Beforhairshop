@@ -14,15 +14,13 @@ const patchUserLocation = async (
       longitude: longitude,
     };
     console.log(body);
-    const result = await authInstance.patch(
-      "/api/v1/members/profiles",
-      JSON.stringify(body),
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
+    const result = await (
+      await authInstance
+    ).patch("/api/v1/members/profiles", JSON.stringify(body), {
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+    });
     return result;
   } catch (error) {
     console.log(error);

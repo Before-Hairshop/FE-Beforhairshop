@@ -17,18 +17,16 @@ const postRecommendation = async (
       price: parseInt(price),
     };
     console.log(body);
-    const result = await authInstance.post(
-      "/api/v1/recommend",
-      JSON.stringify(body),
-      {
-        params: {
-          member_profile_id: id,
-        },
-        headers: {
-          "Content-Type": "application/json",
-        },
+    const result = await (
+      await authInstance
+    ).post("/api/v1/recommend", JSON.stringify(body), {
+      params: {
+        member_profile_id: id,
       },
-    );
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     console.log(result);
     return result;
   } catch (error) {

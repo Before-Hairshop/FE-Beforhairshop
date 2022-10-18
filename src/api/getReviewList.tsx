@@ -1,12 +1,13 @@
 import { authInstance } from "./api";
 
-const getDesignerListThroughLocation = async (num: any) => {
+const getReviewList = async (pageNum: any, designerId: any) => {
   try {
     const result = await (
       await authInstance
-    ).get("/api/v1/hair_designers/list_by_location", {
+    ).get("/api/v1/reviews/list", {
       params: {
-        page_number: num,
+        page: pageNum,
+        hair_designer_id: designerId,
       },
     });
     return result;
@@ -15,4 +16,4 @@ const getDesignerListThroughLocation = async (num: any) => {
   }
 };
 
-export { getDesignerListThroughLocation };
+export { getReviewList };
