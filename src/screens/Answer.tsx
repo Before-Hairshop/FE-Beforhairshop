@@ -78,7 +78,7 @@ export default function Answer({ route }) {
         </View>
 
         <Text style={styles.itemTextStyle}>
-          추천 헤어스타일을 입력해주세요.
+          추천 헤어스타일을 입력해주세요<Text style={{ color: "red" }}> *</Text>
         </Text>
 
         <View style={styles.userTextUnderline}>
@@ -96,7 +96,8 @@ export default function Answer({ route }) {
         </View>
 
         <Text style={styles.itemTextStyle}>
-          해당 스타일을 추천한 이유를 적어주세요.
+          해당 스타일을 추천한 이유를 적어주세요
+          <Text style={{ color: "red" }}> *</Text>
         </Text>
 
         <View style={styles.userTextUnderline}>
@@ -111,11 +112,12 @@ export default function Answer({ route }) {
               newArray[props.itemIndex].reason = e.nativeEvent.text;
               setSuggestionList(newArray);
             }}
-            style={styles.highlightText}></TextInput>
+            style={styles.highlightText}
+          />
         </View>
 
         <Text style={styles.itemTextStyle}>
-          (선택) 추천 헤어스타일 이미지를 첨부해주세요.
+          추천 헤어스타일 이미지를 첨부해주세요
         </Text>
 
         <View style={{ flexDirection: "row" }}>
@@ -133,7 +135,9 @@ export default function Answer({ route }) {
           ) : null}
         </View>
 
-        <Text style={styles.itemTextStyle}>제안 비용</Text>
+        <Text style={styles.itemTextStyle}>
+          제안 비용<Text style={{ color: "red" }}> *</Text>
+        </Text>
 
         <View style={styles.userTextUnderline}>
           <TextInput
@@ -141,14 +145,20 @@ export default function Answer({ route }) {
             placeholder="예시) 30000"
             placeholderTextColor="#555555"
             style={styles.highlightText}
+            // value={suggestionList[props.itemIndex].price}
+            // onChangeText={e => {
+            //   console.log(e);
+            //   let newArray = [...suggestionList];
+            //   newArray[props.itemIndex].price = e;
+            //   setSuggestionList(newArray);
+            // }}
             defaultValue={suggestionList[props.itemIndex].price}
             onEndEditing={e => {
               let newArray = [...suggestionList];
-              console.log(newArray);
               newArray[props.itemIndex].price = e.nativeEvent.text;
-              console.log(newArray);
               setSuggestionList(newArray);
-            }}></TextInput>
+            }}
+          />
         </View>
       </>
     );
@@ -215,7 +225,9 @@ export default function Answer({ route }) {
               width: "88.9%",
               paddingBottom: verticalScale(120),
             }}>
-            <Text style={styles.itemTextStyle}>인사말 </Text>
+            <Text style={styles.itemTextStyle}>
+              인사말<Text style={{ color: "red" }}> *</Text>
+            </Text>
             <View style={styles.userTextUnderline}>
               <TextInput
                 placeholder="인사말을 작성해주세요."
@@ -327,7 +339,7 @@ const styles = StyleSheet.create({
 
     marginBottom: verticalScale(10),
     marginTop: verticalScale(15),
-    color: "#fc2a5b",
+    color: "#ffffff",
   },
 
   SuggestionTitleText: {

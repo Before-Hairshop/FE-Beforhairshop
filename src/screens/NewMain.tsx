@@ -101,7 +101,9 @@ const MainProfile = props => (
         style={{ alignItems: "center" }}
         onPress={() => {
           if (props.designerFlag == "1") {
-            props.navigation.navigate("DesignerProfile");
+            props.navigation.navigate("DesignerProfile", {
+              designerId: props.profileData.hairDesignerId,
+            });
           } else {
             props.navigation.navigate("UserProfileLookup", {
               data: props.profileData,

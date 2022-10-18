@@ -330,7 +330,7 @@ export default function UserProfileLookup({ route }) {
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}> 원하는 스타일링 비용 </Text>
+              <Text style={styles.itemTextStyle}>원하는 스타일링 비용 </Text>
 
               <View style={styles.userTextUnderline}>
                 <TextInput
@@ -338,6 +338,28 @@ export default function UserProfileLookup({ route }) {
                   value={route.params.data.payableAmount.toLocaleString()}
                   // onChangeText={text => setWantedStylingCost(text)}
                   placeholder="예) 30000"
+                  placeholderTextColor={MAINCOLOR}
+                  keyboardType="number-pad"
+                  style={styles.highlightText}></TextInput>
+              </View>
+            </View>
+
+            <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+              <Text style={styles.itemTextStyle}>시술 받을 날짜</Text>
+
+              <View style={styles.userTextUnderline}>
+                <TextInput
+                  editable={false}
+                  value={
+                    route.params.data.treatmentDate.substring(0, 10) +
+                    " " +
+                    route.params.data.treatmentDate.substring(11, 13) +
+                    "시 " +
+                    route.params.data.treatmentDate.substring(14, 16) +
+                    "분"
+                  }
+                  // onChangeText={text => setWantedStylingCost(text)}
+                  // placeholder="예) 30000"
                   placeholderTextColor={MAINCOLOR}
                   keyboardType="number-pad"
                   style={styles.highlightText}></TextInput>

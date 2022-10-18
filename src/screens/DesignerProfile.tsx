@@ -29,7 +29,6 @@ import CallIcon from "../assets/icons/call.svg";
 import LoveIcon from "../assets/icons/love.svg";
 import WriteIcon from "../assets/icons/write.svg";
 import DefaultMap from "../assets/images/default_map.png";
-import HighlightText from "react-native-highlight-underline-text";
 import DashedLine from "react-native-dashed-line";
 import axios from "axios";
 import Map from "./Map";
@@ -39,6 +38,17 @@ import ReportIcon from "../assets/icons/report.svg";
 import DeleteIcon from "../assets/icons/delete.svg";
 
 import { useNavigation } from "@react-navigation/native";
+import { getDesignerProfileById } from "../api/getDesignerProfileById";
+import { UnderLineContent } from "../components/designerProfile/UnderLineContent";
+
+const workingdayDict = {};
+workingdayDict["MON"] = "월요일";
+workingdayDict["TUE"] = "화요일";
+workingdayDict["WED"] = "수요일";
+workingdayDict["THU"] = "목요일";
+workingdayDict["FRI"] = "금요일";
+workingdayDict["SAT"] = "토요일";
+workingdayDict["SUN"] = "일요일";
 
 const DashedLineContent = () => (
   <View
@@ -54,24 +64,6 @@ const DashedLineContent = () => (
       dashColor="#4e4e4e"
     />
   </View>
-);
-
-const UnderLineContent = (props: { value: string }) => (
-  <HighlightText
-    isFixed={false}
-    ratio={0.26}
-    underlineColor="rgba(252, 42, 91, 0.5)"
-    textStyle={{
-      fontFamily: "Pretendard",
-      fontSize: 20,
-      fontWeight: "bold",
-      fontStyle: "normal",
-      letterSpacing: 0,
-      textAlign: "left",
-      color: "#ffffff",
-    }}
-    text={props.value}
-  />
 );
 
 const YellowStar = () => (
@@ -153,7 +145,12 @@ function numberWithCommas(x: number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-export default function Loading() {
+export default function DesignerProfile({ route }) {
+  const [profileData, setProfileData] = useState(undefined);
+  const [reviewData, setReviewData] = useState(undefined);
+  const [yellowStar, setYellowStar] = useState([]);
+  const [grayStar, setGrayStar] = useState([]);
+
   const phoneNumber = "010-1234-1234";
 
   const [ref, setRef] = useState(null);
@@ -176,8 +173,25 @@ export default function Loading() {
 
   const HeaderContents = () => (
     <>
-      <GoBackIcon />
       <TouchableOpacity
+        style={{
+          width: scale(40),
+          height: verticalScale(40),
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        onPress={() => {
+          navigation.goBack();
+        }}>
+        <GoBackIcon />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={{
+          width: scale(40),
+          height: verticalScale(40),
+          alignItems: "center",
+          justifyContent: "center",
+        }}
         onPress={() => {
           console.log("open!!!");
           setIsDesignerModalVisible(true);
@@ -189,17 +203,36 @@ export default function Loading() {
     </>
   );
 
+  const fetchStar = (value: any) => {
+    console.log(value);
+    if (isNaN(value)) {
+      let newStar = [];
+      for (let i = 0; i < 5; i++) {
+        newStar.push(<GreyStar />);
+      }
+      setGrayStar(newStar);
+    } else {
+      let newStar = [];
+      for (let i = 0; i < value; i++) {
+        newStar.push(<YellowStar />);
+      }
+      setYellowStar(newStar);
+      let newStar2 = [];
+      for (let i = 0; i < 5 - value; i++) {
+        newStar2.push(<GreyStar />);
+      }
+      setGrayStar(newStar2);
+    }
+  };
+
   const fetchData = async () => {
     try {
       setError(null);
       setLoading(true);
-
-      const response = await axios.get(
-        "http://localhost:8080/api/v1/hair-designers?id=1",
-      );
-
+      const response = await getDesignerProfileById(route.params.designerId);
       console.log(response.data.result);
-      setData(response.data.result);
+      setProfileData(response.data.result);
+      fetchStar(parseInt(response.data.result.averageStarRating));
     } catch (e) {
       setError(e);
     }
@@ -513,7 +546,14 @@ export default function Loading() {
             </Animated.View>
           </View>
         </Modal>
-        <Image source={DefaultDesigner} style={styles.designer_img} />
+        <Image
+          source={
+            profileData.hairDesignerProfileDto.imageUrl != null
+              ? { uri: profileData.hairDesignerProfileDto.imageUrl }
+              : DefaultDesigner
+          }
+          style={styles.designer_img}
+        />
         <View style={{ width: "100%", position: "absolute" }}>
           <Header contents={<HeaderContents />} />
         </View>
@@ -538,16 +578,21 @@ export default function Loading() {
           }}>
           <View style={{ width: "44%" }}>
             <Text style={styles.designer}>헤어 디자이너</Text>
-            <Text style={styles.designer_name}>이안</Text>
+            <Text style={styles.designer_name}>
+              {profileData != undefined &&
+                profileData.hairDesignerProfileDto.name}
+            </Text>
             {/* <Text style={styles.designer_name}>
             {data.hairDesigner.member.name}
           </Text> */}
             <View style={styles.designer_star_container}>
+              {yellowStar}
+              {grayStar}
+              {/* <YellowStar />
               <YellowStar />
               <YellowStar />
               <YellowStar />
-              <YellowStar />
-              <GreyStar />
+              <GreyStar /> */}
             </View>
           </View>
           <View
@@ -560,9 +605,11 @@ export default function Loading() {
             <View>
               <TouchableOpacity
                 onPress={() => {
-                  Linking.openURL(`tel:${phoneNumber}`).catch(err =>
-                    console.error("An error occurred", err),
-                  );
+                  // Linking.openURL(`tel:${phoneNumber}`).catch(err =>
+                  //   console.error("An error occurred", err),
+                  // );
+                  console.log(yellowStar);
+                  console.log(grayStar);
                 }}>
                 <View style={styles.action_icon}>
                   <CallIcon width={scale(19.1)} height={verticalScale(19.1)} />
@@ -639,43 +686,25 @@ export default function Loading() {
           }}>
           <Text style={styles.introduction}>자기소개</Text>
           <Text style={styles.introduction_contents}>
-            lovable lucid florence flutter you destiny seraphic purity
-            adolescence fabulous girlish requiem lucid fabulous miracle miracle
-            droplet girlish lucid droplet purity droplet flutter adolescence
-            kitten fascinating.
+            {profileData != undefined &&
+              profileData.hairDesignerProfileDto.description}
           </Text>
           {/* <Text style={styles.introduction_contents}>
           {data.hairDesigner.description}
         </Text> */}
           <View
             style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 바버샵</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
-            <View style={styles.introduction_tag}>
-              <Text style={styles.introduction_tag_text}># 포마드</Text>
-            </View>
+            {profileData != undefined && (
+              <>
+                {profileData.hairDesignerHashtagDtoList.map((item, index) => (
+                  <View style={styles.introduction_tag}>
+                    <Text style={styles.introduction_tag_text}>
+                      # {item.tag}
+                    </Text>
+                  </View>
+                ))}
+              </>
+            )}
           </View>
         </View>
         <TabMenu />
@@ -698,98 +727,67 @@ export default function Loading() {
           <View style={styles.hair_category}>
             <Text style={styles.hair_category_text}>컷</Text>
             <View style={{ width: "80%" }}>
-              <View style={styles.hair_price_element}>
-                <Text style={styles.hair_name}>여자컷트</Text>
-                <DashedLineContent />
-                <Text style={styles.hair_price}>
-                  {numberWithCommas(30000)}원
-                </Text>
-              </View>
-              <View style={styles.hair_price_element}>
-                <Text style={styles.hair_name}>남성컷트</Text>
-                <DashedLineContent />
-                <Text style={styles.hair_price}>
-                  {numberWithCommas(30000)}원
-                </Text>
-              </View>
-              <View style={styles.hair_price_element_last}>
-                <Text style={styles.hair_name}>앞머리컷</Text>
-                <DashedLineContent />
-                <Text style={styles.hair_price}>
-                  {numberWithCommas(30000)}원
-                </Text>
-              </View>
+              {profileData != undefined && (
+                <>
+                  {profileData.hairDesignerPriceDtoList
+                    .filter(item => item.hairCategory == "컷")
+                    .map((res, index) => (
+                      <View style={styles.hair_price_element}>
+                        <Text style={styles.hair_name}>
+                          {res.hairStyleName}
+                        </Text>
+                        <DashedLineContent />
+                        <Text style={styles.hair_price}>
+                          {numberWithCommas(res.price)}원
+                        </Text>
+                      </View>
+                    ))}
+                </>
+              )}
             </View>
           </View>
           <View style={styles.hair_category}>
             <Text style={styles.hair_category_text}>일반펌</Text>
             <View style={{ width: "80%" }}>
-              <View style={styles.hair_price_element}>
-                <Text style={styles.hair_name}>일반펌 / 남자</Text>
-                <DashedLineContent />
-                <Text style={styles.hair_price}>
-                  {numberWithCommas(10000)}원
-                </Text>
-              </View>
-              <View style={styles.hair_price_element_last}>
-                <Text style={styles.hair_name}>일반펌 / 여자</Text>
-                <DashedLineContent />
-                <Text style={styles.hair_price}>
-                  {numberWithCommas(5000)}원
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.hair_category}>
-            <Text style={styles.hair_category_text}>열펌</Text>
-            <View style={{ width: "80%" }}>
-              <View style={styles.hair_price_element}>
-                <Text style={styles.hair_name}>셋팅펌</Text>
-                <DashedLineContent />
-                <Text style={styles.hair_price}>
-                  {numberWithCommas(70000)}원
-                </Text>
-              </View>
-              <View style={styles.hair_price_element}>
-                <Text style={styles.hair_name}>매직</Text>
-                <DashedLineContent />
-                <Text style={styles.hair_price}>
-                  {numberWithCommas(70000)}원
-                </Text>
-              </View>
-              <View style={styles.hair_price_element}>
-                <Text style={styles.hair_name}>볼륨매직</Text>
-                <DashedLineContent />
-                <Text style={styles.hair_price}>
-                  {numberWithCommas(80000)}원
-                </Text>
-              </View>
-              <View style={styles.hair_price_element_last}>
-                <Text style={styles.hair_name}>매직셋팅</Text>
-                <DashedLineContent />
-                <Text style={styles.hair_price}>
-                  {numberWithCommas(130000)}원
-                </Text>
-              </View>
+              {profileData != undefined && (
+                <>
+                  {profileData.hairDesignerPriceDtoList
+                    .filter(item => item.hairCategory == "펌")
+                    .map((res, index) => (
+                      <View style={styles.hair_price_element}>
+                        <Text style={styles.hair_name}>
+                          {res.hairStyleName}
+                        </Text>
+                        <DashedLineContent />
+                        <Text style={styles.hair_price}>
+                          {numberWithCommas(res.price)}원
+                        </Text>
+                      </View>
+                    ))}
+                </>
+              )}
             </View>
           </View>
           <View style={styles.hair_category_last}>
             <Text style={styles.hair_category_text}>염색</Text>
             <View style={{ width: "80%" }}>
-              <View style={styles.hair_price_element}>
-                <Text style={styles.hair_name}>염색</Text>
-                <DashedLineContent />
-                <Text style={styles.hair_price}>
-                  {numberWithCommas(60000)}원
-                </Text>
-              </View>
-              <View style={styles.hair_price_element_last}>
-                <Text style={styles.hair_name}>탈색</Text>
-                <DashedLineContent />
-                <Text style={styles.hair_price}>
-                  {numberWithCommas(60000)}원
-                </Text>
-              </View>
+              {profileData != undefined && (
+                <>
+                  {profileData.hairDesignerPriceDtoList
+                    .filter(item => item.hairCategory == "염색")
+                    .map((res, index) => (
+                      <View style={styles.hair_price_element}>
+                        <Text style={styles.hair_name}>
+                          {res.hairStyleName}
+                        </Text>
+                        <DashedLineContent />
+                        <Text style={styles.hair_price}>
+                          {numberWithCommas(res.price)}원
+                        </Text>
+                      </View>
+                    ))}
+                </>
+              )}
             </View>
           </View>
         </View>
@@ -839,7 +837,8 @@ export default function Loading() {
               textAlign: "left",
               color: "#ffffff",
             }}>
-            미용실 이름
+            {profileData != undefined &&
+              profileData.hairDesignerProfileDto.hairShopName}
           </Text>
           <Text
             style={{
@@ -852,7 +851,10 @@ export default function Loading() {
               textAlign: "left",
               color: "#fc2a5b",
             }}>
-            울산 남구 수암로 148 홈플러스 울산남구점 옥상층(5층)
+            {profileData != undefined &&
+              profileData.hairDesignerProfileDto.zipAddress +
+                " " +
+                profileData.hairDesignerProfileDto.detailAddress}
           </Text>
         </View>
         <DivisionSpace />
@@ -872,26 +874,22 @@ export default function Loading() {
           <View style={styles.underline_content_container}>
             <UnderLineContent value="근무시간" />
           </View>
-          <View style={styles.office_hours}>
-            <Text style={styles.working_day}>월요일</Text>
-            <Text style={styles.working_time}>PM 17:00 - PM 21:00</Text>
-          </View>
-          <View style={styles.office_hours}>
-            <Text style={styles.working_day}>화요일</Text>
-            <Text style={styles.working_time}>PM 17:00 - PM 21:00</Text>
-          </View>
-          <View style={styles.office_hours}>
-            <Text style={styles.working_day}>수요일</Text>
-            <Text style={styles.working_time}>PM 17:00 - PM 21:00</Text>
-          </View>
-          <View style={styles.office_hours}>
-            <Text style={styles.working_day}>목요일</Text>
-            <Text style={styles.working_time}>PM 17:00 - PM 21:00</Text>
-          </View>
-          <View style={styles.office_hours_last}>
-            <Text style={styles.working_day}>금ㆍ토ㆍ일</Text>
-            <Text style={styles.working_time}>휴무</Text>
-          </View>
+          {profileData != undefined && (
+            <>
+              {profileData.hairDesignerWorkingDayDtoList.map((data, index) => (
+                <View style={styles.office_hours}>
+                  <Text style={styles.working_day}>
+                    {workingdayDict[data.workingDay]}
+                  </Text>
+                  <Text
+                    style={styles.working_time}>{`PM ${data.startTime.substring(
+                    0,
+                    5,
+                  )} - PM ${data.endTime.substring(0, 5)}`}</Text>
+                </View>
+              ))}
+            </>
+          )}
         </View>
         <DivisionSpace />
         <View
@@ -1096,7 +1094,7 @@ const styles = StyleSheet.create({
   },
   designer_name: {
     fontFamily: "Pretendard",
-    fontSize: 30,
+    fontSize: verticalScale(28),
     fontWeight: "bold",
     fontStyle: "normal",
     letterSpacing: 0,

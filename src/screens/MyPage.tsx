@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import { scale, verticalScale } from "../utils/scale";
 import SimpleHeader from "../components/common/SimpleHeader";
@@ -18,16 +18,27 @@ import MypageItem from "../components/mypage/MypageItem";
 import { useNavigation } from "@react-navigation/native";
 import { readData } from "../utils/asyncStorage";
 
-export default function Mypage() {
+export default function Mypage({ route }) {
+  const [designerFlag, setDesignerFlag] = useState(undefined);
+
   const navigation = useNavigation();
 
   async function moveProfilePage() {
+    console.log(route.params.data);
     if ((await readData("@DESIGNER_FLAG")) == "1") {
       navigation.navigate("DesignerProfile");
     } else {
-      navigation.navigate("UserProfileLookup");
+      navigation.navigate("UserProfileLookup", {
+        data: route.params.data,
+      });
     }
   }
+
+  useEffect(() => {
+    readData("@DESIGNER_FLAG").then(data => {
+      setDesignerFlag(data);
+    });
+  }, []);
 
   return (
     <SafeAreaView style={styles.frame}>
@@ -62,7 +73,60 @@ export default function Mypage() {
             />
           </View>
           <View style={{ width: "62%", justifyContent: "center" }}>
-            <View
+            {designerFlag != undefined && (
+              <>
+                {designerFlag == "1" ? (
+                  <View
+                    style={{
+                      width: scale(45),
+                      height: verticalScale(18),
+                      borderRadius: 100,
+                      borderStyle: "solid",
+                      borderWidth: 0.8,
+                      borderColor: "#fc2a5b",
+                      justifyContent: "center",
+                      marginVertical: verticalScale(2.5),
+                    }}>
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: scale(10),
+                        fontWeight: "normal",
+                        letterSpacing: -0.5,
+                        textAlign: "center",
+                        color: "#fc2a5b",
+                      }}>
+                      디자이너
+                    </Text>
+                  </View>
+                ) : (
+                  <View
+                    style={{
+                      width: scale(29),
+                      height: verticalScale(18),
+                      borderRadius: 100,
+                      borderStyle: "solid",
+                      borderWidth: 0.8,
+                      borderColor: "#fc2a5b",
+                      justifyContent: "center",
+                      marginVertical: verticalScale(2.5),
+                    }}>
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: scale(10),
+                        fontWeight: "normal",
+                        letterSpacing: -0.5,
+                        textAlign: "center",
+                        color: "#fc2a5b",
+                      }}>
+                      유저
+                    </Text>
+                  </View>
+                )}
+              </>
+            )}
+            {/* <View
               style={{
                 width: scale(29),
                 height: verticalScale(18),
@@ -84,7 +148,7 @@ export default function Mypage() {
                 }}>
                 유저
               </Text>
-            </View>
+            </View> */}
             <Text
               style={{
                 fontFamily: "Pretendard",
@@ -95,7 +159,7 @@ export default function Mypage() {
                 color: "#ffffff",
                 marginVertical: verticalScale(2.5),
               }}>
-              대머리 무지
+              {route.params.data.name}
             </Text>
             <View
               style={{
@@ -122,7 +186,7 @@ export default function Mypage() {
                   textAlign: "left",
                   color: "#fc2a5b",
                 }}>
-                프리미엄
+                일반
               </Text>
             </View>
           </View>

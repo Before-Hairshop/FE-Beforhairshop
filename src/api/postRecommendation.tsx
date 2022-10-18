@@ -14,7 +14,7 @@ const postRecommendation = async (
       treatmentDate: treatmentDate,
       hairstyle: hairstyleName,
       reason: reason,
-      price: price,
+      price: parseInt(price),
     };
     console.log(body);
     const result = await authInstance.post(

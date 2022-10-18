@@ -28,6 +28,10 @@ const socialLoginURI = {
   kakao: "http://localhost:8080/oauth2/authorization/kakao",
   naver: "http://localhost:8080/oauth2/authorization/naver",
   logout: "http://localhost:8080/logout",
+  // google: "https://dev.beforehairshop.com/oauth2/authorization/google",
+  // kakao: "https://dev.beforehairshop.com/oauth2/authorization/kakao",
+  // naver: "https://dev.beforehairshop.com/oauth2/authorization/naver",
+  // logout: "https://dev.beforehairshop.com/logout",
 };
 
 const userAgent = "useragent";
@@ -55,8 +59,13 @@ export default function Loading() {
     if (
       navigationState.url == "http://localhost:8080/#" ||
       navigationState.url == "http://localhost:8080/"
+      // navigationState.url == "https://dev.beforehairshop.com/#" ||
+      // navigationState.url == "https://dev.beforehairshop.com/"
     ) {
-      const cookies = await CookieManager.get("http://localhost:8080#");
+      const cookies = await CookieManager.get(
+        "http://localhost:8080#",
+        // "https://dev.beforehairshop.com#",
+      );
       console.log(cookies);
       storeData("@SESSION_ID", cookies.SESSION.value);
       setSocialLoginModalVisible(false);
@@ -64,16 +73,24 @@ export default function Loading() {
       try {
         console.log(cookies.SESSION.value);
         axios
-          .get("http://localhost:8080/api/v1/members", {
-            headers: {
-              Cookies: `SESSION=${cookies.SESSION.value}`,
+          .get(
+            "http://localhost:8080/api/v1/members",
+            // "https://dev.beforehairshop.com/api/v1/members",
+            {
+              headers: {
+                Cookies: `SESSION=${cookies.SESSION.value}`,
+              },
             },
-          })
+          )
           .then(result => {
             console.log(result);
             if (result.data.status == "BAD_REQUEST") {
               navigation.navigate("ServiceTerms");
             } else {
+              storeData(
+                "@DESIGNER_FLAG",
+                String(result.data.result.designerFlag),
+              );
               navigation.navigate("NewMain");
             }
           });

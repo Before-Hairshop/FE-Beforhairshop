@@ -17,8 +17,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: verticalScale(15),
-    paddingTop: Platform.OS === "ios" ? verticalScale(45) : verticalScale(20),
-    paddingLeft: verticalScale(21),
-    paddingRight: verticalScale(21),
+    marginTop: verticalScale(15),
+    // paddingTop: Platform.OS === "ios" ? verticalScale(45) : verticalScale(20),
+    paddingLeft: verticalScale(8),
+    paddingRight: verticalScale(8),
   },
 });

@@ -15,6 +15,7 @@ const postUserProfileImg = async (profileImg: any, desiredHairImg: any) => {
         },
       },
     );
+    console.log(result.data);
     if (result.data.result.frontPreSignedUrl != null) {
       putS3Img(result.data.result.frontPreSignedUrl, profileImg[0].blob);
     }
