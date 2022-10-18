@@ -8,6 +8,7 @@ import {
   TextInput,
   ImageBackground,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import React, { useEffect } from "react";
 import GoBackIcon from "../assets/icons/goBack.svg";
@@ -170,7 +171,7 @@ export default function Review({ route }) {
   }
 
   return (
-    <View style={styles.frame}>
+    <SafeAreaView style={styles.frame}>
       <ComplexityHeader
         title="리뷰 작성"
         goBack="Main"
@@ -421,7 +422,7 @@ export default function Review({ route }) {
           메시지 보내기
         </Text>
       </TouchableOpacity> */}
-    </View>
+    </SafeAreaView>
   );
 }
 

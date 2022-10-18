@@ -29,6 +29,8 @@ import ComplexityHeader from "../components/common/ComplexityHeader";
 import { postUserProfile } from "../api/postUserProfile";
 import { postUserProfileImg } from "../api/postUserProfileImg";
 import { putS3Img } from "../api/putS3Img";
+import { getUserProfile } from "../api/getUserProfile";
+import { patchUserProfile } from "../api/patchUserProfile";
 
 const numHairStatus = 3;
 const numHairTendency = 5;
@@ -37,7 +39,7 @@ const BASEPADDING = 20;
 const numberOfLines = 4;
 const MAINCOLOR = "#fc2a5b";
 
-export default function UserProfile() {
+export default function UserProfileModify() {
   const [profileImage, setProfileImage] = useState(["", "", ""]);
   const [wantHairImage, setWantHairImage] = useState([]);
   const [wantedStyle, setWantedStyle] = useState("");
@@ -59,10 +61,54 @@ export default function UserProfile() {
   const navigation = useNavigation();
   const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
 
-  // useEffect(() => {
-  //   setProfileImage([baseImageURL, baseImageURL, baseImageURL]);
-  //   setWantHairImage([]);
-  // }, []);
+  async function fetchData() {
+    const { data } = await getUserProfile();
+    console.log(data);
+    setNickname(data.result.memberProfileDto.name);
+    setHairStatusIndex(data.result.memberProfileDto.hairCondition - 1);
+    setHairTendencyIndex(data.result.memberProfileDto.hairTendency - 1);
+    setWantedStyle(data.result.memberProfileDto.desiredHairstyle);
+    setWantedStyleDescription(
+      data.result.memberProfileDto.desiredHairstyleDescription,
+    );
+    setWantedStylingCost(data.result.memberProfileDto.payableAmount.toString());
+    setStylingDate(new Date(data.result.memberProfileDto.treatmentDate));
+    setStylingTime(new Date(data.result.memberProfileDto.treatmentDate));
+    setPhoneNumber(data.result.memberProfileDto.phoneNumber);
+    if (data.result.memberProfileDto.frontImageUrl != null) {
+      let temp = [...profileImage];
+      temp[0] = {
+        uri: data.result.memberProfileDto.frontImageUrl,
+      };
+      setProfileImage(temp);
+    }
+    if (data.result.memberProfileDto.sideImageUrl != null) {
+      let temp = [...profileImage];
+      temp[0] = {
+        uri: data.result.memberProfileDto.sideImageUrl,
+      };
+      setProfileImage(temp);
+    }
+    if (data.result.memberProfileDto.backImageUrl != null) {
+      let temp = [...profileImage];
+      temp[0] = {
+        uri: data.result.memberProfileDto.backImageUrl,
+      };
+      setProfileImage(temp);
+    }
+    data.result.desiredHairstyleImageDtoList.map((item, index) => {
+      setWantHairImage(prev => [
+        ...prev,
+        {
+          uri: item.imageUrl,
+        },
+      ]);
+    });
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const saveProfile = async () => {
     console.log(nickname); // 닉네임
@@ -93,7 +139,7 @@ export default function UserProfile() {
       Alert.alert("전화번호를 입력해주세요");
     } else {
       // 프로필 생성
-      const result = await postUserProfile(
+      const result = await patchUserProfile(
         nickname,
         hairStatusIndex + 1,
         hairTendencyIndex + 1,
@@ -106,11 +152,13 @@ export default function UserProfile() {
       );
       console.log(result);
       // 이미지 업로드
-      console.log(profileImage);
-      console.log(wantHairImage);
-      const url = await postUserProfileImg(profileImage, wantHairImage);
-      console.log(url);
-      navigation.navigate("Location");
+      // console.log(profileImage);
+      // console.log(wantHairImage);
+      // const url = await postUserProfileImg(profileImage, wantHairImage);
+      // console.log(url);
+      navigation.navigate("NewMain", {
+        reload: true,
+      });
     }
   };
 
@@ -183,9 +231,9 @@ export default function UserProfile() {
                   placeholder="사용할 닉네임을 작성해주세요"
                   placeholderTextColor="#555555"
                   defaultValue={nickname}
-                  onEndEditing={e => {
+                  onChangeText={text => {
                     console.log(nickname);
-                    setNickname(e.nativeEvent.text);
+                    setNickname(text);
                   }}
                   autoCorrect={false}
                   style={styles.itemTextStyle}
@@ -306,7 +354,8 @@ export default function UserProfile() {
                   placeholder="예) 30000"
                   placeholderTextColor="#555555"
                   keyboardType="number-pad"
-                  style={styles.highlightText}></TextInput>
+                  style={styles.highlightText}
+                />
               </View>
             </View>
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
@@ -343,12 +392,13 @@ export default function UserProfile() {
                   </Text>
                   <DateTimePickerModal
                     isVisible={datePickerIsVisible}
-                    // date={stylingDate}
+                    date={stylingDate}
                     mode={"date"}
                     onCancel={() => {
                       setDatePickerIsVisible(false);
                     }}
                     onConfirm={val => {
+                      console.log(val);
                       setStylingDate(val);
                       setDatePickerIsVisible(false);
                       // console.log(val);

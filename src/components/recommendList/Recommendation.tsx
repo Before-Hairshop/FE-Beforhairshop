@@ -32,8 +32,7 @@ export default function Recommendation(props) {
         }}
         onPress={() => {
           navigation.navigate("Suggestion", {
-            recommendId: props.data.id,
-            data: props.data,
+            recommendId: props.data.recommendDto.id,
           });
         }}>
         <View style={{ alignItems: "center" }}>
@@ -52,7 +51,8 @@ export default function Recommendation(props) {
                 }}>
                 <View style={{ justifyContent: "center" }}>
                   <Image
-                    source={DefaultDesignerImg}
+                    source={{ uri: props.data.designerName }}
+                    // source={DefaultDesignerImg}
                     style={{
                       width: scale(40),
                       height: scale(40),
@@ -72,7 +72,7 @@ export default function Recommendation(props) {
                       textAlign: "left",
                       color: "#ffffff",
                     }}>
-                    이안 디자이너의 추천서
+                    {props.data.designerName} 디자이너의 추천서
                   </Text>
                 </View>
               </View>
@@ -105,7 +105,7 @@ export default function Recommendation(props) {
                       textAlign: "left",
                       color: "#c8c8c8",
                     }}>
-                    {props.data.hairstyle}
+                    {props.data.recommendDto.hairstyle}
                   </Text>
                 </View>
                 <View style={{ flexDirection: "row" }}>
@@ -130,8 +130,8 @@ export default function Recommendation(props) {
                       textAlign: "left",
                       color: "#676767",
                     }}>
-                    {props.data.price != null
-                      ? props.data.price.toLocaleString() + "원"
+                    {props.data.recommendDto.price != null
+                      ? props.data.recommendDto.price.toLocaleString() + "원"
                       : "없음"}
                   </Text>
                 </View>
@@ -154,9 +154,9 @@ export default function Recommendation(props) {
                         height: verticalScale(16),
                         borderRadius: 100,
                         backgroundColor:
-                          props.data.recommendStatus == 2
+                          props.data.recommendDto.recommendStatus == 2
                             ? "#00722d"
-                            : props.data.recommendStatus == 1
+                            : props.data.recommendDto.recommendStatus == 1
                             ? "#616161"
                             : "#a02323",
                         alignItems: "center",
@@ -171,7 +171,7 @@ export default function Recommendation(props) {
                           textAlign: "left",
                           color: "#ffffff",
                         }}>
-                        {statusDict[props.data.recommendStatus]}
+                        {statusDict[props.data.recommendDto.recommendStatus]}
                       </Text>
                     </View>
                   </View>

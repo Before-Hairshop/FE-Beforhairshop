@@ -34,7 +34,7 @@ export default function Answer({ route }) {
 
   const navigation = useNavigation();
 
-  async function sendRecommendation() {
+  function sendRecommendation() {
     console.log(greetings);
     console.log(suggestionList);
     console.log(route.params);
@@ -51,7 +51,7 @@ export default function Answer({ route }) {
         );
         console.log(result);
       });
-      navigation.navigate("RecommendList");
+      navigation.navigate("CustomerList");
     } else {
       Alert.alert("필수 항목을 모두 작성해주세요.");
     }
@@ -237,8 +237,8 @@ export default function Answer({ route }) {
                 placeholder="인사말을 작성해주세요."
                 placeholderTextColor="#555555"
                 defaultValue={greetings}
-                onEndEditing={e => {
-                  setGreetings(e.nativeEvent.text);
+                onChangeText={text => {
+                  setGreetings(text);
                 }}
                 style={styles.highlightText}></TextInput>
             </View>

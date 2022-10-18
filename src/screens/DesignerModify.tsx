@@ -8,6 +8,7 @@ import {
   TextInput,
   Platform,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 
@@ -280,7 +281,7 @@ export default function DesignerModify() {
   }, []);
 
   return (
-    <View style={styles.frame}>
+    <SafeAreaView style={styles.frame}>
       <ComplexityHeader
         title="프로필"
         goBack="Main"
@@ -757,7 +758,7 @@ export default function DesignerModify() {
         setLocation={setLocation}
         setZipCode={setZipCode}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

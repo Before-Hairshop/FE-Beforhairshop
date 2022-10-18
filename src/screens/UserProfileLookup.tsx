@@ -23,6 +23,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Platform } from "react-native";
 import SimpleHeader from "../components/common/SimpleHeader";
 import { readData } from "../utils/asyncStorage";
+import ComplexityHeader from "../components/common/ComplexityHeader";
 
 const numHairStatus = 3;
 const numHairTendency = 5;
@@ -66,6 +67,7 @@ export default function UserProfileLookup({ route }) {
   const [hairTendencyIndex, setHairTendencyIndex] = useState(-1);
   const [profileData, setProfileData] = useState();
   const [designerFlag, setDesignerFlag] = useState(undefined);
+  const [memberId, setMemberId] = useState(undefined);
 
   const hairStatus = ["많이 상했어요", "보통이에요", "매우 건강해요"];
   const hairTendency = ["심한 곱슬", "곱슬", "반곱슬", "반직모", "직모"];
@@ -76,6 +78,7 @@ export default function UserProfileLookup({ route }) {
 
   async function fetchData() {
     setDesignerFlag(await readData("@DESIGNER_FLAG"));
+    setMemberId(await readData("@MEMBER_ID"));
   }
 
   useEffect(() => {
@@ -126,7 +129,34 @@ export default function UserProfileLookup({ route }) {
 
   return (
     <SafeAreaView style={styles.frame}>
-      <SimpleHeader title="홍길동 프로필" goBack="Main" />
+      {memberId != undefined && memberId == route.params.data.memberId && (
+        <ComplexityHeader
+          title={route.params.data.name}
+          goBack="Main"
+          button={
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("UserProfileModify");
+              }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: scale(16),
+                  fontWeight: "500",
+                  fontStyle: "normal",
+                  letterSpacing: -0.5,
+                  textAlign: "left",
+                  color: "#fc2a5b",
+                }}>
+                수정
+              </Text>
+            </TouchableOpacity>
+          }
+        />
+      )}
+      {memberId != undefined && memberId != route.params.data.memberId && (
+        <SimpleHeader title={route.params.data.name} goBack="Main" />
+      )}
       {/* <Header contents={<HeaderContents></HeaderContents>}></Header> */}
       {designerFlag != undefined && designerFlag == "1" && (
         <View style={{ alignItems: "center", justifyContent: "center" }}>

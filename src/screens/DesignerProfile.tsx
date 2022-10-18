@@ -41,6 +41,7 @@ import { useNavigation } from "@react-navigation/native";
 import { getDesignerProfileById } from "../api/getDesignerProfileById";
 import { UnderLineContent } from "../components/designerProfile/UnderLineContent";
 import { getReviewList } from "../api/getReviewList";
+import { readData } from "../utils/asyncStorage";
 
 const workingdayDict = {};
 workingdayDict["MON"] = "월요일";
@@ -154,6 +155,7 @@ export default function DesignerProfile({ route }) {
   const [reviewPageNum, setReviewPageNum] = useState(0);
   const [yellowStar, setYellowStar] = useState([]);
   const [grayStar, setGrayStar] = useState([]);
+  const [memberId, setMemberId] = useState(undefined);
 
   const phoneNumber = "010-1234-1234";
 
@@ -244,6 +246,7 @@ export default function DesignerProfile({ route }) {
       );
       console.log(response2);
       setReviewData(response2.data.result);
+      setMemberId(await readData("@MEMBER_ID"));
     } catch (e) {
       setError(e);
     }
@@ -436,6 +439,56 @@ export default function DesignerProfile({ route }) {
                 borderTopRightRadius: 30,
                 paddingTop: verticalScale(40),
               }}>
+              {memberId != undefined && memberId == route.params.designerId && (
+                <>
+                  <TouchableOpacity
+                    style={{
+                      height: verticalScale(60),
+                      flexDirection: "row",
+                      paddingTop: verticalScale(20),
+                      paddingBottom: verticalScale(20),
+                      paddingLeft: scale(25),
+                    }}
+                    onPress={() => {
+                      setIsDesignerModalVisible(false);
+                      navigation.navigate("DesignerModify");
+                    }}>
+                    <View
+                      style={{
+                        width: scale(35),
+                        height: "100%",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginRight: scale(10),
+                      }}>
+                      <ModifyIcon />
+                    </View>
+                    <View style={{ height: "100%", justifyContent: "center" }}>
+                      <Text
+                        style={{
+                          fontFamily: "Pretendard",
+                          fontSize: 15,
+                          fontWeight: "500",
+                          fontStyle: "normal",
+                          letterSpacing: -1,
+                          textAlign: "left",
+                          color: "rgba(255, 255, 255, 0.7)",
+                        }}>
+                        수정하기
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <View style={{ width: "100%", alignItems: "center" }}>
+                    <View
+                      style={{
+                        width: "89%",
+                        height: verticalScale(1),
+                        backgroundColor: "#333333",
+                      }}
+                    />
+                  </View>
+                </>
+              )}
               <TouchableOpacity
                 style={{
                   height: verticalScale(60),
@@ -445,50 +498,7 @@ export default function DesignerProfile({ route }) {
                   paddingLeft: scale(25),
                 }}
                 onPress={() => {
-                  setIsDesignerModalVisible(false);
-                  navigation.navigate("DesignerModify");
-                }}>
-                <View
-                  style={{
-                    width: scale(35),
-                    height: "100%",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginRight: scale(10),
-                  }}>
-                  <ModifyIcon />
-                </View>
-                <View style={{ height: "100%", justifyContent: "center" }}>
-                  <Text
-                    style={{
-                      fontFamily: "Pretendard",
-                      fontSize: 15,
-                      fontWeight: "500",
-                      fontStyle: "normal",
-                      letterSpacing: -1,
-                      textAlign: "left",
-                      color: "rgba(255, 255, 255, 0.7)",
-                    }}>
-                    수정하기
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <View style={{ width: "100%", alignItems: "center" }}>
-                <View
-                  style={{
-                    width: "89%",
-                    height: verticalScale(1),
-                    backgroundColor: "#333333",
-                  }}
-                />
-              </View>
-              <TouchableOpacity
-                style={{
-                  height: verticalScale(60),
-                  flexDirection: "row",
-                  paddingTop: verticalScale(20),
-                  paddingBottom: verticalScale(20),
-                  paddingLeft: scale(25),
+                  Alert.alert("준비중");
                 }}>
                 <View
                   style={{
@@ -524,48 +534,52 @@ export default function DesignerProfile({ route }) {
                   }}
                 />
               </View>
-              <TouchableOpacity
-                style={{
-                  height: verticalScale(60),
-                  flexDirection: "row",
-                  paddingTop: verticalScale(20),
-                  paddingBottom: verticalScale(20),
-                  paddingLeft: scale(25),
-                }}>
-                <View
-                  style={{
-                    width: scale(35),
-                    height: "100%",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginRight: scale(10),
-                  }}>
-                  <DeleteIcon />
-                </View>
-                <View style={{ height: "100%", justifyContent: "center" }}>
-                  <Text
+              {memberId != undefined && memberId == route.params.designerId && (
+                <>
+                  <TouchableOpacity
                     style={{
-                      fontFamily: "Pretendard",
-                      fontSize: 15,
-                      fontWeight: "500",
-                      fontStyle: "normal",
-                      letterSpacing: -1,
-                      textAlign: "left",
-                      color: "rgba(255, 255, 255, 0.7)",
+                      height: verticalScale(60),
+                      flexDirection: "row",
+                      paddingTop: verticalScale(20),
+                      paddingBottom: verticalScale(20),
+                      paddingLeft: scale(25),
                     }}>
-                    삭제하기
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <View style={{ width: "100%", alignItems: "center" }}>
-                <View
-                  style={{
-                    width: "89%",
-                    height: verticalScale(1),
-                    backgroundColor: "#333333",
-                  }}
-                />
-              </View>
+                    <View
+                      style={{
+                        width: scale(35),
+                        height: "100%",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginRight: scale(10),
+                      }}>
+                      <DeleteIcon />
+                    </View>
+                    <View style={{ height: "100%", justifyContent: "center" }}>
+                      <Text
+                        style={{
+                          fontFamily: "Pretendard",
+                          fontSize: 15,
+                          fontWeight: "500",
+                          fontStyle: "normal",
+                          letterSpacing: -1,
+                          textAlign: "left",
+                          color: "rgba(255, 255, 255, 0.7)",
+                        }}>
+                        삭제하기
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <View style={{ width: "100%", alignItems: "center" }}>
+                    <View
+                      style={{
+                        width: "89%",
+                        height: verticalScale(1),
+                        backgroundColor: "#333333",
+                      }}
+                    />
+                  </View>
+                </>
+              )}
             </Animated.View>
           </View>
         </Modal>

@@ -10,6 +10,7 @@ import {
   Platform,
   Linking,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import React, { useState } from "react";
 
@@ -231,7 +232,7 @@ export default function DesignerRegistration() {
   };
 
   return (
-    <View style={styles.frame}>
+    <SafeAreaView style={styles.frame}>
       <ComplexityHeader
         title="프로필"
         goBack="Main"
@@ -709,7 +710,7 @@ export default function DesignerRegistration() {
         setLocation={setLocation}
         setZipCode={setZipCode}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 
@@ -241,7 +242,7 @@ export default function DesignerList() {
   }, [keyword]);
 
   return (
-    <View style={styles.frame}>
+    <SafeAreaView style={styles.frame}>
       {/* <ComplexityHeader
         title="헤어 디자이너 목록"
         goBack="NewMain"
@@ -372,7 +373,7 @@ export default function DesignerList() {
       />
       {/* </View> */}
       {/* </View> */}
-    </View>
+    </SafeAreaView>
   );
 }
 

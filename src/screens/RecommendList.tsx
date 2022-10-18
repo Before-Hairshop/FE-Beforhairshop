@@ -20,7 +20,7 @@ import { getRecommendListByUser } from "../api/getRecommendListByUser";
 import { readData } from "../utils/asyncStorage";
 import { getRecommendListByDesigner } from "../api/getRecommendListByDesigner";
 
-export default function RecommendList() {
+export default function RecommendList({ route }) {
   const [approveIsOpen, setApproveIsOpen] = useState(false);
   const [pendingIsOpen, setPendingIsOpen] = useState(false);
   const [rejectIsOpen, setRejectIsOpen] = useState(false);
@@ -42,7 +42,7 @@ export default function RecommendList() {
 
   useEffect(() => {
     fetchRecommendList();
-  }, []);
+  }, [route]);
 
   return (
     <SafeAreaView style={styles.frame}>
@@ -105,7 +105,7 @@ export default function RecommendList() {
         {approveIsOpen && recommendList != undefined && (
           <>
             {recommendList
-              .filter(item => item.recommendStatus == 2)
+              .filter(item => item.recommendDto.recommendStatus == 2)
               .map((res, index) => (
                 <Recommendation data={res} />
               ))}
@@ -160,7 +160,7 @@ export default function RecommendList() {
         {pendingIsOpen && recommendList != undefined && (
           <>
             {recommendList
-              .filter(item => item.recommendStatus == 1)
+              .filter(item => item.recommendDto.recommendStatus == 1)
               .map((res, index) => (
                 <Recommendation data={res} />
               ))}
@@ -219,7 +219,7 @@ export default function RecommendList() {
         {rejectIsOpen && recommendList != undefined && (
           <>
             {recommendList
-              .filter(item => item.recommendStatus == 0)
+              .filter(item => item.recommendDto.recommendStatus == 0)
               .map((res, index) => (
                 <Recommendation data={res} />
               ))}
