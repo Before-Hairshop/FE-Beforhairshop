@@ -7,6 +7,7 @@ import {
   Image,
   TextInput,
   ImageBackground,
+  Alert,
 } from "react-native";
 import React, { useEffect } from "react";
 import GoBackIcon from "../assets/icons/goBack.svg";
@@ -30,6 +31,9 @@ import HairButton from "../components/UserProfile/HairButton";
 import Icon from "react-native-vector-icons/Ionicons";
 
 import StarRating from "../components/common/StarRating";
+import ComplexityHeader from "../components/common/ComplexityHeader";
+import { postReview } from "../api/postReview";
+import { postReviewImg } from "../api/postReviewImg";
 
 const BASEWIDTH = 375;
 const BASEPADDING = 20;
@@ -82,10 +86,8 @@ const HeaderContents = () => {
   );
 };
 
-export default function Suggestion() {
+export default function Review({ route }) {
   const resultLevel = ["별로에요", "그저 그랬어요", "만족스러워요"];
-  const [profileImage, setProfileImage] = useState([]);
-
   const numHairRating = 3;
   const numDesignerRating = 3;
   const [hairRating, setHairRating] = useState(-1);
@@ -119,7 +121,7 @@ export default function Suggestion() {
             alignItems: "center",
             justifyContent: "space-evenly",
           }}>
-          <Text style={{ color: MAINCOLOR }}>{hairTag[index]}</Text>
+          <Text style={{ color: MAINCOLOR }}>{hairTag[index].tag}</Text>
           <Icon
             name="close-outline"
             color={MAINCOLOR}
@@ -130,165 +132,277 @@ export default function Suggestion() {
     );
   };
 
-  useEffect(() => {
-    setProfileImage([designerImageURL]);
-  }, []);
+  async function saveReview() {
+    console.log(starScore);
+    console.log(hairRating);
+    console.log(designerRating);
+    console.log(review);
+    console.log(hairTag);
+    console.log(hairImage);
+    if (starScore == 0) {
+      Alert.alert("별점을 등록해주세요");
+    } else if (hairRating == -1) {
+      Alert.alert("시술 만족도를 선택해주세요");
+    } else if (designerRating == -1) {
+      Alert.alert("디자이너 만족도를 선택해주세요");
+    } else if (review == "") {
+      Alert.alert("후기를 남겨주세요");
+    } else if (hairTag.length == 0) {
+      Alert.alert("시술 받은 스타일을 입력해주세요");
+    } else {
+      console.log("완벽");
+    }
+    const result = await postReview(
+      route.params.designerId,
+      starScore,
+      hairRating + 1,
+      designerRating + 1,
+      review,
+      hairTag,
+    );
+    console.log(result);
+    const res = await postReviewImg(result.data.result.id, hairImage);
+    console.log(res);
+    navigation.navigate("DesignerProfile", {
+      designerId: route.params.designerId,
+    });
+  }
+
   return (
-    <View style={styles.mainView}>
-      <Header contents={<HeaderContents></HeaderContents>}></Header>
-      <ScrollView>
-        <View style={{ alignItems: "center", margin: verticalScale(10) }}>
-          <ImageBackground
-            source={{ uri: profileImage[0] }}
-            style={{
-              width: scale(150),
-              aspectRatio: 1,
-              marginHorizontal: verticalScale(6),
-              borderRadius: 100,
-
-              overflow: "hidden",
-              borderWidth: 2,
-              borderColor: "#373737",
+    <View style={styles.frame}>
+      <ComplexityHeader
+        title="리뷰 작성"
+        goBack="Main"
+        button={
+          <TouchableOpacity
+            onPress={() => {
+              saveReview();
             }}>
-            <View
+            <Text
               style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: verticalScale(13),
-                justifyContent: "flex-end",
-                alignItems: "center",
+                fontFamily: "Pretendard",
+                fontSize: scale(16),
+                fontWeight: "500",
+                fontStyle: "normal",
+                letterSpacing: -0.5,
+                textAlign: "left",
+                color: "#fc2a5b",
               }}>
-              <Text style={styles.profileImageFont}>이안</Text>
-            </View>
-          </ImageBackground>
-
-          <View style={{ paddingTop: verticalScale(25) }}>
-            <Text style={styles.profileImageFont}>전체적인 서비스에 대해 </Text>
-            <Text style={[styles.profileImageFont, { fontWeight: "bold" }]}>
-              평가해주세요.
+              등록
             </Text>
-          </View>
+          </TouchableOpacity>
+        }
+      />
+      {/* <Header contents={<HeaderContents></HeaderContents>}></Header> */}
+      <ScrollView>
+        <View
+          style={{ alignItems: "center", paddingBottom: verticalScale(120) }}>
+          <View style={{ width: "88.9%" }}>
+            <View style={{ alignItems: "center", margin: verticalScale(10) }}>
+              <ImageBackground
+                source={{ uri: route.params.designerImg }}
+                style={{
+                  width: scale(150),
+                  aspectRatio: 1,
+                  marginHorizontal: verticalScale(6),
+                  borderRadius: 100,
+                  overflow: "hidden",
+                  borderWidth: 2,
+                  borderColor: "#373737",
+                }}>
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: verticalScale(13),
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                  }}>
+                  <Text style={styles.profileImageFont}>
+                    {route.params.designerName}
+                  </Text>
+                </View>
+              </ImageBackground>
 
-          <StarRating
-            size={scale(32)}
-            containerStyle={{ marginTop: verticalScale(14) }}
-            score={starScore}
-            setScoreFunction={setStarScore}
-            isTouchable={true}></StarRating>
-        </View>
+              <View style={{ paddingTop: verticalScale(25) }}>
+                <Text style={styles.profileImageFont}>
+                  전체적인 서비스에 대해{" "}
+                </Text>
+                <Text style={[styles.profileImageFont, { fontWeight: "bold" }]}>
+                  평가해주세요.<Text style={{ color: "red" }}> *</Text>
+                </Text>
+              </View>
 
-        <View style={{ marginTop: 12 }}>
-          <Text style={[styles.itemTextStyle]}>
-            헤어 시술 결과가 만족스러우신가요?
-          </Text>
+              <StarRating
+                size={scale(32)}
+                containerStyle={{ marginTop: verticalScale(14) }}
+                score={starScore}
+                setScoreFunction={setStarScore}
+                isTouchable={true}></StarRating>
+            </View>
 
-          <View style={{ flexDirection: "row" }}>
-            {resultLevel.map((item, index) => {
-              return (
-                <HairButton
-                  width={scale((BASEWIDTH - BASEPADDING * 2) / numHairRating)}
-                  content={resultLevel[index]}
-                  isActive={index == hairRating}
-                  onPressActive={() => setHairRating(index)}
-                  onPressDeactive={() => setHairRating(-1)}></HairButton>
-              );
-            })}
-          </View>
-        </View>
+            <View style={{ marginTop: 12 }}>
+              <Text style={[styles.itemTextStyle]}>
+                헤어 시술 결과가 만족스러우신가요?
+                <Text style={{ color: "red" }}> *</Text>
+              </Text>
 
-        <View style={{ marginTop: 12 }}>
-          <Text style={[styles.itemTextStyle]}>헤어다지아너가 친절했나요?</Text>
+              <View style={{ flexDirection: "row" }}>
+                {resultLevel.map((item, index) => {
+                  return (
+                    <HairButton
+                      width={scale(
+                        (BASEWIDTH - BASEPADDING * 2) / numHairRating,
+                      )}
+                      content={resultLevel[index]}
+                      isActive={index == hairRating}
+                      onPressActive={() => setHairRating(index)}
+                      onPressDeactive={() => setHairRating(-1)}></HairButton>
+                  );
+                })}
+              </View>
+            </View>
 
-          <View style={{ flexDirection: "row" }}>
-            {resultLevel.map((item, index) => {
-              return (
-                <HairButton
-                  width={scale(
-                    (BASEWIDTH - BASEPADDING * 2) / numDesignerRating,
-                  )}
-                  content={resultLevel[index]}
-                  isActive={index == designerRating}
-                  onPressActive={() => setDesignerRating(index)}
-                  onPressDeactive={() => setDesignerRating(-1)}></HairButton>
-              );
-            })}
-          </View>
-        </View>
+            <View style={{ marginTop: 12 }}>
+              <Text style={[styles.itemTextStyle]}>
+                헤어디자이너가 친절했나요?
+                <Text style={{ color: "red" }}> *</Text>
+              </Text>
 
-        <View style={styles.userTextUnderline}>
-          <TextInput
-            value={review}
-            onChangeText={text => setReview(text)}
-            placeholder="자유롭게 작성해주세요."
-            multiline
-            placeholderTextColor={GRAYCOLOR}
-            numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
-            minHeight={
-              Platform.OS === "ios" && numberOfLines ? 20 * numberOfLines : null
-            }
-            textAlignVertical="top"
-            style={styles.highlightText}></TextInput>
-        </View>
+              <View style={{ flexDirection: "row" }}>
+                {resultLevel.map((item, index) => {
+                  return (
+                    <HairButton
+                      width={scale(
+                        (BASEWIDTH - BASEPADDING * 2) / numDesignerRating,
+                      )}
+                      content={resultLevel[index]}
+                      isActive={index == designerRating}
+                      onPressActive={() => setDesignerRating(index)}
+                      onPressDeactive={() =>
+                        setDesignerRating(-1)
+                      }></HairButton>
+                  );
+                })}
+              </View>
+            </View>
 
-        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}>시술 받은 스타일 </Text>
+            <View style={{ marginTop: 12 }}>
+              <Text style={styles.itemTextStyle}>
+                후기<Text style={{ color: "red" }}> *</Text>
+              </Text>
+              <TextInput
+                value={review}
+                onChangeText={text => setReview(text)}
+                placeholder="자유롭게 작성해주세요."
+                multiline
+                placeholderTextColor={GRAYCOLOR}
+                numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
+                minHeight={
+                  Platform.OS === "ios" && numberOfLines
+                    ? 20 * numberOfLines
+                    : null
+                }
+                textAlignVertical="top"
+                style={styles.highlightText}></TextInput>
+            </View>
 
-          <View style={styles.userTextUnderline}>
-            <TextInput
-              placeholder="#태그"
-              placeholderTextColor={GRAYCOLOR}
-              value={tagInput}
-              onChangeText={text => setTagInput(text)}
-              onEndEditing={e => {
-                let newHairTagArray = [...hairTag];
-                newHairTagArray.push(e.nativeEvent.text);
+            <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+              <Text style={styles.itemTextStyle}>
+                시술 받은 스타일<Text style={{ color: "red" }}> *</Text>
+              </Text>
+              <View
+                style={[
+                  styles.userTextUnderline,
+                  { flexDirection: "row", justifyContent: "space-between" },
+                ]}>
+                <TextInput
+                  placeholder="#태그"
+                  placeholderTextColor={GRAYCOLOR}
+                  value={tagInput}
+                  onChangeText={text => setTagInput(text)}
+                  // onEndEditing={e => {
+                  //   let newHairTagArray = [...hairTag];
+                  //   newHairTagArray.push(e.nativeEvent.text);
 
-                setHairTag(newHairTagArray);
-                setTagInput("");
-              }}
-              autoCorrect={false}
-              style={[styles.inputText]}></TextInput>
-          </View>
+                  //   setHairTag(newHairTagArray);
+                  //   setTagInput("");
+                  // }}
+                  autoCorrect={false}
+                  style={[styles.inputText]}
+                />
+                <TouchableOpacity
+                  style={{
+                    justifyContent: "center",
+                    paddingBottom: verticalScale(10),
+                    paddingTop: verticalScale(15),
+                  }}
+                  onPress={() => {
+                    let newHairTagArray = [...hairTag];
+                    newHairTagArray.push({ tag: tagInput });
+                    setHairTag(newHairTagArray);
+                    setTagInput("");
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(14),
+                      fontWeight: "bold",
+                      fontStyle: "normal",
+                      textAlign: "left",
+                      color: "#fc2a5b",
+                    }}>
+                    + 추가
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={{ paddingTop: verticalScale(13), margin: verticalScale(5) }}
-            contentContainerStyle={{
-              justifyContent: "center",
-              alignItems: "center",
-            }}>
-            {hairTag.map((item, index) => {
-              return <HairTagButton index={index}></HairTagButton>;
-            })}
-          </ScrollView>
-        </View>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{
+                  paddingTop: verticalScale(13),
+                  margin: verticalScale(5),
+                }}
+                contentContainerStyle={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}>
+                {hairTag.map((item, index) => {
+                  return <HairTagButton index={index}></HairTagButton>;
+                })}
+              </ScrollView>
+            </View>
 
-        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <View style={{ flexDirection: "row", marginTop: verticalScale(12) }}>
-            {hairImage.map((item, index) => {
-              return (
-                <WantedStyleButton
-                  index={index}
-                  array={hairImage}
-                  setArray={setHairImage}
-                  style={styles.wantStyleImage}></WantedStyleButton>
-              );
-            })}
+            <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+              <Text style={styles.itemTextStyle}>시술 후 이미지</Text>
+              <View
+                style={{ flexDirection: "row", marginTop: verticalScale(12) }}>
+                {hairImage.map((item, index) => {
+                  return (
+                    <WantedStyleButton
+                      index={index}
+                      array={hairImage}
+                      setArray={setHairImage}
+                      style={styles.wantStyleImage}></WantedStyleButton>
+                  );
+                })}
 
-            {hairImage.length < 3 ? (
-              <WantedStyleUploadButton
-                array={hairImage}
-                setArray={setHairImage}
-                style={styles.wantStyleImage}></WantedStyleUploadButton>
-            ) : null}
+                {hairImage.length < 3 ? (
+                  <WantedStyleUploadButton
+                    array={hairImage}
+                    setArray={setHairImage}
+                    style={styles.wantStyleImage}></WantedStyleUploadButton>
+                ) : null}
+              </View>
+            </View>
           </View>
         </View>
       </ScrollView>
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={{
           alignItems: "center",
           justifyContent: "center",
@@ -305,12 +419,23 @@ export default function Suggestion() {
         <Text style={{ fontSize: scale(16), color: "#ffffff" }}>
           메시지 보내기
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  frame: {
+    flex: 1,
+    backgroundColor: "#191919",
+    shadowColor: "rgba(0, 0, 0, 0.25)",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowRadius: 4,
+    shadowOpacity: 1,
+  },
   mainView: {
     flex: 1,
     paddingHorizontal: 20,

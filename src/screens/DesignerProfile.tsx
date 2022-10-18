@@ -548,9 +548,10 @@ export default function DesignerProfile({ route }) {
         </Modal>
         <Image
           source={
+            profileData != undefined &&
             profileData.hairDesignerProfileDto.imageUrl != null
               ? { uri: profileData.hairDesignerProfileDto.imageUrl }
-              : DefaultDesigner
+              : null
           }
           style={styles.designer_img}
         />
@@ -631,9 +632,9 @@ export default function DesignerProfile({ route }) {
               </TouchableOpacity>
             </View>
             <View>
-              <View style={styles.action_icon}>
+              <TouchableOpacity style={styles.action_icon}>
                 <LoveIcon width={scale(19.1)} height={verticalScale(19.1)} />
-              </View>
+              </TouchableOpacity>
               <View style={{ alignItems: "center" }}>
                 <Text
                   style={{
@@ -650,9 +651,24 @@ export default function DesignerProfile({ route }) {
               </View>
             </View>
             <View>
-              <View style={styles.action_icon}>
+              <TouchableOpacity
+                style={styles.action_icon}
+                onPress={() => {
+                  if (profileData != undefined) {
+                    console.log(
+                      profileData.hairDesignerProfileDto.hairDesignerId,
+                    );
+                    console.log(profileData.hairDesignerProfileDto.name);
+                    navigation.navigate("Review", {
+                      designerId:
+                        profileData.hairDesignerProfileDto.hairDesignerId,
+                      designerName: profileData.hairDesignerProfileDto.name,
+                      designerImg: profileData.hairDesignerProfileDto.imageUrl,
+                    });
+                  }
+                }}>
                 <WriteIcon width={scale(19.1)} height={verticalScale(19.1)} />
-              </View>
+              </TouchableOpacity>
               <View style={{ alignItems: "center" }}>
                 <Text
                   style={{

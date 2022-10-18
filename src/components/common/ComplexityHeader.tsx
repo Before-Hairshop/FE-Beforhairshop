@@ -18,7 +18,7 @@ export default function ComplexityHeader(props: any) {
     <View style={styles.frame}>
       <TouchableOpacity
         style={styles.back_button}
-        onPress={() => navigation.navigate(props.goBack)}>
+        onPress={() => navigation.goBack()}>
         <GoBackIcon />
       </TouchableOpacity>
       <View style={styles.title_container}>
