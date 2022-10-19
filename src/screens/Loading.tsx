@@ -55,7 +55,8 @@ export default function Loading({ route }) {
     console.log(navigationState);
     if (
       navigationState.url == `${BASEURL}/#` ||
-      navigationState.url == `${BASEURL}/`
+      navigationState.url == `${BASEURL}/` ||
+      navigationState.url == "http://dev.beforehairshop.com/"
     ) {
       const cookies = await CookieManager.get(`${BASEURL}#`);
       console.log(cookies);

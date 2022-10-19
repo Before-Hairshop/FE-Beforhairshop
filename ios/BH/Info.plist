@@ -46,6 +46,8 @@
 	<string>$(NAVER_MAP_CLIENT_ID)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+        <true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>localhost</key>
