@@ -5,6 +5,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -14,6 +15,10 @@ import { scale, verticalScale } from "../utils/scale";
 import SimpleHeader from "../components/common/SimpleHeader";
 import Contour from "../components/common/Contour";
 import DefaultImg from "../assets/images/default_designer_profile.png";
+import { getRecommendation } from "../api/getRecommendation";
+import { readData } from "../utils/asyncStorage";
+import { patchRecommendAccept } from "../api/patchRecommendAccept";
+import { patchRecommendReject } from "../api/patchRecommendReject";
 
 const MAINCOLOR = "#fc2a5b";
 const GRAYCOLOR = "#555555";
@@ -21,33 +26,14 @@ const GRAYCOLOR = "#555555";
 const thumbnail =
   "https://via.placeholder.com/300.png/09f/fffC/O%20https://placeholder.com/";
 
-export default function ProfileSelection(props) {
-  const navigation = useNavigation();
+export default function Suggestion({ route }) {
+  const [recommendData, setRecommendData] = useState(undefined);
+  const [designerFlag, setDesignerFlag] = useState(undefined);
+
   const [designerName, setDesignerName] = useState("adasdfdsdf");
   const [greeting, setGreeting] = useState("");
-  const [suggestionList, setSuggestionList] = useState([
-    {
-      hairstyleName: "포마드",
-      reason:
-        "고객님의 헤어를 분석한 결과, 포마드 헤어스타일이 잘 어울릴 것 같아요! 제가 시술한 헤어스타일들을 보시고, 괜찮으시면 저에게 연락주세요. 감사합니다. ",
-      imageUrl: [thumbnail, thumbnail, thumbnail],
-      price: "15000",
-    },
-    {
-      hairstyleName: "투블럭",
-      reason:
-        "고객님의 헤어를 분석한 결과, 포마드 헤어스타일이 잘 어울릴 것 같아요! 제가 시술한 헤어스타일들을 보시고, 괜찮으시면 저에게 연락주세요. 감사합니다. ",
-      imageUrl: [thumbnail, thumbnail],
-      price: "30000",
-    },
-  ]);
 
-  useEffect(() => {
-    setDesignerName("이안");
-    setGreeting(
-      "반갑습니다. 원하시는 헤어 커트는 저희가 제일 잘해요>...어쩌구어쩌구 방문하세요",
-    );
-  });
+  const navigation = useNavigation();
 
   const UnderLineContent = ({ value, fontSize }) => (
     <HighlightText
@@ -67,8 +53,38 @@ export default function ProfileSelection(props) {
     />
   );
 
+  const matchingAccept = id => {
+    patchRecommendAccept(id);
+    navigation.navigate("RecommendList", {
+      reload: true,
+    });
+  };
+
+  const matchingReject = id => {
+    patchRecommendReject(id);
+    navigation.navigate("RecommendList", {
+      reload: true,
+    });
+  };
+
+  async function fetchData() {
+    const result = await getRecommendation(route.params.recommendId);
+    console.log(result);
+    setRecommendData(result.data.result);
+    setDesignerFlag(await readData("@DESIGNER_FLAG"));
+  }
+
+  useEffect(() => {
+    console.log(route.params);
+    fetchData();
+    setDesignerName("이안");
+    setGreeting(
+      "반갑습니다. 원하시는 헤어 커트는 저희가 제일 잘해요>...어쩌구어쩌구 방문하세요",
+    );
+  }, []);
+
   return (
-    <View style={styles.frame}>
+    <SafeAreaView style={styles.frame}>
       <SimpleHeader title="스타일 추천서" goBack="Main" />
       <Contour />
       <ScrollView contentContainerStyle={{ alignItems: "center" }}>
@@ -92,10 +108,13 @@ export default function ProfileSelection(props) {
               안녕하세요
             </Text>
             <View style={{ flexDirection: "row" }}>
-              <UnderLineContent
-                value={`헤어디자이너 ${designerName} `}
-                fontSize={scale(20)}
-              />
+              {recommendData != undefined && (
+                <UnderLineContent
+                  value={`헤어디자이너 ${recommendData.designerName} `}
+                  fontSize={scale(20)}
+                />
+              )}
+
               <Text>
                 <Text
                   style={{
@@ -122,12 +141,14 @@ export default function ProfileSelection(props) {
                 textAlign: "left",
                 color: "#eeeeee",
               }}>
-              반갑습니다. 원하시는 헤어 커트는 저희가 제일 잘해요. 방문하시면
+              {recommendData != undefined &&
+                recommendData.recommendDto.greeting}
+              {/* 반갑습니다. 원하시는 헤어 커트는 저희가 제일 잘해요. 방문하시면
               친절하게 시술 해드립니다.반갑습니다. 원하시는 헤어 커트는 저희가
               제일 잘해요. 방문하시면 친절하게 시술 해드립니다.반갑습니다.
               원하시는 헤어 커트는 저희가 제일 잘해요. 방문하시면 친절하게 시술
               해드립니다.반갑습니다. 원하시는 헤어 커트는 저희가 제일 잘해요.
-              방문하시면 친절하게 시술 해드립니다.반갑습니다.
+              방문하시면 친절하게 시술 해드립니다.반갑습니다. */}
             </Text>
           </View>
           <View style={{ marginTop: verticalScale(18) }}>
@@ -143,7 +164,10 @@ export default function ProfileSelection(props) {
                 textAlign: "left",
                 color: "#eeeeee",
               }}>
-              "포마드"
+              "
+              {recommendData != undefined &&
+                recommendData.recommendDto.hairstyle}
+              "
             </Text>
             <Text
               style={{
@@ -156,13 +180,14 @@ export default function ProfileSelection(props) {
                 textAlign: "left",
                 color: "#eeeeee",
               }}>
-              고객님의 헤어를 분석한 결과, 포마드 헤어스타일이 잘 어울릴 것
+              {recommendData != undefined && recommendData.recommendDto.reason}
+              {/* 고객님의 헤어를 분석한 결과, 포마드 헤어스타일이 잘 어울릴 것
               같아요! 제가 시술한 헤어스타일들을 보시고, 괜찮으시면 저에게
               연락주세요. 감사합니다.고객님의 헤어를 분석한 결과, 포마드
               헤어스타일이 잘 어울릴 것 같아요! 제가 시술한 헤어스타일들을
               보시고, 괜찮으시면 저에게 연락주세요. 감사합니다.고객님의 헤어를
               분석한 결과, 포마드 헤어스타일이 잘 어울릴 것 같아요! 제가 시술한
-              헤어스타일들을 보시고, 괜찮으시면 저에게 연락주세요. 감사합니다.
+              헤어스타일들을 보시고, 괜찮으시면 저에게 연락주세요. 감사합니다. */}
             </Text>
             <View
               style={{
@@ -208,7 +233,7 @@ export default function ProfileSelection(props) {
             </View>
           </View>
           <View style={{ marginTop: verticalScale(18) }}>
-            <UnderLineContent value={"시술 날짜"} fontSize={scale(20)} />
+            <UnderLineContent value="시술 날짜" fontSize={scale(20)} />
             <Text
               style={{
                 marginTop: verticalScale(15),
@@ -220,7 +245,18 @@ export default function ProfileSelection(props) {
                 textAlign: "left",
                 color: "#eeeeee",
               }}>
-              2022. 09. 26 월요일 PM 12:00
+              {recommendData != undefined &&
+                // recommendData.recommendDto.treatmentDate +
+                recommendData.recommendDto.treatmentDate.substring(0, 4) +
+                  "년 " +
+                  recommendData.recommendDto.treatmentDate.substring(5, 7) +
+                  "월 " +
+                  recommendData.recommendDto.treatmentDate.substring(8, 10) +
+                  "일 " +
+                  recommendData.recommendDto.treatmentDate.substring(11, 13) +
+                  "시 " +
+                  recommendData.recommendDto.treatmentDate.substring(14, 16) +
+                  "분"}
             </Text>
           </View>
           <View style={{ marginTop: verticalScale(18) }}>
@@ -236,76 +272,89 @@ export default function ProfileSelection(props) {
                 textAlign: "left",
                 color: "#eeeeee",
               }}>
-              150,000원
+              {recommendData != undefined &&
+                recommendData.recommendDto.price != null &&
+                recommendData.recommendDto.price.toLocaleString() + "원"}
             </Text>
           </View>
         </View>
       </ScrollView>
-      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
-        <View
-          style={{
-            width: scale(156),
-            height: verticalScale(60),
-            borderRadius: 15,
-            backgroundColor: "#00722d",
-            shadowColor: "rgba(0, 0, 0, 0.25)",
-            shadowOffset: {
-              width: 0,
-              height: 4,
-            },
-            shadowRadius: 10,
-            shadowOpacity: 1,
-            borderStyle: "solid",
-            borderWidth: 1,
-            borderColor: "rgba(255, 255, 255, 0)",
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: scale(18),
-              fontWeight: "normal",
-              letterSpacing: 0,
-              textAlign: "left",
-              color: "#ffffff",
-            }}>
-            매칭 수락
-          </Text>
-        </View>
-        <View
-          style={{
-            width: scale(156),
-            height: verticalScale(60),
-            borderRadius: 15,
-            backgroundColor: "#a02323",
-            shadowColor: "rgba(0, 0, 0, 0.25)",
-            shadowOffset: {
-              width: 0,
-              height: 4,
-            },
-            shadowRadius: 10,
-            shadowOpacity: 1,
-            borderStyle: "solid",
-            borderWidth: 1,
-            borderColor: "rgba(255, 255, 255, 0)",
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: scale(18),
-              fontWeight: "normal",
-              letterSpacing: 0,
-              textAlign: "left",
-              color: "#ffffff",
-            }}>
-            매칭 거절
-          </Text>
-        </View>
-      </View>
-    </View>
+      {recommendData != undefined &&
+        designerFlag != undefined &&
+        designerFlag == "0" && (
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+            <TouchableOpacity
+              style={{
+                width: scale(156),
+                height: verticalScale(60),
+                borderRadius: 15,
+                backgroundColor: "#00722d",
+                shadowColor: "rgba(0, 0, 0, 0.25)",
+                shadowOffset: {
+                  width: 0,
+                  height: 4,
+                },
+                shadowRadius: 10,
+                shadowOpacity: 1,
+                borderStyle: "solid",
+                borderWidth: 1,
+                borderColor: "rgba(255, 255, 255, 0)",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onPress={() => {
+                matchingAccept(recommendData.recommendDto.id);
+              }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: scale(18),
+                  fontWeight: "normal",
+                  letterSpacing: 0,
+                  textAlign: "left",
+                  color: "#ffffff",
+                }}>
+                매칭 수락
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                width: scale(156),
+                height: verticalScale(60),
+                borderRadius: 15,
+                backgroundColor: "#a02323",
+                shadowColor: "rgba(0, 0, 0, 0.25)",
+                shadowOffset: {
+                  width: 0,
+                  height: 4,
+                },
+                shadowRadius: 10,
+                shadowOpacity: 1,
+                borderStyle: "solid",
+                borderWidth: 1,
+                borderColor: "rgba(255, 255, 255, 0)",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onPress={() => {
+                matchingReject(recommendData.recommendDto.id);
+              }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: scale(18),
+                  fontWeight: "normal",
+                  letterSpacing: 0,
+                  textAlign: "left",
+                  color: "#ffffff",
+                }}>
+                매칭 거절
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+    </SafeAreaView>
   );
 }
 

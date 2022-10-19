@@ -16,7 +16,7 @@ import ChatIcon from "../assets/icons/main/chat.svg";
 import RightArrowIcon from "../assets/icons/common/arrow.svg";
 import DesignerIcon from "../assets/icons/main/designer.svg";
 import BigContour from "../components/common/BigContour";
-import { readData } from "../utils/asyncStorage";
+import { readData, storeData } from "../utils/asyncStorage";
 import { useNavigation } from "@react-navigation/native";
 import { getUserProfile } from "../api/getUserProfile";
 import { getDesignerProfile } from "../api/getDesignerProfile";
@@ -62,7 +62,12 @@ const Header = props => (
           BEFORE HAIRSHOP
         </Text>
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          props.navigation.navigate("Mypage", {
+            data: props.profileData,
+          });
+        }}>
         <Image
           source={{
             uri: props.profileImg,
@@ -88,99 +93,74 @@ const Header = props => (
 );
 
 const MainProfile = props => (
-  <TouchableOpacity
-    style={{ alignItems: "center" }}
-    onPress={() => {
-      if (props.designerFlag == "1") {
-        props.navigation.navigate("DesignerProfile");
-      } else {
-        props.navigation.navigate("UserProfileLookup");
-      }
-    }}>
-    <View
-      style={{
-        width: "89.4%",
-        paddingTop: verticalScale(20),
-        paddingBottom: verticalScale(20),
-      }}>
-      <Text
-        style={{
-          fontFamily: "Pretendard",
-          fontSize: verticalScale(18),
-          fontWeight: "bold",
-          fontStyle: "normal",
-          textAlign: "left",
-          color: "#ffffff",
+  <>
+    {props.designerFlag != undefined &&
+    props.profileData != undefined &&
+    props.profileImg != undefined ? (
+      <TouchableOpacity
+        style={{ alignItems: "center" }}
+        onPress={() => {
+          if (props.designerFlag == "1") {
+            props.navigation.navigate("DesignerProfile", {
+              designerId: props.profileData.hairDesignerId,
+            });
+          } else {
+            props.navigation.navigate("UserProfileLookup", {
+              data: props.profileData,
+            });
+          }
         }}>
-        {props.profileData.name}
-        <Text
+        <View
           style={{
-            fontFamily: "Pretendard",
-            fontSize: verticalScale(15),
-            fontWeight: "bold",
-            fontStyle: "normal",
-            textAlign: "left",
-            color: "#ffffff",
+            width: "89.4%",
+            paddingTop: verticalScale(20),
+            paddingBottom: verticalScale(20),
           }}>
-          {props.designerFlag == "1" ? " 디자이너 " : ""}
-        </Text>
-      </Text>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          paddingTop: verticalScale(20),
-        }}>
-        <View style={{ width: "27%" }}>
-          <Image
-            source={{
-              uri: props.profileImg,
-            }}
+          <Text
             style={{
-              width: scale(70),
-              height: scale(70),
-              borderRadius: scale(35),
-              borderWidth: scale(1),
-              borderColor: "#323232",
-            }}
-          />
-        </View>
-        <View style={{ width: "73%", justifyContent: "space-around" }}>
-          {props.designerFlag == "1" ? (
-            <>
-              <Text
+              fontFamily: "Pretendard",
+              fontSize: verticalScale(18),
+              fontWeight: "bold",
+              fontStyle: "normal",
+              textAlign: "left",
+              color: "#ffffff",
+            }}>
+            {props.profileData.name}
+            <Text
+              style={{
+                fontFamily: "Pretendard",
+                fontSize: verticalScale(15),
+                fontWeight: "bold",
+                fontStyle: "normal",
+                textAlign: "left",
+                color: "#ffffff",
+              }}>
+              {props.designerFlag == "1" ? " 디자이너 " : ""}
+            </Text>
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingTop: verticalScale(20),
+            }}>
+            <View style={{ width: "27%" }}>
+              <Image
+                source={{
+                  uri: props.profileImg,
+                }}
                 style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(15),
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: 0,
-                  textAlign: "left",
-                  color: "#c8c8c8",
-                }}>
-                {props.profileData.hairShopName}
-              </Text>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(15),
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: 0,
-                  textAlign: "left",
-                  color: "#c8c8c8",
-                }}>
-                {props.profileData.zipAddress}
-              </Text>
-            </>
-          ) : (
-            <>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}>
-                <View style={{ justifyContent: "center" }}>
+                  width: scale(70),
+                  height: scale(70),
+                  borderRadius: scale(35),
+                  borderWidth: scale(1),
+                  borderColor: "#323232",
+                }}
+              />
+            </View>
+            <View style={{ width: "73%", justifyContent: "space-around" }}>
+              {props.designerFlag == "1" ? (
+                <>
                   <Text
                     style={{
                       fontFamily: "Pretendard",
@@ -188,42 +168,11 @@ const MainProfile = props => (
                       fontWeight: "500",
                       fontStyle: "normal",
                       letterSpacing: 0,
-                      textAlign: "center",
+                      textAlign: "left",
                       color: "#c8c8c8",
                     }}>
-                    모 발
+                    {props.profileData.hairShopName}
                   </Text>
-                </View>
-                <View
-                  style={{
-                    borderRadius: 100,
-                    backgroundColor: "#383838",
-                    paddingTop: verticalScale(4),
-                    paddingBottom: verticalScale(4),
-                    paddingLeft: scale(7),
-                    paddingRight: scale(7),
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: "Pretendard",
-                      fontSize: scale(12),
-                      fontWeight: "500",
-                      fontStyle: "normal",
-                      letterSpacing: -0.5,
-                      textAlign: "center",
-                      color: "#ffffff",
-                    }}>
-                    {hairConditionType[props.profileData.hairCondition]}
-                    {/* 매우 건강 */}
-                  </Text>
-                </View>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}>
-                <View style={{ justifyContent: "center" }}>
                   <Text
                     style={{
                       fontFamily: "Pretendard",
@@ -231,45 +180,113 @@ const MainProfile = props => (
                       fontWeight: "500",
                       fontStyle: "normal",
                       letterSpacing: 0,
-                      textAlign: "center",
+                      textAlign: "left",
                       color: "#c8c8c8",
                     }}>
-                    머리성향
+                    {props.profileData.zipAddress}
                   </Text>
-                </View>
-                <View
-                  style={{
-                    borderRadius: 100,
-                    backgroundColor: "#383838",
-                    paddingTop: verticalScale(4),
-                    paddingBottom: verticalScale(4),
-                    paddingLeft: scale(7),
-                    paddingRight: scale(7),
-                  }}>
-                  <Text
+                </>
+              ) : (
+                <>
+                  <View
                     style={{
-                      fontFamily: "Pretendard",
-                      fontSize: scale(12),
-                      fontWeight: "500",
-                      fontStyle: "normal",
-                      letterSpacing: -0.5,
-                      textAlign: "center",
-                      color: "#ffffff",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
                     }}>
-                    {hairTendencyType[props.profileData.hairTendency]}
-                    {/* 곱슬 */}
-                  </Text>
-                </View>
-              </View>
-            </>
-          )}
+                    <View style={{ justifyContent: "center" }}>
+                      <Text
+                        style={{
+                          fontFamily: "Pretendard",
+                          fontSize: scale(15),
+                          fontWeight: "500",
+                          fontStyle: "normal",
+                          letterSpacing: 0,
+                          textAlign: "center",
+                          color: "#c8c8c8",
+                        }}>
+                        모 발
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        borderRadius: 100,
+                        backgroundColor: "#383838",
+                        paddingTop: verticalScale(4),
+                        paddingBottom: verticalScale(4),
+                        paddingLeft: scale(7),
+                        paddingRight: scale(7),
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: "Pretendard",
+                          fontSize: scale(12),
+                          fontWeight: "500",
+                          fontStyle: "normal",
+                          letterSpacing: -0.5,
+                          textAlign: "center",
+                          color: "#ffffff",
+                        }}>
+                        {hairConditionType[props.profileData.hairCondition]}
+                        {/* 매우 건강 */}
+                      </Text>
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}>
+                    <View style={{ justifyContent: "center" }}>
+                      <Text
+                        style={{
+                          fontFamily: "Pretendard",
+                          fontSize: scale(15),
+                          fontWeight: "500",
+                          fontStyle: "normal",
+                          letterSpacing: 0,
+                          textAlign: "center",
+                          color: "#c8c8c8",
+                        }}>
+                        머리성향
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        borderRadius: 100,
+                        backgroundColor: "#383838",
+                        paddingTop: verticalScale(4),
+                        paddingBottom: verticalScale(4),
+                        paddingLeft: scale(7),
+                        paddingRight: scale(7),
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: "Pretendard",
+                          fontSize: scale(12),
+                          fontWeight: "500",
+                          fontStyle: "normal",
+                          letterSpacing: -0.5,
+                          textAlign: "center",
+                          color: "#ffffff",
+                        }}>
+                        {hairTendencyType[props.profileData.hairTendency]}
+                        {/* 곱슬 */}
+                      </Text>
+                    </View>
+                  </View>
+                </>
+              )}
+            </View>
+          </View>
         </View>
-      </View>
-    </View>
-  </TouchableOpacity>
+      </TouchableOpacity>
+    ) : (
+      <Text style={{ color: "white" }}>프로필을 등록해주세요</Text>
+    )}
+  </>
 );
 
-export default function NewMain() {
+export default function NewMain({ route }) {
   const [toggle, setToggle] = useState(undefined);
   const [designerFlag, setDesignerFlag] = useState(undefined);
   const [profileData, setProfileData] = useState(undefined);
@@ -451,12 +468,17 @@ export default function NewMain() {
     async function fetchData() {
       setDesignerFlag(await readData("@DESIGNER_FLAG"));
       const { data } = await getMemberInfo();
+      console.log(data);
       setProfileImg(data.result.imageUrl);
       console.log(data.result.designerFlag);
+      storeData("@MEMBER_ID", String(data.result.id));
       if (data.result.designerFlag == 1) {
-        const result = await getDesignerProfile(data.result.id);
+        const result = await getDesignerProfile();
         console.log(result);
-        setProfileData(result?.data.result.hairDesignerProfileDto);
+        if (result.data.status != "BAD_REQUEST") {
+          console.log(result.data.status);
+          setProfileData(result.data.result);
+        }
       } else {
         const result = await getUserProfile();
         console.log(result?.data.result.memberProfileDto);
@@ -469,12 +491,24 @@ export default function NewMain() {
       }
     }
     fetchData();
-  }, []);
+  }, [route]);
 
   return (
     <View style={styles.frame}>
-      <Header profileImg={profileImg} />
-      {designerFlag != undefined &&
+      {profileImg != undefined && profileData != undefined && (
+        <Header
+          profileImg={profileImg}
+          profileData={profileData}
+          navigation={navigation}
+        />
+      )}
+      <MainProfile
+        designerFlag={designerFlag}
+        profileData={profileData}
+        profileImg={profileImg}
+        navigation={navigation}
+      />
+      {/* {designerFlag != undefined &&
         profileData != undefined &&
         profileImg != undefined && (
           <MainProfile
@@ -483,7 +517,7 @@ export default function NewMain() {
             profileImg={profileImg}
             navigation={navigation}
           />
-        )}
+        )} */}
       {designerFlag != undefined && designerFlag == "0" && <BigContour />}
       {designerFlag != undefined && designerFlag == "1" && (
         <BigContour style={{ height: verticalScale(2) }} />

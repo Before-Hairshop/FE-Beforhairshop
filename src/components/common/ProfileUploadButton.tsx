@@ -1,8 +1,11 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import { launchImageLibrary } from "react-native-image-picker";
+import PlusIcon from "../../assets/icons/plus.png";
 
 export default function ProfileUploadButton(props) {
+  const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
+
   return (
     <TouchableOpacity
       style={props.style}
@@ -21,7 +24,12 @@ export default function ProfileUploadButton(props) {
         props.toChangeFunction(newArray);
       }}>
       <Image
-        source={{ uri: props.toChangeArray[props.index].uri }}
+        source={{
+          uri:
+            props.toChangeArray[props.index] != ""
+              ? props.toChangeArray[props.index].uri
+              : baseImageURL,
+        }}
         style={{ width: "100%", aspectRatio: 1 }}
       />
     </TouchableOpacity>

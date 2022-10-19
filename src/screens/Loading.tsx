@@ -5,6 +5,7 @@ import {
   Animated,
   TouchableOpacity,
   Modal,
+  SafeAreaView,
 } from "react-native";
 import React, { createRef, useEffect, useRef } from "react";
 import { useState } from "react";
@@ -14,17 +15,20 @@ import CookieManager from "@react-native-cookies/cookies";
 
 import { scale, verticalScale } from "../utils/scale";
 import { getMemberInfo } from "../api/getMemberInfo";
-import { removeData, storeData } from "../utils/asyncStorage";
+import { readData, removeData, storeData } from "../utils/asyncStorage";
 import GoogleLoginIcon from "../components/loading/GoogleLoginIcon";
 import KakaoLoginIcon from "../components/loading/KakaoLoginIcon";
 import NaverLoginIcon from "../components/loading/NaverLoginIcon";
 import AppleLoginIcon from "../components/loading/AppleLoginIcon";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASEURL } from "../api/baseUrl";
 
 const socialLoginURI = {
-  google: "http://localhost:8080/oauth2/authorization/google",
-  kakao: "http://localhost:8080/oauth2/authorization/kakao",
-  naver: "http://localhost:8080/oauth2/authorization/naver",
-  logout: "http://localhost:8080/logout",
+  google: `${BASEURL}/oauth2/authorization/google`,
+  kakao: `${BASEURL}/oauth2/authorization/kakao`,
+  naver: `${BASEURL}/oauth2/authorization/naver`,
+  logout: `${BASEURL}/logout`,
 };
 
 const userAgent = "useragent";
@@ -35,7 +39,7 @@ const wait = (timeToDelay: number) => {
 
 const opacity = new Animated.Value(0);
 
-export default function Loading() {
+export default function Loading({ route }) {
   const [socialLoginModalVisible, setSocialLoginModalVisible] = useState(false);
   const [loginType, setLoginType] = useState("");
 
@@ -48,45 +52,83 @@ export default function Loading() {
   };
 
   async function onNavigationStateChange(navigationState: WebViewNavigation) {
-    if (navigationState.url == "http://localhost:8080/") {
-      const cookies = await CookieManager.get("http://localhost:8080");
-      await storeData("@SESSION_ID", cookies.SESSION.value);
-      await setSocialLoginModalVisible(false);
+    console.log(navigationState);
+    if (
+      navigationState.url == `${BASEURL}/#` ||
+      navigationState.url == `${BASEURL}/` ||
+      navigationState.url == "http://dev.beforehairshop.com/"
+    ) {
+      const cookies = await CookieManager.get(`${BASEURL}#`);
+      console.log(cookies);
+      storeData("@SESSION_ID", cookies.SESSION.value);
+      setSocialLoginModalVisible(false);
+      await wait(1000);
+      try {
+        console.log(cookies.SESSION.value);
+        axios
+          .get(`${BASEURL}/api/v1/members`, {
+            headers: {
+              Cookies: `SESSION=${cookies.SESSION.value}`,
+            },
+          })
+          .then(result => {
+            console.log(result);
+            if (result.data.status == "BAD_REQUEST") {
+              navigation.navigate("ServiceTerms");
+            } else {
+              storeData(
+                "@DESIGNER_FLAG",
+                String(result.data.result.designerFlag),
+              );
+              navigation.navigate("NewMain");
+            }
+          });
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 
   const callAPI = async () => {
     try {
-      const result = await getMemberInfo();
-      console.log(result);
-      if (result.data.result != null) {
-        console.log("yes cookie");
-        if (result.data.status == "BAD_REQUEST") {
-          navigation.navigate("ServiceTerms");
-          // Animated.timing(opacity, {
-          //   toValue: 1,
-          //   duration: 1000,
-          //   useNativeDriver: false,
-          // }).start();
-        } else {
-          await storeData(
-            "@DESIGNER_FLAG",
-            String(result.data.result.designerFlag),
-          );
-          navigation.navigate("NewMain");
-        }
-        // Animated.timing(opacity, {
-        //   toValue: 1,
-        //   duration: 1000,
-        //   useNativeDriver: false,
-        // }).start();
-      } else {
-        console.log("no cookie");
+      if ((await readData("@SESSION_ID")) == null) {
         Animated.timing(opacity, {
           toValue: 1,
           duration: 1000,
           useNativeDriver: false,
         }).start();
+      } else {
+        const result = await getMemberInfo();
+        console.log(result);
+        if (result.data.result == null) {
+          console.log("no cookie");
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: false,
+          }).start();
+        } else {
+          console.log("yes cookie");
+          if (result.data.status == "BAD_REQUEST") {
+            // Animated.timing(opacity, {
+            //   toValue: 1,
+            //   duration: 1000,
+            //   useNativeDriver: false,
+            // }).start();
+            navigation.navigate("ServiceTerms");
+          } else {
+            await storeData(
+              "@DESIGNER_FLAG",
+              String(result.data.result.designerFlag),
+            );
+            navigation.navigate("NewMain");
+          }
+          // Animated.timing(opacity, {
+          //   toValue: 1,
+          //   duration: 1000,
+          //   useNativeDriver: false,
+          // }).start();
+        }
       }
     } catch (error) {
       console.log(error);
@@ -94,12 +136,14 @@ export default function Loading() {
   };
 
   useEffect(() => {
+    console.log("loading page");
+    // AsyncStorage.clear();
     async function waitForSecond() {
       await wait(1500);
       await callAPI();
     }
     waitForSecond();
-  }, [socialLoginModalVisible]);
+  }, [route]);
 
   return (
     <View style={styles.frame}>
@@ -147,19 +191,21 @@ export default function Loading() {
         animationType="slide"
         transparent={true}
         visible={socialLoginModalVisible}>
-        <WebView
-          ref={webViewRef}
-          cacheEnabled={false}
-          source={{
-            uri: socialLoginURI[loginType],
-          }}
-          userAgent={userAgent}
-          onNavigationStateChange={onNavigationStateChange}
-          sharedCookiesEnabled={true}
-          thirdPartyCookiesEnabled={true}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-        />
+        <SafeAreaView style={{ flex: 1 }}>
+          <WebView
+            ref={webViewRef}
+            cacheEnabled={false}
+            source={{
+              uri: socialLoginURI[loginType],
+            }}
+            userAgent={userAgent}
+            onNavigationStateChange={onNavigationStateChange}
+            sharedCookiesEnabled={true}
+            thirdPartyCookiesEnabled={true}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+          />
+        </SafeAreaView>
       </Modal>
     </View>
   );

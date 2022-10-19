@@ -31,7 +31,7 @@ export default function SimpleHeader(props: any) {
 
 const styles = StyleSheet.create({
   frame: {
-    marginTop: Platform.OS === "ios" ? verticalScale(40) : verticalScale(0),
+    // marginTop: Platform.OS === "ios" ? verticalScale(40) : verticalScale(0),
     height: verticalScale(70),
     flexDirection: "row",
     justifyContent: "space-between",

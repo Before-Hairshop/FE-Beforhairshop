@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 
@@ -27,6 +28,7 @@ import ComplexityHeader from "../components/common/ComplexityHeader";
 import Contour from "../components/common/Contour";
 import { getDesignerListThroughLocation } from "../api/getDesignerListThroughLocation";
 import { getDesignerListThroughName } from "../api/getDesignerListThroughName";
+import { useNavigation } from "@react-navigation/native";
 
 const HeaderContents = () => (
   <>
@@ -66,105 +68,6 @@ const TagItem = (props: { value: string }) => (
   </View>
 );
 
-const DesignerItem = ({ item }) => (
-  <View>
-    <TouchableOpacity
-      style={{
-        width: "100%",
-        height: verticalScale(141),
-        paddingRight: scale(20),
-        paddingLeft: scale(22),
-        flexDirection: "row",
-        alignItems: "center",
-      }}
-      onPress={() => {
-        console.log(item);
-      }}>
-      <Image
-        source={{ uri: item.imageUrl }}
-        style={{
-          width: "21%",
-          height: verticalScale(70),
-          borderRadius: 70,
-          borderWidth: 1,
-          borderColor: "#373737",
-        }}
-        resizeMode={"cover"}
-      />
-      <View
-        style={{
-          width: "74%",
-          paddingLeft: scale(15),
-          paddingRight: scale(30),
-        }}>
-        <View style={{ flexDirection: "row", marginBottom: verticalScale(8) }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontStyle: "normal",
-              fontWeight: "700",
-              fontSize: 15,
-              textAlign: "left",
-              color: "#FFFFFF",
-              marginRight: scale(5),
-            }}>
-            {item.name}
-          </Text>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontStyle: "normal",
-              fontWeight: "600",
-              fontSize: 15,
-              textAlign: "left",
-              color: "#737373",
-            }}>
-            {item.hairShopName}
-          </Text>
-        </View>
-        <Text
-          style={{
-            fontFamily: "Pretendard",
-            fontStyle: "normal",
-            fontWeight: "400",
-            fontSize: 12,
-            textAlign: "left",
-            color: "rgba(255, 255, 255, 0.7)",
-            marginBottom: verticalScale(8),
-          }}>
-          {item.zipAddress + " " + item.detailAddress}
-        </Text>
-        <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
-          <TagItem value="다운펌" />
-          <TagItem value="남성컷" />
-          <TagItem value="커트" />
-        </View>
-      </View>
-      <View style={{ width: "5%", paddingTop: verticalScale(3), top: -25 }}>
-        <StarIcon fill="#ffce00" width={17} height={17} />
-        <Text
-          style={{
-            fontFamily: "Pretendard",
-            fontStyle: "normal",
-            fontWeight: "500",
-            fontSize: 10,
-            textAlign: "left",
-            color: "rgba(255, 255, 255, 0.7);",
-          }}>
-          0.0
-        </Text>
-      </View>
-    </TouchableOpacity>
-    <View
-      style={{
-        width: "100%",
-        height: verticalScale(1),
-        backgroundColor: "#333333",
-      }}
-    />
-  </View>
-);
-
 export default function DesignerList() {
   const [designerList, setDesignerList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -172,7 +75,124 @@ export default function DesignerList() {
   const [pageNum, setPageNum] = useState(0);
   const [keyword, setKeyword] = useState("");
 
-  const fetchDesignerList = async (prev, page) => {
+  const navigation = useNavigation();
+
+  const DesignerItem = ({ item }) => (
+    <View>
+      <TouchableOpacity
+        style={{
+          width: "100%",
+          height: verticalScale(141),
+          paddingRight: scale(20),
+          paddingLeft: scale(22),
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+        onPress={() => {
+          navigation.navigate("DesignerProfile", {
+            designerId: item.hairDesignerProfileDto.hairDesignerId,
+          });
+        }}>
+        <Image
+          source={{ uri: item.hairDesignerProfileDto.imageUrl }}
+          style={{
+            width: "21%",
+            height: verticalScale(70),
+            borderRadius: 70,
+            borderWidth: 1,
+            borderColor: "#373737",
+          }}
+          resizeMode={"cover"}
+        />
+        <View
+          style={{
+            width: "74%",
+            paddingLeft: scale(15),
+            paddingRight: scale(30),
+          }}>
+          <View
+            style={{ flexDirection: "row", marginBottom: verticalScale(8) }}>
+            <Text
+              style={{
+                fontFamily: "Pretendard",
+                fontStyle: "normal",
+                fontWeight: "700",
+                fontSize: 15,
+                textAlign: "left",
+                color: "#FFFFFF",
+                marginRight: scale(5),
+              }}>
+              {item.hairDesignerProfileDto.name}
+            </Text>
+            <Text
+              style={{
+                fontFamily: "Pretendard",
+                fontStyle: "normal",
+                fontWeight: "600",
+                fontSize: 15,
+                textAlign: "left",
+                color: "#737373",
+              }}>
+              {item.hairDesignerProfileDto.hairShopName}
+            </Text>
+          </View>
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontStyle: "normal",
+              fontWeight: "400",
+              fontSize: 12,
+              textAlign: "left",
+              color: "rgba(255, 255, 255, 0.7)",
+              marginBottom: verticalScale(8),
+            }}>
+            {item.hairDesignerProfileDto.zipAddress +
+              " " +
+              item.hairDesignerProfileDto.detailAddress}
+          </Text>
+          <View
+            style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
+            {item.hairDesignerHashtagDtoList.length == 0 ? (
+              <TagItem value="등록된 태그가 없습니다." />
+            ) : (
+              <>
+                {item.hairDesignerHashtagDtoList.map(
+                  (hashtag: { tag: string }, index: any) => (
+                    <TagItem value={hashtag.tag} />
+                  ),
+                )}
+              </>
+            )}
+          </View>
+        </View>
+        <View style={{ width: "5%", paddingTop: verticalScale(3), top: -25 }}>
+          <StarIcon fill="#ffce00" width={17} height={17} />
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontStyle: "normal",
+              fontWeight: "500",
+              fontSize: 10,
+              textAlign: "left",
+              color: "rgba(255, 255, 255, 0.7);",
+            }}>
+            {item.averageStarRating == null
+              ? "0.0"
+              : item.averageStarRating.toFixed(1)}
+          </Text>
+        </View>
+      </TouchableOpacity>
+      <View
+        style={{
+          width: "100%",
+          height: verticalScale(1),
+          backgroundColor: "#333333",
+        }}
+      />
+    </View>
+  );
+
+  const fetchDesignerList = async (prev: never[], page: number) => {
     try {
       // setError(null);
       // setLoading(true);
@@ -187,7 +207,11 @@ export default function DesignerList() {
     setLoading(false);
   };
 
-  const fetchDesignerListThroughName = async (keyw, prev, page) => {
+  const fetchDesignerListThroughName = async (
+    keyw: string,
+    prev: never[],
+    page: number,
+  ) => {
     try {
       const { data } = await getDesignerListThroughName(keyw, page);
       console.log(data);
@@ -218,7 +242,7 @@ export default function DesignerList() {
   }, [keyword]);
 
   return (
-    <View style={styles.frame}>
+    <SafeAreaView style={styles.frame}>
       {/* <ComplexityHeader
         title="헤어 디자이너 목록"
         goBack="NewMain"
@@ -349,7 +373,7 @@ export default function DesignerList() {
       />
       {/* </View> */}
       {/* </View> */}
-    </View>
+    </SafeAreaView>
   );
 }
 

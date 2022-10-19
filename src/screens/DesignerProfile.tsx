@@ -13,6 +13,7 @@ import {
   Alert,
   TouchableWithoutFeedback,
   Animated,
+  SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import DefaultDesigner from "../assets/images/default_designer_profile.png";
@@ -28,7 +29,6 @@ import CallIcon from "../assets/icons/call.svg";
 import LoveIcon from "../assets/icons/love.svg";
 import WriteIcon from "../assets/icons/write.svg";
 import DefaultMap from "../assets/images/default_map.png";
-import HighlightText from "react-native-highlight-underline-text";
 import DashedLine from "react-native-dashed-line";
 import axios from "axios";
 import Map from "./Map";
@@ -38,6 +38,21 @@ import ReportIcon from "../assets/icons/report.svg";
 import DeleteIcon from "../assets/icons/delete.svg";
 
 import { useNavigation } from "@react-navigation/native";
+import { getDesignerProfileById } from "../api/getDesignerProfileById";
+import { UnderLineContent } from "../components/designerProfile/UnderLineContent";
+import { getReviewList } from "../api/getReviewList";
+import { readData } from "../utils/asyncStorage";
+
+const workingdayDict = {};
+workingdayDict["MON"] = "월요일";
+workingdayDict["TUE"] = "화요일";
+workingdayDict["WED"] = "수요일";
+workingdayDict["THU"] = "목요일";
+workingdayDict["FRI"] = "금요일";
+workingdayDict["SAT"] = "토요일";
+workingdayDict["SUN"] = "일요일";
+
+const ratingDict = ["", "나쁨", "보통", "좋음"];
 
 const DashedLineContent = () => (
   <View
@@ -53,24 +68,6 @@ const DashedLineContent = () => (
       dashColor="#4e4e4e"
     />
   </View>
-);
-
-const UnderLineContent = (props: { value: string }) => (
-  <HighlightText
-    isFixed={false}
-    ratio={0.26}
-    underlineColor="rgba(252, 42, 91, 0.5)"
-    textStyle={{
-      fontFamily: "Pretendard",
-      fontSize: 20,
-      fontWeight: "bold",
-      fontStyle: "normal",
-      letterSpacing: 0,
-      textAlign: "left",
-      color: "#ffffff",
-    }}
-    text={props.value}
-  />
 );
 
 const YellowStar = () => (
@@ -152,7 +149,14 @@ function numberWithCommas(x: number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-export default function Loading() {
+export default function DesignerProfile({ route }) {
+  const [profileData, setProfileData] = useState(undefined);
+  const [reviewData, setReviewData] = useState(undefined);
+  const [reviewPageNum, setReviewPageNum] = useState(0);
+  const [yellowStar, setYellowStar] = useState([]);
+  const [grayStar, setGrayStar] = useState([]);
+  const [memberId, setMemberId] = useState(undefined);
+
   const phoneNumber = "010-1234-1234";
 
   const [ref, setRef] = useState(null);
@@ -175,8 +179,25 @@ export default function Loading() {
 
   const HeaderContents = () => (
     <>
-      <GoBackIcon />
       <TouchableOpacity
+        style={{
+          width: scale(40),
+          height: verticalScale(40),
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        onPress={() => {
+          navigation.goBack();
+        }}>
+        <GoBackIcon />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={{
+          width: scale(40),
+          height: verticalScale(40),
+          alignItems: "center",
+          justifyContent: "center",
+        }}
         onPress={() => {
           console.log("open!!!");
           setIsDesignerModalVisible(true);
@@ -188,17 +209,44 @@ export default function Loading() {
     </>
   );
 
+  const fetchStar = (value: any) => {
+    console.log(value);
+    if (value == null) {
+      let newStar = [];
+      for (let i = 0; i < 5; i++) {
+        newStar.push(<GreyStar />);
+      }
+      setGrayStar(newStar);
+    } else {
+      let newStar = [];
+      for (let i = 0; i < Math.round(value); i++) {
+        newStar.push(<YellowStar />);
+      }
+      setYellowStar(newStar);
+      let newStar2 = [];
+      for (let i = 0; i < 5 - Math.round(value); i++) {
+        newStar2.push(<GreyStar />);
+      }
+      setGrayStar(newStar2);
+    }
+  };
+
   const fetchData = async () => {
     try {
       setError(null);
       setLoading(true);
-
-      const response = await axios.get(
-        "http://localhost:8080/api/v1/hair-designers?id=1",
-      );
-
+      const response = await getDesignerProfileById(route.params.designerId);
       console.log(response.data.result);
-      setData(response.data.result);
+      setProfileData(response.data.result);
+      fetchStar(response.data.result.averageStarRating);
+      const response2 = await getReviewList(
+        reviewPageNum,
+        response.data.result.hairDesignerProfileDto.id,
+        // route.params.designerId,
+      );
+      console.log(response2);
+      setReviewData(response2.data.result);
+      setMemberId(await readData("@MEMBER_ID"));
     } catch (e) {
       setError(e);
     }
@@ -266,7 +314,7 @@ export default function Loading() {
     </View>
   );
 
-  const ReviewItem = () => (
+  const ReviewItem = props => (
     <View
       style={{
         paddingTop: verticalScale(40),
@@ -289,45 +337,53 @@ export default function Loading() {
             textAlign: "left",
             color: "#999999",
           }}>
-          22.07.15
+          {props.data.reviewDto.createDate.substring(0, 4) +
+            "." +
+            props.data.reviewDto.createDate.substring(5, 7) +
+            "." +
+            props.data.reviewDto.createDate.substring(8, 10)}
         </Text>
         <TouchableOpacity
+          style={{ height: verticalScale(24), justifyContent: "center" }}
           onPress={() => {
             setIsReviewModalVisible(true);
           }}>
           <MeatballIcon />
         </TouchableOpacity>
       </View>
-      <Text style={styles.user_name}>겁나 빠른 황소</Text>
+      <Text style={styles.user_name}>{props.data.name}</Text>
       <View style={styles.review_star_container}>
-        <YellowStar />
-        <YellowStar />
-        <YellowStar />
-        <YellowStar />
-        <GreyStar />
+        {props.tempY}
+        {props.tempG}
       </View>
       <View style={styles.review_preference_container}>
         <View style={styles.review_preference_element}>
           <Text style={styles.review_preference}>스타일</Text>
-          <Text style={styles.review_preference_contents}>좋음</Text>
+          <Text style={styles.review_preference_contents}>
+            {ratingDict[props.data.reviewDto.styleRating]}
+          </Text>
         </View>
         <View style={styles.review_preference_element}>
           <Text style={styles.review_preference}>서비스</Text>
-          <Text style={styles.review_preference_contents}>보통</Text>
+          <Text style={styles.review_preference_contents}>
+            {ratingDict[props.data.reviewDto.serviceRating]}
+          </Text>
         </View>
       </View>
       <ReviewPhoto />
-      <Text style={styles.review_contents}>
-        진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추!
-        진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추! 진짜 잘 짤라줘요~ 강추!{" "}
-      </Text>
+      <Text style={styles.review_contents}>{props.data.reviewDto.content}</Text>
       <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
-        <View style={styles.review_tag}>
+        {props.data.hashtagDtoList.map((item, index) => (
+          <View style={styles.review_tag}>
+            <Text style={styles.review_tag_text}>#{item.hashtag}</Text>
+          </View>
+        ))}
+        {/* <View style={styles.review_tag}>
           <Text style={styles.review_tag_text}>#다움펌</Text>
         </View>
         <View style={styles.review_tag}>
           <Text style={styles.review_tag_text}>#남성컷</Text>
-        </View>
+        </View> */}
       </View>
     </View>
   );
@@ -337,553 +393,31 @@ export default function Loading() {
   }, []);
 
   return (
-    <ScrollView
-      style={styles.profile}
-      ref={ref => {
-        setRef(ref);
-      }}
-      onScroll={event => {
-        const scroll = event.nativeEvent.contentOffset.y;
-        if (scroll < locationViewY) {
-          setCurrentTab("price");
-        } else if (scroll >= locationViewY && scroll < officeHoursViewY) {
-          setCurrentTab("location");
-        } else if (scroll >= officeHoursViewY && scroll < reviewViewY) {
-          setCurrentTab("office_hours");
-        } else if (scroll >= reviewViewY) {
-          setCurrentTab("review");
-        }
-      }}
-      stickyHeaderIndices={[7]}>
-      <Modal
-        animationType={"slide"}
-        transparent={true}
-        visible={isDesignerModalVisible}
-        onRequestClose={() => {
-          setIsDesignerModalVisible(!isDesignerModalVisible);
+    <SafeAreaView style={styles.frame}>
+      <ScrollView
+        style={styles.profile}
+        ref={ref => {
+          setRef(ref);
         }}
-        statusBarTranslucent>
-        <View
-          style={{
-            flex: 1,
-          }}>
-          <TouchableWithoutFeedback
-            onPress={() => {
-              setIsDesignerModalVisible(false);
-            }}>
-            <View style={{ flex: 1 }} />
-          </TouchableWithoutFeedback>
-          <Animated.View
-            style={{
-              width: "100%",
-              height: verticalScale(292),
-              backgroundColor: "#0c0c0c",
-              borderTopLeftRadius: 30,
-              borderTopRightRadius: 30,
-              paddingTop: verticalScale(40),
-            }}>
-            <TouchableOpacity
-              style={{
-                height: verticalScale(60),
-                flexDirection: "row",
-                paddingTop: verticalScale(20),
-                paddingBottom: verticalScale(20),
-                paddingLeft: scale(25),
-              }}>
-              <View
-                style={{
-                  width: scale(35),
-                  height: "100%",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginRight: scale(10),
-                }}>
-                <ModifyIcon />
-              </View>
-              <View style={{ height: "100%", justifyContent: "center" }}>
-                <Text
-                  style={{
-                    fontFamily: "Pretendard",
-                    fontSize: 15,
-                    fontWeight: "500",
-                    fontStyle: "normal",
-                    letterSpacing: -1,
-                    textAlign: "left",
-                    color: "rgba(255, 255, 255, 0.7)",
-                  }}>
-                  수정하기
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <View style={{ width: "100%", alignItems: "center" }}>
-              <View
-                style={{
-                  width: "89%",
-                  height: verticalScale(1),
-                  backgroundColor: "#333333",
-                }}
-              />
-            </View>
-            <TouchableOpacity
-              style={{
-                height: verticalScale(60),
-                flexDirection: "row",
-                paddingTop: verticalScale(20),
-                paddingBottom: verticalScale(20),
-                paddingLeft: scale(25),
-              }}>
-              <View
-                style={{
-                  width: scale(35),
-                  height: "100%",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginRight: scale(10),
-                }}>
-                <ReportIcon />
-              </View>
-              <View style={{ height: "100%", justifyContent: "center" }}>
-                <Text
-                  style={{
-                    fontFamily: "Pretendard",
-                    fontSize: 15,
-                    fontWeight: "500",
-                    fontStyle: "normal",
-                    letterSpacing: -1,
-                    textAlign: "left",
-                    color: "rgba(255, 255, 255, 0.7)",
-                  }}>
-                  신고하기
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <View style={{ width: "100%", alignItems: "center" }}>
-              <View
-                style={{
-                  width: "89%",
-                  height: verticalScale(1),
-                  backgroundColor: "#333333",
-                }}
-              />
-            </View>
-            <TouchableOpacity
-              style={{
-                height: verticalScale(60),
-                flexDirection: "row",
-                paddingTop: verticalScale(20),
-                paddingBottom: verticalScale(20),
-                paddingLeft: scale(25),
-              }}>
-              <View
-                style={{
-                  width: scale(35),
-                  height: "100%",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginRight: scale(10),
-                }}>
-                <DeleteIcon />
-              </View>
-              <View style={{ height: "100%", justifyContent: "center" }}>
-                <Text
-                  style={{
-                    fontFamily: "Pretendard",
-                    fontSize: 15,
-                    fontWeight: "500",
-                    fontStyle: "normal",
-                    letterSpacing: -1,
-                    textAlign: "left",
-                    color: "rgba(255, 255, 255, 0.7)",
-                  }}>
-                  삭제하기
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <View style={{ width: "100%", alignItems: "center" }}>
-              <View
-                style={{
-                  width: "89%",
-                  height: verticalScale(1),
-                  backgroundColor: "#333333",
-                }}
-              />
-            </View>
-          </Animated.View>
-        </View>
-      </Modal>
-      <Image source={DefaultDesigner} style={styles.designer_img} />
-      <View style={{ width: "100%", position: "absolute" }}>
-        <Header contents={<HeaderContents />} />
-      </View>
-      <View
-        style={{
-          width: "100%",
-          backgroundColor: "#191919",
-          height: verticalScale(30),
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-          position: "absolute",
-          top: verticalScale(345),
+        onScroll={event => {
+          const scroll = event.nativeEvent.contentOffset.y;
+          if (scroll < locationViewY) {
+            setCurrentTab("price");
+          } else if (scroll >= locationViewY && scroll < officeHoursViewY) {
+            setCurrentTab("location");
+          } else if (scroll >= officeHoursViewY && scroll < reviewViewY) {
+            setCurrentTab("office_hours");
+          } else if (scroll >= reviewViewY) {
+            setCurrentTab("review");
+          }
         }}
-      />
-      <View
-        style={{
-          width: "100%",
-          paddingLeft: scale(30),
-          paddingRight: scale(30),
-          paddingBottom: scale(30),
-          flexDirection: "row",
-        }}>
-        <View style={{ width: "44%" }}>
-          <Text style={styles.designer}>헤어 디자이너</Text>
-          <Text style={styles.designer_name}>이안</Text>
-          {/* <Text style={styles.designer_name}>
-            {data.hairDesigner.member.name}
-          </Text> */}
-          <View style={styles.designer_star_container}>
-            <YellowStar />
-            <YellowStar />
-            <YellowStar />
-            <YellowStar />
-            <GreyStar />
-          </View>
-        </View>
-        <View
-          style={{
-            width: "56%",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}>
-          <View>
-            <TouchableOpacity
-              onPress={() => {
-                Linking.openURL(`tel:${phoneNumber}`).catch(err =>
-                  console.error("An error occurred", err),
-                );
-              }}>
-              <View style={styles.action_icon}>
-                <CallIcon width={scale(19.1)} height={verticalScale(19.1)} />
-              </View>
-              <View style={{ alignItems: "center" }}>
-                <Text
-                  style={{
-                    fontFamily: "Pretendard",
-                    fontSize: 12,
-                    fontWeight: "500",
-                    fontStyle: "normal",
-                    letterSpacing: 0,
-                    textAlign: "left",
-                    color: "#ffffff",
-                  }}>
-                  전화걸기
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View>
-            <View style={styles.action_icon}>
-              <LoveIcon width={scale(19.1)} height={verticalScale(19.1)} />
-            </View>
-            <View style={{ alignItems: "center" }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: 0,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                찜하기
-              </Text>
-            </View>
-          </View>
-          <View>
-            <View style={styles.action_icon}>
-              <WriteIcon width={scale(19.1)} height={verticalScale(19.1)} />
-            </View>
-            <View style={{ alignItems: "center" }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: 12,
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: 0,
-                  textAlign: "left",
-                  color: "#ffffff",
-                }}>
-                리뷰작성
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-      <View style={{ width: "100%", alignItems: "center" }}>
-        <View
-          style={{
-            width: "89%",
-            height: verticalScale(1),
-            backgroundColor: "#333333",
-          }}
-        />
-      </View>
-      <View
-        style={{
-          padding: "8%",
-          width: "100%",
-        }}>
-        <Text style={styles.introduction}>자기소개</Text>
-        <Text style={styles.introduction_contents}>
-          lovable lucid florence flutter you destiny seraphic purity adolescence
-          fabulous girlish requiem lucid fabulous miracle miracle droplet
-          girlish lucid droplet purity droplet flutter adolescence kitten
-          fascinating.
-        </Text>
-        {/* <Text style={styles.introduction_contents}>
-          {data.hairDesigner.description}
-        </Text> */}
-        <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
-          <View style={styles.introduction_tag}>
-            <Text style={styles.introduction_tag_text}># 포마드</Text>
-          </View>
-          <View style={styles.introduction_tag}>
-            <Text style={styles.introduction_tag_text}># 바버샵</Text>
-          </View>
-          <View style={styles.introduction_tag}>
-            <Text style={styles.introduction_tag_text}># 포마드</Text>
-          </View>
-          <View style={styles.introduction_tag}>
-            <Text style={styles.introduction_tag_text}># 포마드</Text>
-          </View>
-          <View style={styles.introduction_tag}>
-            <Text style={styles.introduction_tag_text}># 포마드</Text>
-          </View>
-          <View style={styles.introduction_tag}>
-            <Text style={styles.introduction_tag_text}># 포마드</Text>
-          </View>
-          <View style={styles.introduction_tag}>
-            <Text style={styles.introduction_tag_text}># 포마드</Text>
-          </View>
-          <View style={styles.introduction_tag}>
-            <Text style={styles.introduction_tag_text}># 포마드</Text>
-          </View>
-          <View style={styles.introduction_tag}>
-            <Text style={styles.introduction_tag_text}># 포마드</Text>
-          </View>
-        </View>
-      </View>
-      <TabMenu />
-      <View
-        style={{
-          width: "100%",
-          paddingTop: verticalScale(30),
-          paddingLeft: scale(30),
-          paddingRight: scale(30),
-          paddingBottom: verticalScale(40),
-        }}
-        onLayout={event => {
-          const { layout } = event.nativeEvent;
-          console.log(layout);
-          setPriceViewY(layout.y);
-        }}>
-        <View style={styles.underline_content_container}>
-          <UnderLineContent value="가격" />
-        </View>
-        <View style={styles.hair_category}>
-          <Text style={styles.hair_category_text}>컷</Text>
-          <View style={{ width: "80%" }}>
-            <View style={styles.hair_price_element}>
-              <Text style={styles.hair_name}>여자컷트</Text>
-              <DashedLineContent />
-              <Text style={styles.hair_price}>{numberWithCommas(30000)}원</Text>
-            </View>
-            <View style={styles.hair_price_element}>
-              <Text style={styles.hair_name}>남성컷트</Text>
-              <DashedLineContent />
-              <Text style={styles.hair_price}>{numberWithCommas(30000)}원</Text>
-            </View>
-            <View style={styles.hair_price_element_last}>
-              <Text style={styles.hair_name}>앞머리컷</Text>
-              <DashedLineContent />
-              <Text style={styles.hair_price}>{numberWithCommas(30000)}원</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.hair_category}>
-          <Text style={styles.hair_category_text}>일반펌</Text>
-          <View style={{ width: "80%" }}>
-            <View style={styles.hair_price_element}>
-              <Text style={styles.hair_name}>일반펌 / 남자</Text>
-              <DashedLineContent />
-              <Text style={styles.hair_price}>{numberWithCommas(10000)}원</Text>
-            </View>
-            <View style={styles.hair_price_element_last}>
-              <Text style={styles.hair_name}>일반펌 / 여자</Text>
-              <DashedLineContent />
-              <Text style={styles.hair_price}>{numberWithCommas(5000)}원</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.hair_category}>
-          <Text style={styles.hair_category_text}>열펌</Text>
-          <View style={{ width: "80%" }}>
-            <View style={styles.hair_price_element}>
-              <Text style={styles.hair_name}>셋팅펌</Text>
-              <DashedLineContent />
-              <Text style={styles.hair_price}>{numberWithCommas(70000)}원</Text>
-            </View>
-            <View style={styles.hair_price_element}>
-              <Text style={styles.hair_name}>매직</Text>
-              <DashedLineContent />
-              <Text style={styles.hair_price}>{numberWithCommas(70000)}원</Text>
-            </View>
-            <View style={styles.hair_price_element}>
-              <Text style={styles.hair_name}>볼륨매직</Text>
-              <DashedLineContent />
-              <Text style={styles.hair_price}>{numberWithCommas(80000)}원</Text>
-            </View>
-            <View style={styles.hair_price_element_last}>
-              <Text style={styles.hair_name}>매직셋팅</Text>
-              <DashedLineContent />
-              <Text style={styles.hair_price}>
-                {numberWithCommas(130000)}원
-              </Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.hair_category_last}>
-          <Text style={styles.hair_category_text}>염색</Text>
-          <View style={{ width: "80%" }}>
-            <View style={styles.hair_price_element}>
-              <Text style={styles.hair_name}>염색</Text>
-              <DashedLineContent />
-              <Text style={styles.hair_price}>{numberWithCommas(60000)}원</Text>
-            </View>
-            <View style={styles.hair_price_element_last}>
-              <Text style={styles.hair_name}>탈색</Text>
-              <DashedLineContent />
-              <Text style={styles.hair_price}>{numberWithCommas(60000)}원</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-      <DivisionSpace />
-      <View
-        style={{
-          width: "100%",
-          paddingTop: verticalScale(40),
-          paddingLeft: scale(30),
-          paddingRight: scale(30),
-          paddingBottom: verticalScale(40),
-        }}
-        onLayout={event => {
-          const { layout } = event.nativeEvent;
-          console.log(layout);
-          setLocationViewY(layout.y);
-        }}>
-        <View style={styles.underline_content_container}>
-          <UnderLineContent value="위치" />
-        </View>
-        {/* <Image
-          source={DefaultMap}
-          style={{
-            width: "100%",
-            height: verticalScale(200),
-            borderRadius: 10,
-            marginBottom: verticalScale(20),
-          }}
-        /> */}
-        <View
-          style={{
-            width: "100%",
-            height: verticalScale(200),
-            borderRadius: 10,
-            marginBottom: verticalScale(20),
-          }}>
-          <Map />
-        </View>
-        <Text
-          style={{
-            fontFamily: "Pretendard",
-            fontSize: 18,
-            fontWeight: "bold",
-            fontStyle: "normal",
-            lineHeight: 28,
-            letterSpacing: 0.6,
-            textAlign: "left",
-            color: "#ffffff",
-          }}>
-          미용실 이름
-        </Text>
-        <Text
-          style={{
-            fontFamily: "Pretendard",
-            fontSize: 11,
-            fontWeight: "500",
-            fontStyle: "normal",
-            lineHeight: 12,
-            letterSpacing: 0,
-            textAlign: "left",
-            color: "#fc2a5b",
-          }}>
-          울산 남구 수암로 148 홈플러스 울산남구점 옥상층(5층)
-        </Text>
-      </View>
-      <DivisionSpace />
-      <View
-        style={{
-          width: "100%",
-          paddingTop: verticalScale(40),
-          paddingLeft: scale(30),
-          paddingRight: scale(30),
-          paddingBottom: verticalScale(40),
-        }}
-        onLayout={event => {
-          const { layout } = event.nativeEvent;
-          console.log(layout);
-          setOfficeHoursViewY(layout.y);
-        }}>
-        <View style={styles.underline_content_container}>
-          <UnderLineContent value="근무시간" />
-        </View>
-        <View style={styles.office_hours}>
-          <Text style={styles.working_day}>월요일</Text>
-          <Text style={styles.working_time}>PM 17:00 - PM 21:00</Text>
-        </View>
-        <View style={styles.office_hours}>
-          <Text style={styles.working_day}>화요일</Text>
-          <Text style={styles.working_time}>PM 17:00 - PM 21:00</Text>
-        </View>
-        <View style={styles.office_hours}>
-          <Text style={styles.working_day}>수요일</Text>
-          <Text style={styles.working_time}>PM 17:00 - PM 21:00</Text>
-        </View>
-        <View style={styles.office_hours}>
-          <Text style={styles.working_day}>목요일</Text>
-          <Text style={styles.working_time}>PM 17:00 - PM 21:00</Text>
-        </View>
-        <View style={styles.office_hours_last}>
-          <Text style={styles.working_day}>금ㆍ토ㆍ일</Text>
-          <Text style={styles.working_time}>휴무</Text>
-        </View>
-      </View>
-      <DivisionSpace />
-      <View
-        style={styles.designer_review}
-        onLayout={event => {
-          const { layout } = event.nativeEvent;
-          console.log(layout);
-          setReviewViewY(layout.y);
-        }}>
+        stickyHeaderIndices={[7]}>
         <Modal
           animationType={"slide"}
           transparent={true}
-          visible={isReviewModalVisible}
+          visible={isDesignerModalVisible}
           onRequestClose={() => {
-            setIsReviewModalVisible(!isReviewModalVisible);
+            setIsDesignerModalVisible(!isDesignerModalVisible);
           }}
           statusBarTranslucent>
           <View
@@ -892,7 +426,7 @@ export default function Loading() {
             }}>
             <TouchableWithoutFeedback
               onPress={() => {
-                setIsReviewModalVisible(false);
+                setIsDesignerModalVisible(false);
               }}>
               <View style={{ flex: 1 }} />
             </TouchableWithoutFeedback>
@@ -905,44 +439,77 @@ export default function Loading() {
                 borderTopRightRadius: 30,
                 paddingTop: verticalScale(40),
               }}>
+              {memberId != undefined && memberId == route.params.designerId && (
+                <>
+                  <TouchableOpacity
+                    style={{
+                      height: verticalScale(60),
+                      flexDirection: "row",
+                      paddingTop: verticalScale(20),
+                      paddingBottom: verticalScale(20),
+                      paddingLeft: scale(25),
+                    }}
+                    onPress={() => {
+                      setIsDesignerModalVisible(false);
+                      navigation.navigate("DesignerModify");
+                    }}>
+                    <View
+                      style={{
+                        width: scale(35),
+                        height: "100%",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginRight: scale(10),
+                      }}>
+                      <ModifyIcon />
+                    </View>
+                    <View style={{ height: "100%", justifyContent: "center" }}>
+                      <Text
+                        style={{
+                          fontFamily: "Pretendard",
+                          fontSize: 15,
+                          fontWeight: "500",
+                          fontStyle: "normal",
+                          letterSpacing: -1,
+                          textAlign: "left",
+                          color: "rgba(255, 255, 255, 0.7)",
+                        }}>
+                        수정하기
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <View style={{ width: "100%", alignItems: "center" }}>
+                    <View
+                      style={{
+                        width: "89%",
+                        height: verticalScale(1),
+                        backgroundColor: "#333333",
+                      }}
+                    />
+                  </View>
+                </>
+              )}
               <TouchableOpacity
                 style={{
                   height: verticalScale(60),
+                  flexDirection: "row",
                   paddingTop: verticalScale(20),
                   paddingBottom: verticalScale(20),
-                  paddingLeft: scale(35),
+                  paddingLeft: scale(25),
+                }}
+                onPress={() => {
+                  Alert.alert("준비중");
                 }}>
-                <View style={{ height: "100%", justifyContent: "center" }}>
-                  <Text
-                    style={{
-                      fontFamily: "Pretendard",
-                      fontSize: 15,
-                      fontWeight: "500",
-                      fontStyle: "normal",
-                      letterSpacing: -1,
-                      textAlign: "left",
-                      color: "rgba(255, 255, 255, 0.7)",
-                    }}>
-                    수정하기
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <View style={{ width: "100%", alignItems: "center" }}>
                 <View
                   style={{
-                    width: "89%",
-                    height: verticalScale(1),
-                    backgroundColor: "#333333",
-                  }}
-                />
-              </View>
-              <TouchableOpacity
-                style={{
-                  height: verticalScale(60),
-                  paddingTop: verticalScale(20),
-                  paddingBottom: verticalScale(20),
-                  paddingLeft: scale(35),
-                }}>
+                    width: scale(35),
+                    height: "100%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginRight: scale(10),
+                  }}>
+                  <ReportIcon />
+                </View>
                 <View style={{ height: "100%", justifyContent: "center" }}>
                   <Text
                     style={{
@@ -967,72 +534,643 @@ export default function Loading() {
                   }}
                 />
               </View>
-              <TouchableOpacity
-                style={{
-                  height: verticalScale(60),
-                  paddingTop: verticalScale(20),
-                  paddingBottom: verticalScale(20),
-                  paddingLeft: scale(35),
-                }}>
-                <View style={{ height: "100%", justifyContent: "center" }}>
-                  <Text
+              {memberId != undefined && memberId == route.params.designerId && (
+                <>
+                  <TouchableOpacity
                     style={{
-                      fontFamily: "Pretendard",
-                      fontSize: 15,
-                      fontWeight: "500",
-                      fontStyle: "normal",
-                      letterSpacing: -1,
-                      textAlign: "left",
-                      color: "rgba(255, 255, 255, 0.7)",
+                      height: verticalScale(60),
+                      flexDirection: "row",
+                      paddingTop: verticalScale(20),
+                      paddingBottom: verticalScale(20),
+                      paddingLeft: scale(25),
                     }}>
-                    삭제하기
-                  </Text>
-                </View>
-              </TouchableOpacity>
-              <View style={{ width: "100%", alignItems: "center" }}>
-                <View
-                  style={{
-                    width: "89%",
-                    height: verticalScale(1),
-                    backgroundColor: "#333333",
-                  }}
-                />
-              </View>
+                    <View
+                      style={{
+                        width: scale(35),
+                        height: "100%",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginRight: scale(10),
+                      }}>
+                      <DeleteIcon />
+                    </View>
+                    <View style={{ height: "100%", justifyContent: "center" }}>
+                      <Text
+                        style={{
+                          fontFamily: "Pretendard",
+                          fontSize: 15,
+                          fontWeight: "500",
+                          fontStyle: "normal",
+                          letterSpacing: -1,
+                          textAlign: "left",
+                          color: "rgba(255, 255, 255, 0.7)",
+                        }}>
+                        삭제하기
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <View style={{ width: "100%", alignItems: "center" }}>
+                    <View
+                      style={{
+                        width: "89%",
+                        height: verticalScale(1),
+                        backgroundColor: "#333333",
+                      }}
+                    />
+                  </View>
+                </>
+              )}
             </Animated.View>
           </View>
         </Modal>
-        <View style={styles.underline_content_container}>
-          <UnderLineContent value="디자이너 리뷰" />
+        <Image
+          source={
+            profileData != undefined &&
+            profileData.hairDesignerProfileDto.imageUrl != null
+              ? { uri: profileData.hairDesignerProfileDto.imageUrl }
+              : null
+          }
+          style={styles.designer_img}
+        />
+        <View style={{ width: "100%", position: "absolute" }}>
+          <Header contents={<HeaderContents />} />
         </View>
-        <View style={{ marginBottom: verticalScale(30) }}>
-          <ReviewItem />
-          <View style={{ width: "100%", alignItems: "center" }}>
+        <View
+          style={{
+            width: "100%",
+            backgroundColor: "#191919",
+            height: verticalScale(30),
+            borderTopLeftRadius: 30,
+            borderTopRightRadius: 30,
+            position: "absolute",
+            top: verticalScale(345),
+          }}
+        />
+        <View
+          style={{
+            width: "100%",
+            paddingLeft: scale(30),
+            paddingRight: scale(30),
+            paddingBottom: scale(30),
+            flexDirection: "row",
+          }}>
+          <View style={{ width: "44%" }}>
+            <Text style={styles.designer}>헤어 디자이너</Text>
+            <Text style={styles.designer_name}>
+              {profileData != undefined &&
+                profileData.hairDesignerProfileDto.name}
+            </Text>
+            {/* <Text style={styles.designer_name}>
+            {data.hairDesigner.member.name}
+          </Text> */}
+            <View style={styles.designer_star_container}>
+              {yellowStar}
+              {grayStar}
+              {/* <YellowStar />
+              <YellowStar />
+              <YellowStar />
+              <YellowStar />
+              <GreyStar /> */}
+            </View>
+          </View>
+          <View
+            style={{
+              width: "56%",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}>
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  if (profileData != undefined) {
+                    Linking.openURL(
+                      `tel:${profileData.hairDesignerProfileDto.phoneNumber}`,
+                    ).catch(err => console.error("An error occurred", err));
+                  }
+                }}>
+                <View style={styles.action_icon}>
+                  <CallIcon width={scale(19.1)} height={verticalScale(19.1)} />
+                </View>
+                <View style={{ alignItems: "center" }}>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: 12,
+                      fontWeight: "500",
+                      fontStyle: "normal",
+                      letterSpacing: 0,
+                      textAlign: "left",
+                      color: "#ffffff",
+                    }}>
+                    전화걸기
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <TouchableOpacity
+                style={styles.action_icon}
+                onPress={() => {
+                  Alert.alert("준비중");
+                }}>
+                <LoveIcon width={scale(19.1)} height={verticalScale(19.1)} />
+              </TouchableOpacity>
+              <View style={{ alignItems: "center" }}>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: 12,
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    letterSpacing: 0,
+                    textAlign: "left",
+                    color: "#ffffff",
+                  }}>
+                  추천서요청
+                </Text>
+              </View>
+            </View>
+            <View>
+              <TouchableOpacity
+                style={styles.action_icon}
+                onPress={() => {
+                  if (profileData != undefined) {
+                    console.log(
+                      profileData.hairDesignerProfileDto.hairDesignerId,
+                    );
+                    console.log(profileData.hairDesignerProfileDto.name);
+                    navigation.navigate("Review", {
+                      designerId:
+                        profileData.hairDesignerProfileDto.hairDesignerId,
+                      designerName: profileData.hairDesignerProfileDto.name,
+                      designerImg: profileData.hairDesignerProfileDto.imageUrl,
+                    });
+                  }
+                }}>
+                <WriteIcon width={scale(19.1)} height={verticalScale(19.1)} />
+              </TouchableOpacity>
+              <View style={{ alignItems: "center" }}>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: 12,
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    letterSpacing: 0,
+                    textAlign: "left",
+                    color: "#ffffff",
+                  }}>
+                  리뷰작성
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View style={{ width: "100%", alignItems: "center" }}>
+          <View
+            style={{
+              width: "89%",
+              height: verticalScale(1),
+              backgroundColor: "#333333",
+            }}
+          />
+        </View>
+        <View
+          style={{
+            padding: "8%",
+            width: "100%",
+          }}>
+          <Text style={styles.introduction}>자기소개</Text>
+          <Text style={styles.introduction_contents}>
+            {profileData != undefined &&
+              profileData.hairDesignerProfileDto.description}
+          </Text>
+          {/* <Text style={styles.introduction_contents}>
+          {data.hairDesigner.description}
+        </Text> */}
+          <View
+            style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
+            {profileData != undefined && (
+              <>
+                {profileData.hairDesignerHashtagDtoList.map((item, index) => (
+                  <View style={styles.introduction_tag}>
+                    <Text style={styles.introduction_tag_text}>
+                      # {item.tag}
+                    </Text>
+                  </View>
+                ))}
+              </>
+            )}
+          </View>
+        </View>
+        <TabMenu />
+        <View
+          style={{
+            width: "100%",
+            paddingTop: verticalScale(30),
+            paddingLeft: scale(30),
+            paddingRight: scale(30),
+            paddingBottom: verticalScale(40),
+          }}
+          onLayout={event => {
+            const { layout } = event.nativeEvent;
+            console.log(layout);
+            setPriceViewY(layout.y);
+          }}>
+          <View style={styles.underline_content_container}>
+            <UnderLineContent value="가격" />
+          </View>
+          <View style={styles.hair_category}>
+            <Text style={styles.hair_category_text}>컷</Text>
+            <View style={{ width: "80%" }}>
+              {profileData != undefined && (
+                <>
+                  {profileData.hairDesignerPriceDtoList
+                    .filter(item => item.hairCategory == "컷")
+                    .map((res, index) => (
+                      <View style={styles.hair_price_element}>
+                        <Text style={styles.hair_name}>
+                          {res.hairStyleName}
+                        </Text>
+                        <DashedLineContent />
+                        <Text style={styles.hair_price}>
+                          {numberWithCommas(res.price)}원
+                        </Text>
+                      </View>
+                    ))}
+                </>
+              )}
+            </View>
+          </View>
+          <View style={styles.hair_category}>
+            <Text style={styles.hair_category_text}>일반펌</Text>
+            <View style={{ width: "80%" }}>
+              {profileData != undefined && (
+                <>
+                  {profileData.hairDesignerPriceDtoList
+                    .filter(item => item.hairCategory == "펌")
+                    .map((res, index) => (
+                      <View style={styles.hair_price_element}>
+                        <Text style={styles.hair_name}>
+                          {res.hairStyleName}
+                        </Text>
+                        <DashedLineContent />
+                        <Text style={styles.hair_price}>
+                          {numberWithCommas(res.price)}원
+                        </Text>
+                      </View>
+                    ))}
+                </>
+              )}
+            </View>
+          </View>
+          <View style={styles.hair_category_last}>
+            <Text style={styles.hair_category_text}>염색</Text>
+            <View style={{ width: "80%" }}>
+              {profileData != undefined && (
+                <>
+                  {profileData.hairDesignerPriceDtoList
+                    .filter(item => item.hairCategory == "염색")
+                    .map((res, index) => (
+                      <View style={styles.hair_price_element}>
+                        <Text style={styles.hair_name}>
+                          {res.hairStyleName}
+                        </Text>
+                        <DashedLineContent />
+                        <Text style={styles.hair_price}>
+                          {numberWithCommas(res.price)}원
+                        </Text>
+                      </View>
+                    ))}
+                </>
+              )}
+            </View>
+          </View>
+        </View>
+        <DivisionSpace />
+        <View
+          style={{
+            width: "100%",
+            paddingTop: verticalScale(40),
+            paddingLeft: scale(30),
+            paddingRight: scale(30),
+            paddingBottom: verticalScale(40),
+          }}
+          onLayout={event => {
+            const { layout } = event.nativeEvent;
+            console.log(layout);
+            setLocationViewY(layout.y);
+          }}>
+          <View style={styles.underline_content_container}>
+            <UnderLineContent value="위치" />
+          </View>
+          {/* <Image
+          source={DefaultMap}
+          style={{
+            width: "100%",
+            height: verticalScale(200),
+            borderRadius: 10,
+            marginBottom: verticalScale(20),
+          }}
+        /> */}
+          <View
+            style={{
+              width: "100%",
+              height: verticalScale(200),
+              borderRadius: 10,
+              marginBottom: verticalScale(20),
+            }}>
+            {profileData != undefined && (
+              <Map
+                coord={{
+                  latitude: profileData.hairDesignerProfileDto.latitude,
+                  longitude: profileData.hairDesignerProfileDto.longitude,
+                }}
+              />
+            )}
+          </View>
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontSize: 18,
+              fontWeight: "bold",
+              fontStyle: "normal",
+              lineHeight: 28,
+              letterSpacing: 0.6,
+              textAlign: "left",
+              color: "#ffffff",
+            }}>
+            {profileData != undefined &&
+              profileData.hairDesignerProfileDto.hairShopName}
+          </Text>
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontSize: 11,
+              fontWeight: "500",
+              fontStyle: "normal",
+              lineHeight: 12,
+              letterSpacing: 0,
+              textAlign: "left",
+              color: "#fc2a5b",
+            }}>
+            {profileData != undefined &&
+              profileData.hairDesignerProfileDto.zipAddress +
+                " " +
+                profileData.hairDesignerProfileDto.detailAddress}
+          </Text>
+        </View>
+        <DivisionSpace />
+        <View
+          style={{
+            width: "100%",
+            paddingTop: verticalScale(40),
+            paddingLeft: scale(30),
+            paddingRight: scale(30),
+            paddingBottom: verticalScale(40),
+          }}
+          onLayout={event => {
+            const { layout } = event.nativeEvent;
+            console.log(layout);
+            setOfficeHoursViewY(layout.y);
+          }}>
+          <View style={styles.underline_content_container}>
+            <UnderLineContent value="근무시간" />
+          </View>
+          {profileData != undefined && (
+            <>
+              {profileData.hairDesignerWorkingDayDtoList.map((data, index) => (
+                <View style={styles.office_hours}>
+                  <Text style={styles.working_day}>
+                    {workingdayDict[data.workingDay]}
+                  </Text>
+                  <Text
+                    style={styles.working_time}>{`PM ${data.startTime.substring(
+                    0,
+                    5,
+                  )} - PM ${data.endTime.substring(0, 5)}`}</Text>
+                </View>
+              ))}
+            </>
+          )}
+        </View>
+        <DivisionSpace />
+        <View
+          style={styles.designer_review}
+          onLayout={event => {
+            const { layout } = event.nativeEvent;
+            console.log(layout);
+            setReviewViewY(layout.y);
+          }}>
+          <Modal
+            animationType={"slide"}
+            transparent={true}
+            visible={isReviewModalVisible}
+            onRequestClose={() => {
+              setIsReviewModalVisible(!isReviewModalVisible);
+            }}
+            statusBarTranslucent>
             <View
               style={{
-                width: scale(334),
-                height: verticalScale(1),
-                backgroundColor: "#333333",
-              }}
-            />
+                flex: 1,
+              }}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  setIsReviewModalVisible(false);
+                }}>
+                <View style={{ flex: 1 }} />
+              </TouchableWithoutFeedback>
+              <Animated.View
+                style={{
+                  width: "100%",
+                  height: verticalScale(292),
+                  backgroundColor: "#0c0c0c",
+                  borderTopLeftRadius: 30,
+                  borderTopRightRadius: 30,
+                  paddingTop: verticalScale(40),
+                }}>
+                <TouchableOpacity
+                  style={{
+                    height: verticalScale(60),
+                    paddingTop: verticalScale(20),
+                    paddingBottom: verticalScale(20),
+                    paddingLeft: scale(35),
+                  }}>
+                  <View style={{ height: "100%", justifyContent: "center" }}>
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: 15,
+                        fontWeight: "500",
+                        fontStyle: "normal",
+                        letterSpacing: -1,
+                        textAlign: "left",
+                        color: "rgba(255, 255, 255, 0.7)",
+                      }}>
+                      수정하기
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <View style={{ width: "100%", alignItems: "center" }}>
+                  <View
+                    style={{
+                      width: "89%",
+                      height: verticalScale(1),
+                      backgroundColor: "#333333",
+                    }}
+                  />
+                </View>
+                <TouchableOpacity
+                  style={{
+                    height: verticalScale(60),
+                    paddingTop: verticalScale(20),
+                    paddingBottom: verticalScale(20),
+                    paddingLeft: scale(35),
+                  }}>
+                  <View style={{ height: "100%", justifyContent: "center" }}>
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: 15,
+                        fontWeight: "500",
+                        fontStyle: "normal",
+                        letterSpacing: -1,
+                        textAlign: "left",
+                        color: "rgba(255, 255, 255, 0.7)",
+                      }}>
+                      신고하기
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <View style={{ width: "100%", alignItems: "center" }}>
+                  <View
+                    style={{
+                      width: "89%",
+                      height: verticalScale(1),
+                      backgroundColor: "#333333",
+                    }}
+                  />
+                </View>
+                <TouchableOpacity
+                  style={{
+                    height: verticalScale(60),
+                    paddingTop: verticalScale(20),
+                    paddingBottom: verticalScale(20),
+                    paddingLeft: scale(35),
+                  }}>
+                  <View style={{ height: "100%", justifyContent: "center" }}>
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: 15,
+                        fontWeight: "500",
+                        fontStyle: "normal",
+                        letterSpacing: -1,
+                        textAlign: "left",
+                        color: "rgba(255, 255, 255, 0.7)",
+                      }}>
+                      삭제하기
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <View style={{ width: "100%", alignItems: "center" }}>
+                  <View
+                    style={{
+                      width: "89%",
+                      height: verticalScale(1),
+                      backgroundColor: "#333333",
+                    }}
+                  />
+                </View>
+              </Animated.View>
+            </View>
+          </Modal>
+          <View style={styles.underline_content_container}>
+            <UnderLineContent value="디자이너 리뷰" />
           </View>
-          <ReviewItem />
-          <View style={{ width: "100%", alignItems: "center" }}>
-            <View
-              style={{
-                width: scale(334),
-                height: verticalScale(1),
-                backgroundColor: "#333333",
-              }}
-            />
+          <View style={{ marginBottom: verticalScale(30) }}>
+            {reviewData != undefined && (
+              <>
+                {reviewData.map((review, index) => {
+                  console.log(review.reviewDto.totalRating);
+                  let tempY = [];
+                  for (
+                    let i = 0;
+                    i < Math.round(review.reviewDto.totalRating);
+                    i++
+                  ) {
+                    tempY.push(<YellowStar />);
+                  }
+                  let tempG = [];
+                  for (
+                    let i = 0;
+                    i < 5 - Math.round(review.reviewDto.totalRating);
+                    i++
+                  ) {
+                    tempG.push(<GreyStar />);
+                  }
+                  return (
+                    <ReviewItem data={review} tempY={tempY} tempG={tempG} />
+                  );
+                })}
+              </>
+            )}
+            {reviewData != undefined && reviewData.length == 0 && (
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: scale(15),
+                  fontWeight: "bold",
+                  fontStyle: "normal",
+                  lineHeight: 28,
+                  letterSpacing: 0.6,
+                  textAlign: "left",
+                  color: "#888888",
+                }}>
+                등록된 리뷰가 없습니다.
+              </Text>
+            )}
+            {/* <ReviewItem />
+            <View style={{ width: "100%", alignItems: "center" }}>
+              <View
+                style={{
+                  width: scale(334),
+                  height: verticalScale(1),
+                  backgroundColor: "#333333",
+                }}
+              />
+            </View>
+            <ReviewItem />
+            <View style={{ width: "100%", alignItems: "center" }}>
+              <View
+                style={{
+                  width: scale(334),
+                  height: verticalScale(1),
+                  backgroundColor: "#333333",
+                }}
+              />
+            </View>
+            <ReviewItem /> */}
           </View>
-          <ReviewItem />
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  frame: {
+    flex: 1,
+    backgroundColor: "#191919",
+    shadowColor: "rgba(0, 0, 0, 0.25)",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowRadius: 4,
+    shadowOpacity: 1,
+  },
   profile: {
     width: width,
     backgroundColor: "#191919",
@@ -1061,7 +1199,7 @@ const styles = StyleSheet.create({
   },
   designer_name: {
     fontFamily: "Pretendard",
-    fontSize: 30,
+    fontSize: verticalScale(28),
     fontWeight: "bold",
     fontStyle: "normal",
     letterSpacing: 0,
@@ -1076,6 +1214,7 @@ const styles = StyleSheet.create({
     padding: verticalScale(3),
   },
   action_icon: {
+    alignItems: "center",
     padding: verticalScale(11),
   },
   introduction: {

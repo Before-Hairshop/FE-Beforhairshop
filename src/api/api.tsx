@@ -1,8 +1,6 @@
 import axios from "axios";
 import { readData } from "../utils/asyncStorage";
-
-const BASEURL = "http://localhost:8080";
-// const BASEURL = "http://10.0.2.2:8080";
+import { BASEURL } from "./baseUrl";
 
 const axiosApi = () => {
   const instance = axios.create({
@@ -11,11 +9,12 @@ const axiosApi = () => {
   return instance;
 };
 
-const axiosAuthApi = () => {
+const axiosAuthApi = async () => {
+  console.log(await readData("@SESSION_ID"));
   const instance = axios.create({
     baseURL: BASEURL,
     headers: {
-      Cookie: `SESSION=${readData("@SESSION_ID")}`,
+      Cookies: `SESSION=${await readData("@SESSION_ID")}`,
     },
   });
   return instance;

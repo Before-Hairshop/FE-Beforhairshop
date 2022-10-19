@@ -1,5 +1,13 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import {
+  Alert,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 
 import { scale, verticalScale } from "../utils/scale";
 import SimpleHeader from "../components/common/SimpleHeader";
@@ -8,14 +16,51 @@ import DefaultProfileImg from "../assets/images/mypage/default_profile.png";
 import RightArrowIcon from "../assets/icons/common/arrow.svg";
 import BigContour from "../components/common/BigContour";
 import MypageItem from "../components/mypage/MypageItem";
+import { useNavigation } from "@react-navigation/native";
+import { readData, removeData } from "../utils/asyncStorage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function Mypage() {
+export default function Mypage({ route }) {
+  const [designerFlag, setDesignerFlag] = useState(undefined);
+
+  const navigation = useNavigation();
+
+  async function moveProfilePage() {
+    console.log(route.params.data);
+    if ((await readData("@DESIGNER_FLAG")) == "1") {
+      navigation.navigate("DesignerProfile");
+    } else {
+      navigation.navigate("UserProfileLookup", {
+        data: route.params.data,
+      });
+    }
+  }
+
+  function logout() {
+    AsyncStorage.clear().then(() => {
+      navigation.navigate("Loading", {
+        reload: true,
+      });
+    });
+    // await removeData("@SESSION_ID");
+    // console.log(await readData("@SESSION_ID"));
+  }
+
+  useEffect(() => {
+    readData("@DESIGNER_FLAG").then(data => {
+      setDesignerFlag(data);
+    });
+  }, []);
+
   return (
-    <View style={styles.frame}>
+    <SafeAreaView style={styles.frame}>
       <SimpleHeader title="마이페이지" goBack="Main" />
       <Contour style={{ opacity: 0.1 }} />
       <TouchableOpacity
-        style={{ height: verticalScale(120), alignItems: "center" }}>
+        style={{ height: verticalScale(120), alignItems: "center" }}
+        onPress={() => {
+          moveProfilePage();
+        }}>
         <View
           style={{
             width: "88.8%",
@@ -40,7 +85,60 @@ export default function Mypage() {
             />
           </View>
           <View style={{ width: "62%", justifyContent: "center" }}>
-            <View
+            {designerFlag != undefined && (
+              <>
+                {designerFlag == "1" ? (
+                  <View
+                    style={{
+                      width: scale(45),
+                      height: verticalScale(18),
+                      borderRadius: 100,
+                      borderStyle: "solid",
+                      borderWidth: 0.8,
+                      borderColor: "#fc2a5b",
+                      justifyContent: "center",
+                      marginVertical: verticalScale(2.5),
+                    }}>
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: scale(10),
+                        fontWeight: "normal",
+                        letterSpacing: -0.5,
+                        textAlign: "center",
+                        color: "#fc2a5b",
+                      }}>
+                      디자이너
+                    </Text>
+                  </View>
+                ) : (
+                  <View
+                    style={{
+                      width: scale(29),
+                      height: verticalScale(18),
+                      borderRadius: 100,
+                      borderStyle: "solid",
+                      borderWidth: 0.8,
+                      borderColor: "#fc2a5b",
+                      justifyContent: "center",
+                      marginVertical: verticalScale(2.5),
+                    }}>
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: scale(10),
+                        fontWeight: "normal",
+                        letterSpacing: -0.5,
+                        textAlign: "center",
+                        color: "#fc2a5b",
+                      }}>
+                      유저
+                    </Text>
+                  </View>
+                )}
+              </>
+            )}
+            {/* <View
               style={{
                 width: scale(29),
                 height: verticalScale(18),
@@ -62,7 +160,7 @@ export default function Mypage() {
                 }}>
                 유저
               </Text>
-            </View>
+            </View> */}
             <Text
               style={{
                 fontFamily: "Pretendard",
@@ -73,7 +171,7 @@ export default function Mypage() {
                 color: "#ffffff",
                 marginVertical: verticalScale(2.5),
               }}>
-              대머리 무지
+              {route.params.data.name}
             </Text>
             <View
               style={{
@@ -100,7 +198,7 @@ export default function Mypage() {
                   textAlign: "left",
                   color: "#fc2a5b",
                 }}>
-                프리미엄
+                일반
               </Text>
             </View>
           </View>
@@ -116,12 +214,42 @@ export default function Mypage() {
         </View>
       </TouchableOpacity>
       <BigContour />
-      <MypageItem title="찜 목록" navigate="Main" />
-      <MypageItem title="공지사항" navigate="Main" />
-      <MypageItem title="고객센터" navigate="Main" />
-      <MypageItem title="로그아웃" navigate="Main" />
-      <MypageItem title="회원탈퇴" navigate="Main" />
-    </View>
+      <MypageItem
+        title="찜 목록"
+        navigate="Main"
+        action={() => {
+          Alert.alert("준비중");
+        }}
+      />
+      <MypageItem
+        title="공지사항"
+        navigate="Main"
+        action={() => {
+          Alert.alert("준비중");
+        }}
+      />
+      <MypageItem
+        title="고객센터"
+        navigate="Main"
+        action={() => {
+          Alert.alert("준비중");
+        }}
+      />
+      <MypageItem
+        title="로그아웃"
+        navigate="Main"
+        action={() => {
+          logout();
+        }}
+      />
+      <MypageItem
+        title="회원탈퇴"
+        navigate="Main"
+        action={() => {
+          Alert.alert("준비중");
+        }}
+      />
+    </SafeAreaView>
   );
 }
 

@@ -18,7 +18,7 @@ export default function ComplexityHeader(props: any) {
     <View style={styles.frame}>
       <TouchableOpacity
         style={styles.back_button}
-        onPress={() => navigation.navigate(props.goBack)}>
+        onPress={() => navigation.goBack()}>
         <GoBackIcon />
       </TouchableOpacity>
       <View style={styles.title_container}>
@@ -31,7 +31,7 @@ export default function ComplexityHeader(props: any) {
 
 const styles = StyleSheet.create({
   frame: {
-    marginTop: Platform.OS === "ios" ? verticalScale(40) : verticalScale(0),
+    // marginTop: Platform.OS === "ios" ? verticalScale(40) : verticalScale(0),
     height: verticalScale(70),
     flexDirection: "row",
     justifyContent: "space-between",

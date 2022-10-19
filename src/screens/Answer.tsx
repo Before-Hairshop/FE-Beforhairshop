@@ -6,48 +6,22 @@ import {
   ScrollView,
   TextInput,
   Image,
+  SafeAreaView,
+  Alert,
 } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import GoBackIcon from "../assets/icons/goBack.svg";
 import { verticalScale, scale } from "../utils/scale";
-import Header from "../components/Header";
 import { useState } from "react";
 import PlusIcon from "../assets/icons/plus.png";
 
 import { launchImageLibrary } from "react-native-image-picker";
+import SimpleHeader from "../components/common/SimpleHeader";
+import { postRecommendation } from "../api/postRecommendation";
 
 const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
 
-const MAINCOLOR = "#fc2a5b";
-const HeaderContents = () => {
-  const navigation = useNavigation();
-  return (
-    <>
-      <View style={{ flex: 1 }}>
-        <GoBackIcon />
-      </View>
-      <View
-        style={{ flex: 10, justifyContent: "center", alignItems: "center" }}>
-        <Text
-          style={{
-            fontFamily: "Pretendard-Bold",
-            fontSize: verticalScale(18),
-            fontWeight: "bold",
-            fontStyle: "normal",
-            letterSpacing: 0.07,
-            textAlign: "left",
-            color: "#ffffff",
-          }}>
-          [홍길동] 스타일 추천서
-        </Text>
-      </View>
-      <View style={{ flex: 1, alignItems: "flex-end" }}></View>
-    </>
-  );
-};
-
-export default function Answer() {
+export default function Answer({ route }) {
   const [suggestionList, setSuggestionList] = useState([
     {
       hairstyleName: "",
@@ -56,8 +30,32 @@ export default function Answer() {
       price: "",
     },
   ]);
-
   const [greetings, setGreetings] = useState("");
+
+  const navigation = useNavigation();
+
+  function sendRecommendation() {
+    console.log(greetings);
+    console.log(suggestionList);
+    console.log(route.params);
+    console.log(route.params.treatmentDate.substring(0, 16));
+    if (greetings != "") {
+      suggestionList.map((data, index) => {
+        const result = postRecommendation(
+          route.params.memberId,
+          greetings,
+          data.hairstyleName,
+          data.reason,
+          data.price,
+          route.params.treatmentDate.substring(0, 16),
+        );
+        console.log(result);
+      });
+      navigation.navigate("CustomerList");
+    } else {
+      Alert.alert("필수 항목을 모두 작성해주세요.");
+    }
+  }
 
   const SuggestionItem = props => {
     return (
@@ -84,12 +82,12 @@ export default function Answer() {
         </View>
 
         <Text style={styles.itemTextStyle}>
-          추천 헤어스타일을 입력해주세요.
+          추천 헤어스타일을 입력해주세요<Text style={{ color: "red" }}> *</Text>
         </Text>
 
         <View style={styles.userTextUnderline}>
           <TextInput
-            placeholder="예시) 포마드, 투블럭, C컬펌"
+            placeholder="예시) 포마드"
             placeholderTextColor="#555555"
             defaultValue={suggestionList[props.itemIndex].hairstyleName}
             onEndEditing={e => {
@@ -102,7 +100,8 @@ export default function Answer() {
         </View>
 
         <Text style={styles.itemTextStyle}>
-          해당 스타일을 추천한 이유를 적어주세요.
+          해당 스타일을 추천한 이유를 적어주세요
+          <Text style={{ color: "red" }}> *</Text>
         </Text>
 
         <View style={styles.userTextUnderline}>
@@ -117,11 +116,12 @@ export default function Answer() {
               newArray[props.itemIndex].reason = e.nativeEvent.text;
               setSuggestionList(newArray);
             }}
-            style={styles.highlightText}></TextInput>
+            style={styles.highlightText}
+          />
         </View>
 
         <Text style={styles.itemTextStyle}>
-          (선택) 추천 헤어스타일 이미지를 첨부해주세요.
+          추천 헤어스타일 이미지를 첨부해주세요
         </Text>
 
         <View style={{ flexDirection: "row" }}>
@@ -139,7 +139,9 @@ export default function Answer() {
           ) : null}
         </View>
 
-        <Text style={styles.itemTextStyle}>제안 비용</Text>
+        <Text style={styles.itemTextStyle}>
+          제안 비용<Text style={{ color: "red" }}> *</Text>
+        </Text>
 
         <View style={styles.userTextUnderline}>
           <TextInput
@@ -147,14 +149,20 @@ export default function Answer() {
             placeholder="예시) 30000"
             placeholderTextColor="#555555"
             style={styles.highlightText}
+            // value={suggestionList[props.itemIndex].price}
+            // onChangeText={e => {
+            //   console.log(e);
+            //   let newArray = [...suggestionList];
+            //   newArray[props.itemIndex].price = e;
+            //   setSuggestionList(newArray);
+            // }}
             defaultValue={suggestionList[props.itemIndex].price}
             onEndEditing={e => {
               let newArray = [...suggestionList];
-              console.log(newArray);
               newArray[props.itemIndex].price = e.nativeEvent.text;
-              console.log(newArray);
               setSuggestionList(newArray);
-            }}></TextInput>
+            }}
+          />
         </View>
       </>
     );
@@ -206,90 +214,111 @@ export default function Answer() {
       </TouchableOpacity>
     );
   };
-  return (
-    <View style={styles.mainView}>
-      <Header contents={<HeaderContents></HeaderContents>}></Header>
 
+  return (
+    <SafeAreaView style={styles.frame}>
+      <SimpleHeader title="스타일 추천서" goBack="Main" />
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}>
-        <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-          <Text style={styles.itemTextStyle}>인사말 </Text>
-          <View style={styles.userTextUnderline}>
-            <TextInput
-              placeholder="인사말을 작성해주세요."
-              placeholderTextColor="#555555"
-              defaultValue={greetings}
-              onEndEditing={e => {
-                setGreetings(e.nativeEvent.text);
-              }}
-              style={styles.highlightText}></TextInput>
-          </View>
-          <Text style={styles.itemTextStyle}>시술 일정</Text>
-          <View style={styles.userTextUnderline}>
-            <TextInput
-              placeholder="2022년 5월 30일 PM 1:00"
-              placeholderTextColor="#555555"
-              defaultValue={greetings}
-              onEndEditing={e => {
-                setGreetings(e.nativeEvent.text);
-              }}
-              style={styles.highlightText}></TextInput>
-          </View>
-          <View style={{ width: "100%" }}>
-            <>
-              {suggestionList.map((item, index) => (
-                <SuggestionItem itemIndex={index} />
-              ))}
-              <TouchableOpacity
-                style={{
-                  alignItems: "center",
-                  backgroundColor: "#2e2e2e",
-                  padding: 10,
-                  marginTop: verticalScale(25),
-                  borderRadius: 10,
+        <View style={{ alignItems: "center" }}>
+          <View
+            style={{
+              marginTop: 12,
+              alignItems: "flex-start",
+              width: "88.9%",
+              paddingBottom: verticalScale(120),
+            }}>
+            <Text style={styles.itemTextStyle}>
+              인사말<Text style={{ color: "red" }}> *</Text>
+            </Text>
+            <View style={styles.userTextUnderline}>
+              <TextInput
+                placeholder="인사말을 작성해주세요."
+                placeholderTextColor="#555555"
+                defaultValue={greetings}
+                onChangeText={text => {
+                  setGreetings(text);
                 }}
-                onPress={() => {
-                  let newArray = [...suggestionList];
-                  newArray.push({
-                    hairstyleName: "",
-                    reason: "",
-                    imageUrl: [],
-                    price: "",
-                  });
-                  setSuggestionList(newArray);
-                }}>
-                <Text style={{ fontSize: scale(14), color: "#a0a0a0" }}>
-                  스타일 추천서 추가 +
-                </Text>
-              </TouchableOpacity>
-            </>
+                style={styles.highlightText}></TextInput>
+            </View>
+            <Text style={styles.itemTextStyle}>시술 일정</Text>
+            <View style={styles.userTextUnderline}>
+              <Text style={[styles.highlightText, { color: "#555555" }]}>
+                {route.params.treatmentDate.substring(0, 4) +
+                  "년 " +
+                  route.params.treatmentDate.substring(5, 7) +
+                  "월 " +
+                  route.params.treatmentDate.substring(8, 10) +
+                  "일 " +
+                  route.params.treatmentDate.substring(11, 16)}
+                {/* 2022년 5월 30일 PM 1:00 */}
+              </Text>
+            </View>
+            <View style={{ width: "100%" }}>
+              <>
+                {suggestionList.map((item, index) => (
+                  <SuggestionItem itemIndex={index} />
+                ))}
+                <TouchableOpacity
+                  style={{
+                    alignItems: "center",
+                    backgroundColor: "#2e2e2e",
+                    padding: 10,
+                    marginTop: verticalScale(25),
+                    borderRadius: 10,
+                  }}
+                  onPress={() => {
+                    let newArray = [...suggestionList];
+                    newArray.push({
+                      hairstyleName: "",
+                      reason: "",
+                      imageUrl: [],
+                      price: "",
+                    });
+                    setSuggestionList(newArray);
+                  }}>
+                  <Text style={{ fontSize: scale(14), color: "#a0a0a0" }}>
+                    스타일 추천서 추가 +
+                  </Text>
+                </TouchableOpacity>
+              </>
+            </View>
           </View>
         </View>
       </ScrollView>
-
-      <TouchableOpacity
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#fc2a5b",
-
-          marginBottom: verticalScale(30),
-          height: verticalScale(55),
-          borderRadius: 10,
-        }}
-        onPress={() => {
-          console.log(suggestionList);
-        }}>
-        <Text style={{ fontSize: scale(16), color: "#ffffff" }}>
-          메시지 보내기
-        </Text>
-      </TouchableOpacity>
-    </View>
+      <View style={{ alignItems: "center" }}>
+        <TouchableOpacity
+          style={{
+            width: "88.9%",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#fc2a5b",
+            height: verticalScale(55),
+            borderRadius: 10,
+          }}
+          onPress={() => {
+            sendRecommendation();
+          }}>
+          <Text style={{ fontSize: scale(16), color: "#ffffff" }}>보내기</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  frame: {
+    flex: 1,
+    backgroundColor: "#191919",
+    shadowColor: "rgba(0, 0, 0, 0.25)",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowRadius: 4,
+    shadowOpacity: 1,
+  },
   mainView: {
     flex: 1,
     paddingHorizontal: 20,
@@ -320,7 +349,7 @@ const styles = StyleSheet.create({
 
     marginBottom: verticalScale(10),
     marginTop: verticalScale(15),
-    color: "#fc2a5b",
+    color: "#ffffff",
   },
 
   SuggestionTitleText: {

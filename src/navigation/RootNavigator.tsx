@@ -22,6 +22,10 @@ import ChatList from "../screens/ChatList";
 import NewMain from "../screens/NewMain";
 import Mypage from "../screens/MyPage";
 import RecommendList from "../screens/RecommendList";
+import KakaoSocialLogin from "../screens/KakaoSocialLogin";
+import AppleSocialLogin from "../screens/AppleSocialLogin";
+import DesignerModify from "../screens/DesignerModify";
+import UserProfileModify from "../screens/UserProfileModify";
 
 const mainStack = createNativeStackNavigator();
 
@@ -49,6 +53,13 @@ export const RootNavigator = () => {
       <mainStack.Screen name="Review" component={Review} />
       <mainStack.Screen name="Mypage" component={Mypage} />
       <mainStack.Screen name="RecommendList" component={RecommendList} />
+      <mainStack.Screen name="KakaoSocialLogin" component={KakaoSocialLogin} />
+      <mainStack.Screen name="AppleSocialLogin" component={AppleSocialLogin} />
+      <mainStack.Screen name="DesignerModify" component={DesignerModify} />
+      <mainStack.Screen
+        name="UserProfileModify"
+        component={UserProfileModify}
+      />
       <mainStack.Screen
         name="UserProfileLookup"
         component={UserProfileLookup}

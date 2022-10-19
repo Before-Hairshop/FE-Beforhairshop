@@ -26,20 +26,18 @@ const postDesignerProfile = async (
       longitude: parseFloat(data.addresses[0].x),
       detailAddress: specificLocation,
       phoneNumber: phoneNumber,
-      hashTagList: hairTag,
+      hashtagList: hairTag,
       workingDayList: schedule,
       priceList: menuInfo,
     };
     console.log(body);
-    const result = await authInstance.post(
-      "/api/v1/hair_designers",
-      JSON.stringify(body),
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
+    const result = await (
+      await authInstance
+    ).post("/api/v1/hair_designers", JSON.stringify(body), {
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+    });
     return result;
   } catch (error) {
     console.log(error);

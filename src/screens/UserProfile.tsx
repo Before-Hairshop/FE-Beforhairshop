@@ -1,5 +1,6 @@
 import {
   Alert,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -36,7 +37,7 @@ const BASEPADDING = 20;
 const numberOfLines = 4;
 const MAINCOLOR = "#fc2a5b";
 
-export default function UserProfileLookup() {
+export default function UserProfile() {
   const [profileImage, setProfileImage] = useState(["", "", ""]);
   const [wantHairImage, setWantHairImage] = useState([]);
   const [wantedStyle, setWantedStyle] = useState("");
@@ -46,14 +47,14 @@ export default function UserProfileLookup() {
   const [hairTendencyIndex, setHairTendencyIndex] = useState(-1);
   const [datePickerIsVisible, setDatePickerIsVisible] = useState(false);
   const [timePickerIsVisible, setTimePickerIsVisible] = useState(false);
-  const [stylingDate, setStylingDate] = useState(new Date());
-  const [stylingTime, setStylingTime] = useState(new Date());
+  const [stylingDate, setStylingDate] = useState(undefined);
+  const [stylingTime, setStylingTime] = useState(undefined);
   const [phoneNumber, setPhoneNumber] = useState(undefined);
   const [nickname, setNickname] = useState("");
 
   const hairStatus = ["많이 상했어요", "보통이에요", "매우 건강해요"];
   const hairTendency = ["심한 곱슬", "곱슬", "반곱슬", "반직모", "직모"];
-  const profileExplanation = ["정면 (필수)", "측면 (선택)", "후면 (선택)"];
+  const profileExplanation = ["정면", "측면", "후면"];
 
   const navigation = useNavigation();
   const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
@@ -74,15 +75,23 @@ export default function UserProfileLookup() {
     console.log(stylingTime); // 원하는 시술 시간
     console.log(phoneNumber); // 전화번호
     console.log(wantHairImage);
-    if (
-      nickname != "" &&
-      hairStatusIndex != -1 &&
-      hairTendencyIndex != -1 &&
-      wantedStyleDescription != "" &&
-      wantedStylingCost != "" &&
-      phoneNumber != undefined &&
-      profileImage[0] != ""
-    ) {
+    if (profileImage[0] == "") {
+      Alert.alert("정면 이미지를 첨부해주세요");
+    } else if (nickname == "") {
+      Alert.alert("닉네임을 입력해주세요");
+    } else if (hairStatusIndex == -1) {
+      Alert.alert("모발 상태를 선택해주세요");
+    } else if (hairTendencyIndex == -1) {
+      Alert.alert("머리 성향을 선택해주세요");
+    } else if (wantedStyleDescription == "") {
+      Alert.alert("원하는 스타일을 설명해주세요");
+    } else if (wantedStylingCost == "") {
+      Alert.alert("원하는 스타일링 비용을 입력해주세요");
+    } else if (stylingDate == undefined || stylingTime == undefined) {
+      Alert.alert("시술일정을 선택해주세요");
+    } else if (phoneNumber == undefined) {
+      Alert.alert("전화번호를 입력해주세요");
+    } else {
       // 프로필 생성
       const result = await postUserProfile(
         nickname,
@@ -102,13 +111,11 @@ export default function UserProfileLookup() {
       const url = await postUserProfileImg(profileImage, wantHairImage);
       console.log(url);
       navigation.navigate("Location");
-    } else {
-      Alert.alert("필수 항목을 모두 작성해주세요.");
     }
   };
 
   return (
-    <View style={styles.frame}>
+    <SafeAreaView style={styles.frame}>
       <ComplexityHeader
         title="프로필"
         goBack="Main"
@@ -139,6 +146,7 @@ export default function UserProfileLookup() {
             <View style={{ alignItems: "center" }}>
               <View style={{ flexDirection: "row" }}>
                 {profileImage.map((item, index) => {
+                  console.log(item);
                   return (
                     <View
                       style={{
@@ -158,6 +166,7 @@ export default function UserProfileLookup() {
                           paddingTop: verticalScale(10),
                         }}>
                         {profileExplanation[index]}
+                        {index == 0 && <Text style={{ color: "red" }}> *</Text>}
                       </Text>
                     </View>
                   );
@@ -166,13 +175,16 @@ export default function UserProfileLookup() {
             </View>
 
             <View style={{ marginTop: 12 }}>
-              <Text style={styles.itemTextStyle}>닉네임</Text>
+              <Text style={styles.itemTextStyle}>
+                닉네임<Text style={{ color: "red" }}> *</Text>
+              </Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
-                  placeholder="사용할 닉네임을 작성해주세요."
+                  placeholder="사용할 닉네임을 작성해주세요"
                   placeholderTextColor="#555555"
                   defaultValue={nickname}
                   onEndEditing={e => {
+                    console.log(nickname);
                     setNickname(e.nativeEvent.text);
                   }}
                   autoCorrect={false}
@@ -182,7 +194,9 @@ export default function UserProfileLookup() {
             </View>
 
             <View style={{ marginTop: 12 }}>
-              <Text style={[styles.itemTextStyle]}>고객님의 모발 상태</Text>
+              <Text style={[styles.itemTextStyle]}>
+                고객님의 모발 상태<Text style={{ color: "red" }}> *</Text>
+              </Text>
               <View style={{ flexDirection: "row" }}>
                 {hairStatus.map((item, index) => {
                   return (
@@ -203,7 +217,9 @@ export default function UserProfileLookup() {
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>머리 성향</Text>
+              <Text style={styles.itemTextStyle}>
+                머리 성향<Text style={{ color: "red" }}> *</Text>
+              </Text>
               <View style={{ flexDirection: "row" }}>
                 {hairTendency.map((item, index) => {
                   return (
@@ -223,12 +239,12 @@ export default function UserProfileLookup() {
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>원하는 스타일(선택)</Text>
+              <Text style={styles.itemTextStyle}>원하는 스타일</Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
                   onChangeText={text => setWantedStyle(text)}
                   placeholder="예) 투블럭"
-                  placeholderTextColor={MAINCOLOR}
+                  placeholderTextColor="#555555"
                   value={wantedStyle}
                   style={styles.highlightText}></TextInput>
               </View>
@@ -259,14 +275,15 @@ export default function UserProfileLookup() {
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
               <Text style={styles.itemTextStyle}>
-                원하는 헤어스타일을 자세히 설명해주세요.
+                원하는 헤어스타일을 자세히 설명해주세요
+                <Text style={{ color: "red" }}> *</Text>
               </Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
                   value={wantedStyleDescription}
                   onChangeText={text => setWantedStyleDescription(text)}
                   placeholder="자유롭게 작성해주세요."
-                  placeholderTextColor={MAINCOLOR}
+                  placeholderTextColor="#555555"
                   multiline
                   numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
                   minHeight={
@@ -279,19 +296,23 @@ export default function UserProfileLookup() {
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>원하는 스타일링 비용</Text>
+              <Text style={styles.itemTextStyle}>
+                원하는 스타일링 비용<Text style={{ color: "red" }}> *</Text>
+              </Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
                   value={wantedStylingCost}
                   onChangeText={text => setWantedStylingCost(text)}
                   placeholder="예) 30000"
-                  placeholderTextColor={MAINCOLOR}
+                  placeholderTextColor="#555555"
                   keyboardType="number-pad"
                   style={styles.highlightText}></TextInput>
               </View>
             </View>
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>시술 일정</Text>
+              <Text style={styles.itemTextStyle}>
+                시술 일정<Text style={{ color: "red" }}> *</Text>
+              </Text>
               <View style={{ flexDirection: "row" }}>
                 <TouchableOpacity
                   style={{
@@ -300,6 +321,7 @@ export default function UserProfileLookup() {
                     justifyContent: "center",
                     borderBottomColor: "#373737",
                     borderBottomWidth: 1,
+                    marginRight: 10,
                   }}
                   onPress={() => {
                     setDatePickerIsVisible(true);
@@ -321,7 +343,7 @@ export default function UserProfileLookup() {
                   </Text>
                   <DateTimePickerModal
                     isVisible={datePickerIsVisible}
-                    date={stylingDate}
+                    // date={stylingDate}
                     mode={"date"}
                     onCancel={() => {
                       setDatePickerIsVisible(false);
@@ -355,7 +377,7 @@ export default function UserProfileLookup() {
                     }}>
                     {stylingTime != undefined
                       ? `${stylingTime.getHours()}시 ${stylingTime.getMinutes()}분`
-                      : "날짜"}
+                      : "시간"}
                   </Text>
                   <DateTimePickerModal
                     isVisible={timePickerIsVisible}
@@ -375,14 +397,14 @@ export default function UserProfileLookup() {
             </View>
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
               <Text style={styles.itemTextStyle}>
-                전화번호 (매칭 성공시 디자이너에게 전달됩니다)
+                전화번호 <Text style={{ color: "red" }}> *</Text>
               </Text>
 
               <View style={styles.userTextUnderline}>
                 <TextInput
                   onChangeText={num => setPhoneNumber(num)}
-                  placeholder="예) 01012345678"
-                  placeholderTextColor={MAINCOLOR}
+                  placeholder="예) 010-1234-5678"
+                  placeholderTextColor="#555555"
                   value={phoneNumber}
                   style={styles.highlightText}></TextInput>
               </View>
@@ -390,7 +412,7 @@ export default function UserProfileLookup() {
           </View>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -447,7 +469,7 @@ const styles = StyleSheet.create({
 
     marginBottom: verticalScale(10),
     marginTop: verticalScale(15),
-    color: "#fc2a5b",
+    color: "#ffffff",
   },
 
   userTextUnderline: {

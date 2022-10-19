@@ -10,6 +10,7 @@ import {
   Platform,
   Linking,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import React, { useState } from "react";
 
@@ -47,7 +48,7 @@ workingdayDict["SAT"] = "토요일";
 workingdayDict["SUN"] = "일요일";
 
 export default function DesignerRegistration() {
-  const [profileImage, setProfileImage] = useState([baseImageURL]);
+  const [profileImage, setProfileImage] = useState([""]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [tagInput, setTagInput] = useState("");
@@ -231,7 +232,7 @@ export default function DesignerRegistration() {
   };
 
   return (
-    <View style={styles.frame}>
+    <SafeAreaView style={styles.frame}>
       <ComplexityHeader
         title="프로필"
         goBack="Main"
@@ -281,7 +282,9 @@ export default function DesignerRegistration() {
             </View>
 
             <View style={{ marginTop: 12 }}>
-              <Text style={styles.itemTextStyle}>이름</Text>
+              <Text style={styles.itemTextStyle}>
+                이름<Text style={{ color: "red" }}> *</Text>
+              </Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
                   placeholder="이름을 작성해주세요."
@@ -297,7 +300,9 @@ export default function DesignerRegistration() {
             </View>
 
             <View style={{ marginTop: 12 }}>
-              <Text style={styles.itemTextStyle}>자기소개</Text>
+              <Text style={styles.itemTextStyle}>
+                자기소개<Text style={{ color: "red" }}> *</Text>
+              </Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
                   autoCorrect={false}
@@ -320,7 +325,7 @@ export default function DesignerRegistration() {
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>주요 헤어스타일(선택) </Text>
+              <Text style={styles.itemTextStyle}>주요 헤어스타일</Text>
               <View
                 style={[
                   styles.userTextUnderline,
@@ -384,7 +389,9 @@ export default function DesignerRegistration() {
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>가격</Text>
+              <Text style={styles.itemTextStyle}>
+                가격<Text style={{ color: "red" }}> *</Text>
+              </Text>
 
               <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
                 <View style={{ flex: 1, marginRight: scale(10) }}>
@@ -506,7 +513,9 @@ export default function DesignerRegistration() {
 
             <View
               style={{ marginTop: 12, alignItems: "flex-start", zIndex: 0 }}>
-              <Text style={styles.itemTextStyle}>헤어샵 이름</Text>
+              <Text style={styles.itemTextStyle}>
+                헤어샵 이름<Text style={{ color: "red" }}> *</Text>
+              </Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
                   placeholder="헤어샵 이름을 입력해주세요."
@@ -520,7 +529,9 @@ export default function DesignerRegistration() {
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>헤어샵 위치</Text>
+              <Text style={styles.itemTextStyle}>
+                헤어샵 위치<Text style={{ color: "red" }}> *</Text>
+              </Text>
               <TouchableOpacity
                 style={styles.userTextUnderline}
                 onPress={() => {
@@ -533,7 +544,9 @@ export default function DesignerRegistration() {
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>상세 주소 입력</Text>
+              <Text style={styles.itemTextStyle}>
+                상세 주소 입력<Text style={{ color: "red" }}> *</Text>
+              </Text>
 
               <View style={styles.userTextUnderline}>
                 <TextInput
@@ -548,7 +561,9 @@ export default function DesignerRegistration() {
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>근무 일정</Text>
+              <Text style={styles.itemTextStyle}>
+                근무 일정<Text style={{ color: "red" }}> *</Text>
+              </Text>
               <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
                 <View style={{ flex: 1, marginRight: scale(10) }}>
                   <View style={[styles.userTextUnderline]}>
@@ -593,7 +608,7 @@ export default function DesignerRegistration() {
                   newArray.push({
                     workingDay: selectedWeek,
                     startTime: beginTime,
-                    endTime,
+                    endTime: endTime,
                   });
                   setSchedule(newArray);
                 }}>
@@ -648,7 +663,9 @@ export default function DesignerRegistration() {
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>전화번호</Text>
+              <Text style={styles.itemTextStyle}>
+                전화번호<Text style={{ color: "red" }}> *</Text>
+              </Text>
 
               <View style={styles.userTextUnderline}>
                 <TextInput
@@ -693,7 +710,7 @@ export default function DesignerRegistration() {
         setLocation={setLocation}
         setZipCode={setZipCode}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
