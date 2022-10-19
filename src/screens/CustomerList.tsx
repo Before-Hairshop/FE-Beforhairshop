@@ -4,6 +4,7 @@ import {
   Image,
   Platform,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,6 +12,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import Swiper from "react-native-swiper";
 
 import { scale, verticalScale } from "../utils/scale";
 import GoBackIcon from "../assets/icons/goBack.svg";
@@ -18,10 +20,13 @@ import DefaultCustomerImg from "../assets/images/customerList/default_customer_p
 import HashTag from "../components/customerList/HashTag";
 import SimpleHeader from "../components/common/SimpleHeader";
 import { getCustomerList } from "../api/getCustomerList";
+import { getRequestList } from "../api/getRequestList";
+import SwiperItem from "../components/customerList/SwiperItem";
 
 export default function CustomerList() {
   const [pageNum, setPageNum] = useState(0);
   const [customerList, setCustomerList] = useState([]);
+  const [requestList, setRequestList] = useState([]);
 
   const navigation = useNavigation();
 
@@ -29,12 +34,14 @@ export default function CustomerList() {
     try {
       const { data } = await getCustomerList(pageNum);
       console.log(data);
-      if (data.status == "BAD_REQUEST") {
-        Alert.alert("프로필을 먼저 등록해주세요.");
-        navigation.goBack();
-      } else {
+      if (data.status == "OK") {
         setCustomerList([...customerList, ...data.result]);
         setPageNum(pageNum + 1);
+      }
+      const result = await getRequestList();
+      console.log(result);
+      if (result.data.status == "OK") {
+        setRequestList(result.data.result);
       }
     } catch (error) {
       console.log(error);
@@ -52,7 +59,7 @@ export default function CustomerList() {
       }}
       onPress={() =>
         navigation.navigate("UserProfileLookup", {
-          data: item,
+          userProfileId: item.id,
         })
       }>
       <View>
@@ -184,6 +191,74 @@ export default function CustomerList() {
                 backgroundColor: "#eeeeee",
               }}
             />
+            <View
+              style={{ paddingHorizontal: scale(14), paddingTop: scale(14) }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: scale(16),
+                  fontWeight: "normal",
+                  fontStyle: "normal",
+                  textAlign: "left",
+                  color: "#ffffff",
+                  paddingBottom: verticalScale(14),
+                }}>
+                추천서 요청 고객
+              </Text>
+              <View
+                style={{
+                  height: verticalScale(140),
+                  backgroundColor: "#0c0c0c",
+                  borderRadius: 10,
+                  alignItems: "center",
+                  marginBottom: verticalScale(25),
+                }}>
+                {requestList != undefined && requestList.length != 0 ? (
+                  <Swiper loop={false} showsPagination={false}>
+                    <SwiperItem />
+                    <SwiperItem />
+                  </Swiper>
+                ) : (
+                  <View style={{ height: "100%", justifyContent: "center" }}>
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: verticalScale(16),
+                        fontWeight: "bold",
+                        fontStyle: "normal",
+                        letterSpacing: 0,
+                        textAlign: "left",
+                        color: "#2e2e2e",
+                      }}>
+                      추천서 요청 고객이 없습니다.
+                    </Text>
+                  </View>
+                )}
+              </View>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: scale(16),
+                  fontWeight: "normal",
+                  fontStyle: "normal",
+                  textAlign: "left",
+                  color: "#ffffff",
+                }}>
+                내 주변 고객
+              </Text>
+            </View>
+            {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+              <View style={{ alignItems: "center" }}>
+                <View
+                  style={{
+                    width: "88.8%",
+                    height: verticalScale(140),
+                    backgroundColor: "red",
+                  }}>
+                  <Text>하하하하하</Text>
+                </View>
+              </View>
+            </ScrollView> */}
           </>
         }
         data={customerList}

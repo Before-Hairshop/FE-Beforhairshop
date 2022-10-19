@@ -246,7 +246,9 @@ export default function UserProfile() {
                   placeholder="예) 투블럭"
                   placeholderTextColor="#555555"
                   value={wantedStyle}
-                  style={styles.highlightText}></TextInput>
+                  style={styles.highlightText}
+                  autoCorrect={false}
+                />
               </View>
             </View>
 
@@ -291,7 +293,9 @@ export default function UserProfile() {
                       ? 20 * numberOfLines
                       : null
                   }
-                  style={styles.highlightText}></TextInput>
+                  style={styles.highlightText}
+                  autoCorrect={false}
+                />
               </View>
             </View>
 
@@ -306,7 +310,9 @@ export default function UserProfile() {
                   placeholder="예) 30000"
                   placeholderTextColor="#555555"
                   keyboardType="number-pad"
-                  style={styles.highlightText}></TextInput>
+                  style={styles.highlightText}
+                  autoCorrect={false}
+                />
               </View>
             </View>
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
@@ -406,7 +412,9 @@ export default function UserProfile() {
                   placeholder="예) 010-1234-5678"
                   placeholderTextColor="#555555"
                   value={phoneNumber}
-                  style={styles.highlightText}></TextInput>
+                  style={styles.highlightText}
+                  autoCorrect={false}
+                />
               </View>
             </View>
           </View>

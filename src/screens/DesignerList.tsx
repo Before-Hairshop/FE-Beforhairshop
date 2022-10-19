@@ -353,6 +353,7 @@ export default function DesignerList() {
                   }}
                   keyboardType="phone-pad"
                   style={{ color: "#cccccc" }}
+                  autoCorrect={false}
                 />
               </View>
             </View>

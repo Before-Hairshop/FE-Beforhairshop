@@ -422,6 +422,7 @@ export default function DesignerRegistration() {
                         setStyleName(text);
                       }}
                       style={[styles.inputText, styles.dropdownStyle]}
+                      autoCorrect={false}
                     />
                   </View>
                 </View>
@@ -435,6 +436,7 @@ export default function DesignerRegistration() {
                       }}
                       placeholderTextColor={GRAYCOLOR}
                       style={[styles.inputText, styles.dropdownStyle]}
+                      autoCorrect={false}
                     />
                   </View>
                 </View>
@@ -524,7 +526,9 @@ export default function DesignerRegistration() {
                   onChangeText={text => {
                     setShopName(text);
                   }}
-                  style={styles.inputText}></TextInput>
+                  style={styles.inputText}
+                  autoCorrect={false}
+                />
               </View>
             </View>
 
@@ -556,7 +560,9 @@ export default function DesignerRegistration() {
                   onChangeText={text => {
                     setSpecificLocation(text);
                   }}
-                  style={styles.inputText}></TextInput>
+                  style={styles.inputText}
+                  autoCorrect={false}
+                />
               </View>
             </View>
 
@@ -676,7 +682,9 @@ export default function DesignerRegistration() {
                     setPhoneNumber(text);
                   }}
                   keyboardType="phone-pad"
-                  style={styles.inputText}></TextInput>
+                  style={styles.inputText}
+                  autoCorrect={false}
+                />
               </View>
             </View>
           </View>

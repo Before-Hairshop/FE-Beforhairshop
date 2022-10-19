@@ -7,8 +7,8 @@ const patchUserProfile = async (
   wantedStyle: any,
   wantedStyleDescription: any,
   wantedStylingCost: any,
-  stylingDate: Date,
-  stylingTime: Date,
+  stylingDate: any,
+  stylingTime: any,
   phoneNumber: any,
 ) => {
   try {

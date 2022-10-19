@@ -11,22 +11,20 @@ import {
   SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
+import { Dropdown } from "react-native-element-dropdown";
+import Icon from "react-native-vector-icons/Ionicons";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { useNavigation } from "@react-navigation/native";
 
 import PlusIcon from "../assets/icons/plus.png";
 import { verticalScale, scale } from "../utils/scale";
 import ProfileUploadButton from "../components/common/ProfileUploadButton";
 import PostcodeModal from "../components/designerRegistration/PostcodeModal";
 import ComplexityHeader from "../components/common/ComplexityHeader";
-import { postDesignerProfile } from "../api/postDesignerProfile";
-import { postDesignerProfileImg } from "../api/postDesignerProfileImg";
 import { patchDesignerProfile } from "../api/patchDesignerProfile";
 import { getDesignerProfileById } from "../api/getDesignerProfileById";
 import { readData } from "../utils/asyncStorage";
-
-import { Dropdown } from "react-native-element-dropdown";
-import Icon from "react-native-vector-icons/Ionicons";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { useNavigation } from "@react-navigation/native";
+import { patchDesignerProfileImg } from "../api/patchDesignerProfileImg";
 
 const BASEWIDTH = 375;
 const BASEPADDING = 20;
@@ -217,15 +215,24 @@ export default function DesignerModify() {
         phoneNumber,
       );
       console.log(result);
+      if (profileImage[0].blob != undefined) {
+        console.log(profileImage[0].blob);
+        const response = await patchDesignerProfileImg(profileImage[0].blob);
+        // console.log(result);
+        if (response.status == 200) {
+          console.log(result);
+          navigation.navigate("NewMain");
+        }
+      } else if (result.data.status == "OK") {
+        navigation.navigate("NewMain");
+      }
+
       // presigned url
       // const url = await postDesignerProfileImg();
       // console.log(url);
       // console.log(profileImage[0]);
       // const response = await putS3Img(url, profileImage[0].blob);
       // console.log(response);
-      navigation.navigate("NewMain", {
-        reload: true,
-      });
     } else {
       Alert.alert("필수 항목을 모두 작성해주세요.");
     }
@@ -471,6 +478,7 @@ export default function DesignerModify() {
                         setStyleName(text);
                       }}
                       style={[styles.inputText, styles.dropdownStyle]}
+                      autoCorrect={false}
                     />
                   </View>
                 </View>
@@ -484,6 +492,7 @@ export default function DesignerModify() {
                       }}
                       placeholderTextColor={GRAYCOLOR}
                       style={[styles.inputText, styles.dropdownStyle]}
+                      autoCorrect={false}
                     />
                   </View>
                 </View>
@@ -573,7 +582,9 @@ export default function DesignerModify() {
                   onChangeText={text => {
                     setShopName(text);
                   }}
-                  style={styles.inputText}></TextInput>
+                  style={styles.inputText}
+                  autoCorrect={false}
+                />
               </View>
             </View>
 
@@ -604,7 +615,9 @@ export default function DesignerModify() {
                   onChangeText={text => {
                     setSpecificLocation(text);
                   }}
-                  style={styles.inputText}></TextInput>
+                  style={styles.inputText}
+                  autoCorrect={false}
+                />
               </View>
             </View>
 
@@ -724,7 +737,9 @@ export default function DesignerModify() {
                     setPhoneNumber(text);
                   }}
                   keyboardType="phone-pad"
-                  style={styles.inputText}></TextInput>
+                  style={styles.inputText}
+                  autoCorrect={false}
+                />
               </View>
             </View>
           </View>

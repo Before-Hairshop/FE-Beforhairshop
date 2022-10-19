@@ -34,15 +34,24 @@ export const RootNavigator = () => {
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
       initialRouteName="Loading">
-      <mainStack.Screen name="Loading" component={Loading} />
-      <mainStack.Screen name="Main" component={Main} />
-      <mainStack.Screen name="NewMain" component={NewMain} />
-      <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />
+      <mainStack.Screen
+        name="Loading"
+        component={Loading}
+        options={{ gestureEnabled: false }}
+      />
+      <mainStack.Screen
+        name="NewMain"
+        component={NewMain}
+        options={{ gestureEnabled: false }}
+      />
+      <mainStack.Screen
+        name="ServiceTerms"
+        component={ServiceTerms}
+        options={{ gestureEnabled: false }}
+      />
       <mainStack.Screen name="DesignerProfile" component={DesignerProfile} />
-      <mainStack.Screen name="ProfileSelection" component={ProfileSelection} />
       <mainStack.Screen name="DesignerList" component={DesignerList} />
       <mainStack.Screen name="Map" component={Map} />
-      <mainStack.Screen name="ServiceTerms" component={ServiceTerms} />
       <mainStack.Screen name="UserCheck" component={UserCheck} />
       <mainStack.Screen name="UserProfile" component={UserProfile} />
       <mainStack.Screen name="Answer" component={Answer} />
@@ -68,6 +77,9 @@ export const RootNavigator = () => {
         name="DesignerRegistration"
         component={DesignerRegistration}
       />
+      {/* <mainStack.Screen name="Main" component={Main} /> */}
+      {/* <mainStack.Screen name="VirtualStyling" component={VirtualStyling} /> */}
+      {/* <mainStack.Screen name="ProfileSelection" component={ProfileSelection} /> */}
     </mainStack.Navigator>
   );
 };

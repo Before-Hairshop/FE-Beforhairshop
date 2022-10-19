@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   Platform,
   StyleSheet,
@@ -17,7 +18,7 @@ import RightArrowIcon from "../assets/icons/common/arrow.svg";
 import DesignerIcon from "../assets/icons/main/designer.svg";
 import BigContour from "../components/common/BigContour";
 import { readData, storeData } from "../utils/asyncStorage";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { getUserProfile } from "../api/getUserProfile";
 import { getDesignerProfile } from "../api/getDesignerProfile";
 import { patchUserMatchingActive } from "../api/patchUserMatchingActive";
@@ -70,7 +71,7 @@ const Header = props => (
         }}>
         <Image
           source={{
-            uri: props.profileImg,
+            uri: props.profileImg != undefined ? props.profileImg : null,
           }}
           style={{
             width: scale(40),
@@ -106,7 +107,7 @@ const MainProfile = props => (
             });
           } else {
             props.navigation.navigate("UserProfileLookup", {
-              data: props.profileData,
+              userProfileId: props.profileData.id,
             });
           }
         }}>
@@ -281,18 +282,58 @@ const MainProfile = props => (
         </View>
       </TouchableOpacity>
     ) : (
-      <Text style={{ color: "white" }}>프로필을 등록해주세요</Text>
+      <View
+        style={{ alignItems: "center", paddingVertical: verticalScale(20) }}>
+        <TouchableOpacity
+          style={{
+            width: "89.4%",
+            height: verticalScale(90),
+            justifyContent: "center",
+            paddingTop: verticalScale(20),
+            paddingBottom: verticalScale(20),
+            alignItems: "center",
+            backgroundColor: "#0c0c0c",
+            borderRadius: 15,
+            shadowColor: "rgba(0, 0, 0, 0.25)",
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
+            shadowRadius: 10,
+            shadowOpacity: 1,
+            borderStyle: "solid",
+            borderWidth: 1,
+            borderColor: "rgba(255, 255, 255, 0)",
+          }}
+          onPress={() => {
+            props.navigation.navigate("DesignerRegistration");
+          }}>
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontSize: verticalScale(16),
+              fontWeight: "bold",
+              fontStyle: "normal",
+              letterSpacing: 0,
+              textAlign: "left",
+              color: "#ffffff",
+            }}>
+            프로필 등록하기
+          </Text>
+        </TouchableOpacity>
+      </View>
     )}
   </>
 );
 
-export default function NewMain({ route }) {
+export default function NewMain() {
   const [toggle, setToggle] = useState(undefined);
   const [designerFlag, setDesignerFlag] = useState(undefined);
   const [profileData, setProfileData] = useState(undefined);
   const [profileImg, setProfileImg] = useState(undefined);
 
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   function changeToggleStatus(value) {
     setToggle(value);
@@ -475,33 +516,40 @@ export default function NewMain({ route }) {
       if (data.result.designerFlag == 1) {
         const result = await getDesignerProfile();
         console.log(result);
-        if (result.data.status != "BAD_REQUEST") {
+        if (result.data.status == "OK") {
           console.log(result.data.status);
           setProfileData(result.data.result);
         }
       } else {
         const result = await getUserProfile();
-        console.log(result?.data.result.memberProfileDto);
-        setProfileData(result?.data.result.memberProfileDto);
-        setToggle(
-          result.data.result.memberProfileDto.matchingActivationFlag == 1
-            ? true
-            : false,
-        );
+        if (result.data.status == "OK") {
+          console.log(result?.data.result.memberProfileDto);
+          setProfileData(result?.data.result.memberProfileDto);
+          setToggle(
+            result.data.result.memberProfileDto.matchingActivationFlag == 1
+              ? true
+              : false,
+          );
+        }
       }
     }
     fetchData();
-  }, [route]);
+  }, [isFocused]);
 
   return (
     <View style={styles.frame}>
-      {profileImg != undefined && profileData != undefined && (
+      <Header
+        profileImg={profileImg}
+        profileData={profileData}
+        navigation={navigation}
+      />
+      {/* {profileImg != undefined && profileData != undefined && (
         <Header
           profileImg={profileImg}
           profileData={profileData}
           navigation={navigation}
         />
-      )}
+      )} */}
       <MainProfile
         designerFlag={designerFlag}
         profileData={profileData}
@@ -548,7 +596,11 @@ export default function NewMain({ route }) {
             alignItems: "center",
           }}
           onPress={() => {
-            navigation.navigate("RecommendList");
+            if (profileData != undefined) {
+              navigation.navigate("RecommendList");
+            } else {
+              Alert.alert("프로필을 먼저 등록해주세요.");
+            }
           }}>
           <View
             style={{
@@ -622,10 +674,14 @@ export default function NewMain({ route }) {
             marginTop: verticalScale(10),
           }}
           onPress={() => {
-            if (designerFlag == "1") {
-              navigation.navigate("CustomerList");
+            if (profileData != undefined) {
+              if (designerFlag == "1") {
+                navigation.navigate("CustomerList");
+              } else {
+                navigation.navigate("DesignerList");
+              }
             } else {
-              navigation.navigate("DesignerList");
+              Alert.alert("프로필을 먼저 등록해주세요.");
             }
           }}>
           <View

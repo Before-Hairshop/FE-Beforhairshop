@@ -308,7 +308,9 @@ export default function Review({ route }) {
                     : null
                 }
                 textAlignVertical="top"
-                style={styles.highlightText}></TextInput>
+                style={styles.highlightText}
+                autoCorrect={false}
+              />
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>

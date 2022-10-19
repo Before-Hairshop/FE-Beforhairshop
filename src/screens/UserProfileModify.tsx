@@ -31,6 +31,7 @@ import { postUserProfileImg } from "../api/postUserProfileImg";
 import { putS3Img } from "../api/putS3Img";
 import { getUserProfile } from "../api/getUserProfile";
 import { patchUserProfile } from "../api/patchUserProfile";
+import { patchUserProfileImg } from "../api/patchUserProfileImg";
 
 const numHairStatus = 3;
 const numHairTendency = 5;
@@ -53,6 +54,7 @@ export default function UserProfileModify() {
   const [stylingTime, setStylingTime] = useState(undefined);
   const [phoneNumber, setPhoneNumber] = useState(undefined);
   const [nickname, setNickname] = useState("");
+  const [oldImg, setOldImg] = useState([]);
 
   const hairStatus = ["많이 상했어요", "보통이에요", "매우 건강해요"];
   const hairTendency = ["심한 곱슬", "곱슬", "반곱슬", "반직모", "직모"];
@@ -75,29 +77,33 @@ export default function UserProfileModify() {
     setStylingDate(new Date(data.result.memberProfileDto.treatmentDate));
     setStylingTime(new Date(data.result.memberProfileDto.treatmentDate));
     setPhoneNumber(data.result.memberProfileDto.phoneNumber);
-    if (data.result.memberProfileDto.frontImageUrl != null) {
-      let temp = [...profileImage];
-      temp[0] = {
-        uri: data.result.memberProfileDto.frontImageUrl,
-      };
-      setProfileImage(temp);
+    let temp = [...profileImage];
+    for (let i = 0; i < 3; i++) {
+      if (i == 0 && data.result.memberProfileDto.frontImageUrl != null) {
+        temp[0] = {
+          uri: data.result.memberProfileDto.frontImageUrl,
+        };
+      }
+      if (i == 1 && data.result.memberProfileDto.sideImageUrl != null) {
+        temp[1] = {
+          uri: data.result.memberProfileDto.sideImageUrl,
+        };
+      }
+      if (i == 2 && data.result.memberProfileDto.backImageUrl != null) {
+        temp[2] = {
+          uri: data.result.memberProfileDto.backImageUrl,
+        };
+      }
     }
-    if (data.result.memberProfileDto.sideImageUrl != null) {
-      let temp = [...profileImage];
-      temp[0] = {
-        uri: data.result.memberProfileDto.sideImageUrl,
-      };
-      setProfileImage(temp);
-    }
-    if (data.result.memberProfileDto.backImageUrl != null) {
-      let temp = [...profileImage];
-      temp[0] = {
-        uri: data.result.memberProfileDto.backImageUrl,
-      };
-      setProfileImage(temp);
-    }
+    setProfileImage(temp);
     data.result.desiredHairstyleImageDtoList.map((item, index) => {
       setWantHairImage(prev => [
+        ...prev,
+        {
+          uri: item.imageUrl,
+        },
+      ]);
+      setOldImg(prev => [
         ...prev,
         {
           uri: item.imageUrl,
@@ -151,21 +157,25 @@ export default function UserProfileModify() {
         phoneNumber,
       );
       console.log(result);
+      const result2 = await patchUserProfileImg(
+        profileImage,
+        wantHairImage,
+        oldImg,
+      );
+      console.log(result2);
       // 이미지 업로드
       // console.log(profileImage);
       // console.log(wantHairImage);
       // const url = await postUserProfileImg(profileImage, wantHairImage);
       // console.log(url);
-      navigation.navigate("NewMain", {
-        reload: true,
-      });
+      navigation.navigate("NewMain");
     }
   };
 
   return (
     <SafeAreaView style={styles.frame}>
       <ComplexityHeader
-        title="프로필"
+        title="프로필 수정"
         goBack="Main"
         button={
           <TouchableOpacity
@@ -294,7 +304,9 @@ export default function UserProfileModify() {
                   placeholder="예) 투블럭"
                   placeholderTextColor="#555555"
                   value={wantedStyle}
-                  style={styles.highlightText}></TextInput>
+                  style={styles.highlightText}
+                  autoCorrect={false}
+                />
               </View>
             </View>
 
@@ -307,7 +319,8 @@ export default function UserProfileModify() {
                       index={index}
                       array={wantHairImage}
                       setArray={setWantHairImage}
-                      style={styles.wantStyleImage}></WantedStyleButton>
+                      style={styles.wantStyleImage}
+                    />
                   );
                 })}
 
@@ -339,7 +352,9 @@ export default function UserProfileModify() {
                       ? 20 * numberOfLines
                       : null
                   }
-                  style={styles.highlightText}></TextInput>
+                  style={styles.highlightText}
+                  autoCorrect={false}
+                />
               </View>
             </View>
 
@@ -355,6 +370,7 @@ export default function UserProfileModify() {
                   placeholderTextColor="#555555"
                   keyboardType="number-pad"
                   style={styles.highlightText}
+                  autoCorrect={false}
                 />
               </View>
             </View>
@@ -456,7 +472,9 @@ export default function UserProfileModify() {
                   placeholder="예) 010-1234-5678"
                   placeholderTextColor="#555555"
                   value={phoneNumber}
-                  style={styles.highlightText}></TextInput>
+                  style={styles.highlightText}
+                  autoCorrect={false}
+                />
               </View>
             </View>
           </View>

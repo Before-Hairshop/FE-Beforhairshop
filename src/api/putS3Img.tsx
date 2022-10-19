@@ -6,6 +6,7 @@ const putS3Img = async (url, img) => {
         body: img,
       }),
     );
+    console.log(result);
     return result;
   } catch (error) {
     console.log(error);

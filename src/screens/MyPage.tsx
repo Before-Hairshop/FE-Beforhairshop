@@ -28,10 +28,12 @@ export default function Mypage({ route }) {
   async function moveProfilePage() {
     console.log(route.params.data);
     if ((await readData("@DESIGNER_FLAG")) == "1") {
-      navigation.navigate("DesignerProfile");
+      navigation.navigate("DesignerProfile", {
+        designerId: route.params.data.hairDesignerId,
+      });
     } else {
       navigation.navigate("UserProfileLookup", {
-        data: route.params.data,
+        userProfileId: route.params.data.id,
       });
     }
   }
@@ -47,6 +49,7 @@ export default function Mypage({ route }) {
   }
 
   useEffect(() => {
+    console.log(route);
     readData("@DESIGNER_FLAG").then(data => {
       setDesignerFlag(data);
     });
@@ -56,163 +59,205 @@ export default function Mypage({ route }) {
     <SafeAreaView style={styles.frame}>
       <SimpleHeader title="마이페이지" goBack="Main" />
       <Contour style={{ opacity: 0.1 }} />
-      <TouchableOpacity
-        style={{ height: verticalScale(120), alignItems: "center" }}
-        onPress={() => {
-          moveProfilePage();
-        }}>
-        <View
-          style={{
-            width: "88.8%",
-            height: "100%",
-            flexDirection: "row",
-            justifyContent: "center",
+      {route.params.data != undefined && designerFlag != undefined ? (
+        <TouchableOpacity
+          style={{ height: verticalScale(120), alignItems: "center" }}
+          onPress={() => {
+            moveProfilePage();
           }}>
           <View
             style={{
-              width: "26%",
+              width: "88.8%",
+              height: "100%",
+              flexDirection: "row",
               justifyContent: "center",
             }}>
-            <Image
-              source={DefaultProfileImg}
+            <View
               style={{
-                width: scale(70),
-                height: scale(70),
-                borderRadius: 1000,
-                borderWidth: 1,
-                borderColor: "#323232",
-              }}
-            />
-          </View>
-          <View style={{ width: "62%", justifyContent: "center" }}>
-            {designerFlag != undefined && (
-              <>
-                {designerFlag == "1" ? (
-                  <View
-                    style={{
-                      width: scale(45),
-                      height: verticalScale(18),
-                      borderRadius: 100,
-                      borderStyle: "solid",
-                      borderWidth: 0.8,
-                      borderColor: "#fc2a5b",
-                      justifyContent: "center",
-                      marginVertical: verticalScale(2.5),
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: "Pretendard",
-                        fontSize: scale(10),
-                        fontWeight: "normal",
-                        letterSpacing: -0.5,
-                        textAlign: "center",
-                        color: "#fc2a5b",
-                      }}>
-                      디자이너
-                    </Text>
-                  </View>
-                ) : (
-                  <View
-                    style={{
-                      width: scale(29),
-                      height: verticalScale(18),
-                      borderRadius: 100,
-                      borderStyle: "solid",
-                      borderWidth: 0.8,
-                      borderColor: "#fc2a5b",
-                      justifyContent: "center",
-                      marginVertical: verticalScale(2.5),
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: "Pretendard",
-                        fontSize: scale(10),
-                        fontWeight: "normal",
-                        letterSpacing: -0.5,
-                        textAlign: "center",
-                        color: "#fc2a5b",
-                      }}>
-                      유저
-                    </Text>
-                  </View>
-                )}
-              </>
-            )}
-            {/* <View
-              style={{
-                width: scale(29),
-                height: verticalScale(18),
-                borderRadius: 100,
-                borderStyle: "solid",
-                borderWidth: 0.8,
-                borderColor: "#fc2a5b",
+                width: "26%",
                 justifyContent: "center",
-                marginVertical: verticalScale(2.5),
               }}>
-              <Text
+              <Image
+                source={{
+                  uri:
+                    designerFlag == "1"
+                      ? route.params.data.imageUrl
+                      : route.params.data.frontImageUrl,
+                }}
                 style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(10),
-                  fontWeight: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "center",
-                  color: "#fc2a5b",
-                }}>
-                유저
-              </Text>
-            </View> */}
+                  width: scale(70),
+                  height: scale(70),
+                  borderRadius: 1000,
+                  borderWidth: 1,
+                  borderColor: "#323232",
+                }}
+              />
+            </View>
+            <View style={{ width: "62%", justifyContent: "center" }}>
+              {designerFlag == "1" ? (
+                <View
+                  style={{
+                    width: scale(45),
+                    height: verticalScale(18),
+                    borderRadius: 100,
+                    borderStyle: "solid",
+                    borderWidth: 0.8,
+                    borderColor: "#fc2a5b",
+                    justifyContent: "center",
+                    marginVertical: verticalScale(2.5),
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(10),
+                      fontWeight: "normal",
+                      letterSpacing: -0.5,
+                      textAlign: "center",
+                      color: "#fc2a5b",
+                    }}>
+                    디자이너
+                  </Text>
+                </View>
+              ) : (
+                <View
+                  style={{
+                    width: scale(29),
+                    height: verticalScale(18),
+                    borderRadius: 100,
+                    borderStyle: "solid",
+                    borderWidth: 0.8,
+                    borderColor: "#fc2a5b",
+                    justifyContent: "center",
+                    marginVertical: verticalScale(2.5),
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(10),
+                      fontWeight: "normal",
+                      letterSpacing: -0.5,
+                      textAlign: "center",
+                      color: "#fc2a5b",
+                    }}>
+                    유저
+                  </Text>
+                </View>
+              )}
+              {/* <View
+            style={{
+              width: scale(29),
+              height: verticalScale(18),
+              borderRadius: 100,
+              borderStyle: "solid",
+              borderWidth: 0.8,
+              borderColor: "#fc2a5b",
+              justifyContent: "center",
+              marginVertical: verticalScale(2.5),
+            }}>
             <Text
               style={{
                 fontFamily: "Pretendard",
-                fontSize: scale(20),
+                fontSize: scale(10),
                 fontWeight: "normal",
-                letterSpacing: -0.2,
-                textAlign: "left",
-                color: "#ffffff",
-                marginVertical: verticalScale(2.5),
+                letterSpacing: -0.5,
+                textAlign: "center",
+                color: "#fc2a5b",
               }}>
-              {route.params.data.name}
+              유저
             </Text>
+          </View> */}
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: scale(20),
+                  fontWeight: "normal",
+                  letterSpacing: -0.2,
+                  textAlign: "left",
+                  color: "#ffffff",
+                  marginVertical: verticalScale(2.5),
+                }}>
+                {route.params.data.name}
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  marginVertical: verticalScale(2.5),
+                }}>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: scale(12),
+                    fontWeight: "normal",
+                    letterSpacing: -0.12,
+                    textAlign: "left",
+                    color: "#cccccc",
+                  }}>
+                  회원등급{" "}
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: scale(12),
+                    fontWeight: "normal",
+                    letterSpacing: -0.12,
+                    textAlign: "left",
+                    color: "#fc2a5b",
+                  }}>
+                  일반
+                </Text>
+              </View>
+            </View>
             <View
               style={{
-                flexDirection: "row",
-                marginVertical: verticalScale(2.5),
+                width: "12%",
+                alignItems: "flex-end",
+                justifyContent: "center",
+                opacity: 0.34,
               }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(12),
-                  fontWeight: "normal",
-                  letterSpacing: -0.12,
-                  textAlign: "left",
-                  color: "#cccccc",
-                }}>
-                회원등급{" "}
-              </Text>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(12),
-                  fontWeight: "normal",
-                  letterSpacing: -0.12,
-                  textAlign: "left",
-                  color: "#fc2a5b",
-                }}>
-                일반
-              </Text>
+              <RightArrowIcon />
             </View>
           </View>
-          <View
+        </TouchableOpacity>
+      ) : (
+        <View
+          style={{
+            height: verticalScale(120),
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <TouchableOpacity
             style={{
-              width: "12%",
-              alignItems: "flex-end",
-              justifyContent: "center",
-              opacity: 0.34,
+              width: "88.8%",
+              backgroundColor: "#0c0c0c",
+              padding: 20,
+              borderRadius: 15,
+              shadowColor: "rgba(0, 0, 0, 0.25)",
+              shadowOffset: {
+                width: 0,
+                height: 4,
+              },
+              shadowRadius: 10,
+              shadowOpacity: 1,
+              borderStyle: "solid",
+              borderWidth: 1,
+              borderColor: "rgba(255, 255, 255, 0)",
+              alignItems: "center",
             }}>
-            <RightArrowIcon />
-          </View>
+            <Text
+              style={{
+                fontFamily: "Pretendard",
+                fontSize: verticalScale(16),
+                fontWeight: "bold",
+                fontStyle: "normal",
+                letterSpacing: 0,
+                textAlign: "left",
+                color: "#ffffff",
+              }}>
+              프로필 등록하기
+            </Text>
+          </TouchableOpacity>
         </View>
-      </TouchableOpacity>
+      )}
       <BigContour />
       <MypageItem
         title="찜 목록"

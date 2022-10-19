@@ -42,6 +42,7 @@ import { getDesignerProfileById } from "../api/getDesignerProfileById";
 import { UnderLineContent } from "../components/designerProfile/UnderLineContent";
 import { getReviewList } from "../api/getReviewList";
 import { readData } from "../utils/asyncStorage";
+import { postRequest } from "../api/postRequest";
 
 const workingdayDict = {};
 workingdayDict["MON"] = "월요일";
@@ -156,6 +157,7 @@ export default function DesignerProfile({ route }) {
   const [yellowStar, setYellowStar] = useState([]);
   const [grayStar, setGrayStar] = useState([]);
   const [memberId, setMemberId] = useState(undefined);
+  const [designerFlag, setDesignerFlag] = useState(undefined);
 
   const phoneNumber = "010-1234-1234";
 
@@ -247,6 +249,7 @@ export default function DesignerProfile({ route }) {
       console.log(response2);
       setReviewData(response2.data.result);
       setMemberId(await readData("@MEMBER_ID"));
+      setDesignerFlag(await readData("@DESIGNER_FLAG"));
     } catch (e) {
       setError(e);
     }
@@ -389,6 +392,7 @@ export default function DesignerProfile({ route }) {
   );
 
   useEffect(() => {
+    console.log(route.params.designerId);
     fetchData();
   }, []);
 
@@ -672,7 +676,20 @@ export default function DesignerProfile({ route }) {
               <TouchableOpacity
                 style={styles.action_icon}
                 onPress={() => {
-                  Alert.alert("준비중");
+                  if (
+                    profileData != undefined &&
+                    designerFlag != undefined &&
+                    designerFlag == "0"
+                  ) {
+                    const result = postRequest(
+                      profileData.hairDesignerProfileDto.id,
+                    );
+                    if (result.data.status == "OK") {
+                      Alert.alert("추천서 요청이 완료되었습니다.");
+                    }
+                  } else {
+                    Alert.alert("추천서 요청은 고객만 가능합니다.");
+                  }
                 }}>
                 <LoveIcon width={scale(19.1)} height={verticalScale(19.1)} />
               </TouchableOpacity>
@@ -804,7 +821,7 @@ export default function DesignerProfile({ route }) {
             </View>
           </View>
           <View style={styles.hair_category}>
-            <Text style={styles.hair_category_text}>일반펌</Text>
+            <Text style={styles.hair_category_text}>펌</Text>
             <View style={{ width: "80%" }}>
               {profileData != undefined && (
                 <>

@@ -22,7 +22,7 @@ import { postRecommendation } from "../api/postRecommendation";
 const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
 
 export default function Answer({ route }) {
-  const [suggestionList, setSuggestionList] = useState([
+  const [suggestionList, setSuggestionList] = React.useState([
     {
       hairstyleName: "",
       reason: "",
@@ -51,7 +51,7 @@ export default function Answer({ route }) {
         );
         console.log(result);
       });
-      navigation.navigate("CustomerList");
+      navigation.navigate("NewMain");
     } else {
       Alert.alert("필수 항목을 모두 작성해주세요.");
     }
@@ -71,7 +71,6 @@ export default function Answer({ route }) {
               onPress={() => {
                 let newArray = [...suggestionList];
                 newArray.splice(props.itemIndex, 1);
-
                 setSuggestionList(newArray);
               }}>
               <Image
@@ -90,13 +89,12 @@ export default function Answer({ route }) {
             placeholder="예시) 포마드"
             placeholderTextColor="#555555"
             defaultValue={suggestionList[props.itemIndex].hairstyleName}
-            onEndEditing={e => {
-              let newArray = [...suggestionList];
-              console.log(newArray);
-              newArray[props.itemIndex].hairstyleName = e.nativeEvent.text;
-              setSuggestionList(newArray);
+            onChangeText={text => {
+              suggestionList[props.itemIndex].hairstyleName = text;
             }}
-            style={styles.highlightText}></TextInput>
+            style={styles.highlightText}
+            autoCorrect={false}
+          />
         </View>
 
         <Text style={styles.itemTextStyle}>
@@ -110,11 +108,12 @@ export default function Answer({ route }) {
             placeholderTextColor="#555555"
             autoCorrect={false}
             defaultValue={suggestionList[props.itemIndex].reason}
-            onEndEditing={e => {
-              let newArray = [...suggestionList];
-              console.log(newArray);
-              newArray[props.itemIndex].reason = e.nativeEvent.text;
-              setSuggestionList(newArray);
+            onChangeText={text => {
+              suggestionList[props.itemIndex].reason = text;
+              // let newArray = [...suggestionList];
+              // console.log(newArray);
+              // newArray[props.itemIndex].reason = text;
+              // setSuggestionList(newArray);
             }}
             style={styles.highlightText}
           />
@@ -157,10 +156,11 @@ export default function Answer({ route }) {
             //   setSuggestionList(newArray);
             // }}
             defaultValue={suggestionList[props.itemIndex].price}
-            onEndEditing={e => {
-              let newArray = [...suggestionList];
-              newArray[props.itemIndex].price = e.nativeEvent.text;
-              setSuggestionList(newArray);
+            onChangeText={text => {
+              suggestionList[props.itemIndex].price = text;
+              // let newArray = [...suggestionList];
+              // newArray[props.itemIndex].price = text;
+              // setSuggestionList(newArray);
             }}
           />
         </View>
@@ -240,7 +240,9 @@ export default function Answer({ route }) {
                 onChangeText={text => {
                   setGreetings(text);
                 }}
-                style={styles.highlightText}></TextInput>
+                style={styles.highlightText}
+                autoCorrect={false}
+              />
             </View>
             <Text style={styles.itemTextStyle}>시술 일정</Text>
             <View style={styles.userTextUnderline}>

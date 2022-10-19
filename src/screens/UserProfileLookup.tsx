@@ -24,6 +24,7 @@ import { Platform } from "react-native";
 import SimpleHeader from "../components/common/SimpleHeader";
 import { readData } from "../utils/asyncStorage";
 import ComplexityHeader from "../components/common/ComplexityHeader";
+import { getUserProfileById } from "../api/getUserProfileById";
 
 const numHairStatus = 3;
 const numHairTendency = 5;
@@ -31,31 +32,6 @@ const BASEWIDTH = 375;
 const BASEPADDING = 20;
 const numberOfLines = 4;
 const MAINCOLOR = "#fc2a5b";
-
-const HeaderContents = () => {
-  return (
-    <>
-      <View style={{ flex: 1 }}>
-        <GoBackIcon />
-      </View>
-      <View style={{ flex: 2, justifyContent: "center", alignItems: "center" }}>
-        <Text
-          style={{
-            fontFamily: "Pretendard-Bold",
-            fontSize: verticalScale(18),
-            fontWeight: "bold",
-            fontStyle: "normal",
-            letterSpacing: 0.07,
-            textAlign: "left",
-            color: "#ffffff",
-          }}>
-          [홍길동] 프로필
-        </Text>
-      </View>
-      <View style={{ flex: 1, alignItems: "flex-end" }}></View>
-    </>
-  );
-};
 
 export default function UserProfileLookup({ route }) {
   const [profileImage, setProfileImage] = useState(["", "", ""]);
@@ -77,32 +53,17 @@ export default function UserProfileLookup({ route }) {
   const navigation = useNavigation();
 
   async function fetchData() {
+    const result = await getUserProfileById(route.params.userProfileId);
+    console.log(result);
+    if (result.data.status == "OK") {
+      setProfileData(result.data.result);
+    }
     setDesignerFlag(await readData("@DESIGNER_FLAG"));
     setMemberId(await readData("@MEMBER_ID"));
   }
 
   useEffect(() => {
     fetchData();
-    console.log(route.params.data);
-    setProfileImage([
-      "https://picsum.photos/200/300",
-      "https://picsum.photos/200/300",
-      "https://picsum.photos/200/300",
-    ]);
-
-    setWantHairImage([
-      "https://picsum.photos/200/300",
-      "https://picsum.photos/200/300",
-      "https://picsum.photos/200/300",
-    ]);
-
-    setHairStatusIndex(1);
-    setHairTendencyIndex(3);
-
-    setWantedStyle("투블럭");
-    setWantedStyleDescription("예쁘게 해주세요");
-
-    setWantedStylingCost("30000");
   }, []);
 
   const ImageUploadButton = props => {
@@ -129,54 +90,63 @@ export default function UserProfileLookup({ route }) {
 
   return (
     <SafeAreaView style={styles.frame}>
-      {memberId != undefined && memberId == route.params.data.memberId && (
-        <ComplexityHeader
-          title={route.params.data.name}
-          goBack="Main"
-          button={
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("UserProfileModify");
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(16),
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "left",
-                  color: "#fc2a5b",
+      {memberId != undefined &&
+        profileData != undefined &&
+        memberId == profileData.memberProfileDto.memberId && (
+          <ComplexityHeader
+            title={profileData.memberProfileDto.name}
+            goBack="Main"
+            button={
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("UserProfileModify");
                 }}>
-                수정
-              </Text>
-            </TouchableOpacity>
-          }
-        />
-      )}
-      {memberId != undefined && memberId != route.params.data.memberId && (
-        <SimpleHeader title={route.params.data.name} goBack="Main" />
-      )}
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: scale(16),
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    letterSpacing: -0.5,
+                    textAlign: "left",
+                    color: "#fc2a5b",
+                  }}>
+                  수정
+                </Text>
+              </TouchableOpacity>
+            }
+          />
+        )}
+      {memberId != undefined &&
+        profileData != undefined &&
+        memberId != profileData.memberProfileDto.memberId && (
+          <SimpleHeader
+            title={profileData.memberProfileDto.name}
+            goBack="Main"
+          />
+        )}
       {/* <Header contents={<HeaderContents></HeaderContents>}></Header> */}
-      {designerFlag != undefined && designerFlag == "1" && (
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <Button
-            buttonStyle={{
-              backgroundColor: "#fc2a5b",
-              borderRadius: 10,
-              width: scale(110),
-              marginBottom: verticalScale(5),
-            }}
-            onPress={() =>
-              navigation.navigate("Answer", {
-                memberId: route.params.data.id,
-                treatmentDate: route.params.data.treatmentDate,
-              })
-            }>
-            매칭 제안
-          </Button>
-        </View>
-      )}
+      {designerFlag != undefined &&
+        profileData != undefined &&
+        designerFlag == "1" && (
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <Button
+              buttonStyle={{
+                backgroundColor: "#fc2a5b",
+                borderRadius: 10,
+                width: scale(110),
+                marginBottom: verticalScale(5),
+              }}
+              onPress={() =>
+                navigation.navigate("Answer", {
+                  memberId: profileData.memberProfileDto.memberId,
+                  treatmentDate: profileData.memberProfileDto.treatmentDate,
+                })
+              }>
+              매칭 제안
+            </Button>
+          </View>
+        )}
 
       <ScrollView>
         <View style={{ alignItems: "center" }}>
@@ -191,7 +161,11 @@ export default function UserProfileLookup({ route }) {
                   }}>
                   <ImageUploadButton
                     // index={index}
-                    uri={route.params.data.frontImageUrl}
+                    uri={
+                      profileData != undefined
+                        ? profileData.memberProfileDto.frontImageUrl
+                        : null
+                    }
                     // toChangeArray={profileImage}
                     // toChangeFunction={setProfileImage}
                     style={styles.userProfileImage}
@@ -212,7 +186,11 @@ export default function UserProfileLookup({ route }) {
                   }}>
                   <ImageUploadButton
                     // index={index}
-                    uri={route.params.data.sideImageUrl}
+                    uri={
+                      profileData != undefined
+                        ? profileData.memberProfileDto.sideImageUrl
+                        : null
+                    }
                     // toChangeArray={profileImage}
                     // toChangeFunction={setProfileImage}
                     style={styles.userProfileImage}
@@ -233,7 +211,11 @@ export default function UserProfileLookup({ route }) {
                   }}>
                   <ImageUploadButton
                     // index={index}
-                    uri={route.params.data.backImageUrl}
+                    uri={
+                      profileData != undefined
+                        ? profileData.memberProfileDto.backImageUrl
+                        : null
+                    }
                     // toChangeArray={profileImage}
                     // toChangeFunction={setProfileImage}
                     style={styles.userProfileImage}
@@ -275,19 +257,23 @@ export default function UserProfileLookup({ route }) {
             <View style={{ marginTop: 12 }}>
               <Text style={[styles.itemTextStyle]}>고객님의 모발 상태</Text>
               <View style={{ flexDirection: "row" }}>
-                {hairStatus.map((item, index) => {
-                  return (
-                    <HairButton
-                      width={scale(
-                        (BASEWIDTH - BASEPADDING * 2) / numHairStatus,
-                      )}
-                      index={index}
-                      content={hairStatus[index]}
-                      disabled
-                      isActive={index == route.params.data.hairCondition - 1}
-                    />
-                  );
-                })}
+                {profileData != undefined &&
+                  hairStatus.map((item, index) => {
+                    return (
+                      <HairButton
+                        width={scale(
+                          (BASEWIDTH - BASEPADDING * 2) / numHairStatus,
+                        )}
+                        index={index}
+                        content={hairStatus[index]}
+                        disabled
+                        isActive={
+                          index ==
+                          profileData.memberProfileDto.hairCondition - 1
+                        }
+                      />
+                    );
+                  })}
               </View>
             </View>
 
@@ -295,19 +281,22 @@ export default function UserProfileLookup({ route }) {
               <Text style={styles.itemTextStyle}>머리 성향</Text>
 
               <View style={{ flexDirection: "row" }}>
-                {hairTendency.map((item, index) => {
-                  return (
-                    <HairButton
-                      width={scale(
-                        (BASEWIDTH - BASEPADDING * 2) / numHairTendency,
-                      )}
-                      index={index}
-                      content={hairTendency[index]}
-                      disabled
-                      isActive={index == route.params.data.hairTendency - 1}
-                    />
-                  );
-                })}
+                {profileData != undefined &&
+                  hairTendency.map((item, index) => {
+                    return (
+                      <HairButton
+                        width={scale(
+                          (BASEWIDTH - BASEPADDING * 2) / numHairTendency,
+                        )}
+                        index={index}
+                        content={hairTendency[index]}
+                        disabled
+                        isActive={
+                          index == profileData.memberProfileDto.hairTendency - 1
+                        }
+                      />
+                    );
+                  })}
               </View>
             </View>
 
@@ -317,7 +306,11 @@ export default function UserProfileLookup({ route }) {
                 <TextInput
                   placeholder="예) 투블럭"
                   placeholderTextColor={MAINCOLOR}
-                  value={route.params.data.desiredHairstyle}
+                  value={
+                    profileData != undefined
+                      ? profileData.memberProfileDto.desiredHairstyle
+                      : null
+                  }
                   editable={false}
                   style={styles.highlightText}></TextInput>
               </View>
@@ -340,11 +333,14 @@ export default function UserProfileLookup({ route }) {
               <Text style={styles.itemTextStyle}>
                 원하는 헤어스타일을 자세히 설명해주세요.
               </Text>
-
               <View style={styles.userTextUnderline}>
                 <TextInput
                   editable={false}
-                  value={route.params.data.desiredHairstyleDescription}
+                  value={
+                    profileData != undefined
+                      ? profileData.memberProfileDto.desiredHairstyleDescription
+                      : null
+                  }
                   onChangeText={text => setWantedStyleDescription(text)}
                   placeholder="자유롭게 작성해주세요."
                   placeholderTextColor={MAINCOLOR}
@@ -360,12 +356,15 @@ export default function UserProfileLookup({ route }) {
             </View>
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
-              <Text style={styles.itemTextStyle}>원하는 스타일링 비용 </Text>
-
+              <Text style={styles.itemTextStyle}>원하는 스타일링 비용</Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
                   editable={false}
-                  value={route.params.data.payableAmount.toLocaleString()}
+                  value={
+                    profileData != undefined
+                      ? profileData.memberProfileDto.payableAmount.toLocaleString()
+                      : null
+                  }
                   // onChangeText={text => setWantedStylingCost(text)}
                   placeholder="예) 30000"
                   placeholderTextColor={MAINCOLOR}
@@ -381,12 +380,23 @@ export default function UserProfileLookup({ route }) {
                 <TextInput
                   editable={false}
                   value={
-                    route.params.data.treatmentDate.substring(0, 10) +
-                    " " +
-                    route.params.data.treatmentDate.substring(11, 13) +
-                    "시 " +
-                    route.params.data.treatmentDate.substring(14, 16) +
-                    "분"
+                    profileData != undefined
+                      ? profileData.memberProfileDto.treatmentDate.substring(
+                          0,
+                          10,
+                        ) +
+                        " " +
+                        profileData.memberProfileDto.treatmentDate.substring(
+                          11,
+                          13,
+                        ) +
+                        "시 " +
+                        profileData.memberProfileDto.treatmentDate.substring(
+                          14,
+                          16,
+                        ) +
+                        "분"
+                      : null
                   }
                   // onChangeText={text => setWantedStylingCost(text)}
                   // placeholder="예) 30000"

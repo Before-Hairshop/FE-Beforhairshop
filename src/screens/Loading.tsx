@@ -47,8 +47,12 @@ export default function Loading({ route }) {
   const webViewRef = createRef<WebView>();
 
   const signIn = async (type: string) => {
+    // if(type == "kakao") {
+    //   signInWithKakao();
+    // } else {
     await setLoginType(type);
     setSocialLoginModalVisible(true);
+    // }
   };
 
   async function onNavigationStateChange(navigationState: WebViewNavigation) {
