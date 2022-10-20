@@ -240,47 +240,51 @@ export default function DesignerModify() {
 
   async function fetchData() {
     const { data } = await getDesignerProfileById(await readData("@MEMBER_ID"));
-    console.log(data.result);
-    setName(data.result.hairDesignerProfileDto.name);
-    setDescription(data.result.hairDesignerProfileDto.description);
-    data.result.hairDesignerHashtagDtoList.map((item, index) => {
-      setHairTag(prev => [
-        ...prev,
+    if (data.status == "OK") {
+      console.log(data.result);
+      setName(data.result.hairDesignerProfileDto.name);
+      setDescription(data.result.hairDesignerProfileDto.description);
+      data.result.hairDesignerHashtagDtoList.map((item, index) => {
+        setHairTag(prev => [
+          ...prev,
+          {
+            tag: item.tag,
+          },
+        ]);
+      });
+      data.result.hairDesignerPriceDtoList.map((item, index) => {
+        setMenuInfo(prev => [
+          ...prev,
+          {
+            hairCategory: item.hairCategory,
+            hairStyleName: item.hairStyleName,
+            price: item.price,
+          },
+        ]);
+      });
+      setShopName(data.result.hairDesignerProfileDto.hairShopName);
+      setLocation(data.result.hairDesignerProfileDto.zipAddress);
+      setSpecificLocation(data.result.hairDesignerProfileDto.detailAddress);
+      setZipCode(data.result.hairDesignerProfileDto.zipCode);
+      data.result.hairDesignerWorkingDayDtoList.map((item, index) => {
+        setSchedule(prev => [
+          ...prev,
+          {
+            workingDay: item.workingDay,
+            startTime: item.startTime,
+            endTime: item.endTime,
+          },
+        ]);
+      });
+      setPhoneNumber(data.result.hairDesignerProfileDto.phoneNumber);
+      setProfileImage([
         {
-          tag: item.tag,
+          uri: data.result.hairDesignerProfileDto.imageUrl,
         },
       ]);
-    });
-    data.result.hairDesignerPriceDtoList.map((item, index) => {
-      setMenuInfo(prev => [
-        ...prev,
-        {
-          hairCategory: item.hairCategory,
-          hairStyleName: item.hairStyleName,
-          price: item.price,
-        },
-      ]);
-    });
-    setShopName(data.result.hairDesignerProfileDto.hairShopName);
-    setLocation(data.result.hairDesignerProfileDto.zipAddress);
-    setSpecificLocation(data.result.hairDesignerProfileDto.detailAddress);
-    setZipCode(data.result.hairDesignerProfileDto.zipCode);
-    data.result.hairDesignerWorkingDayDtoList.map((item, index) => {
-      setSchedule(prev => [
-        ...prev,
-        {
-          workingDay: item.workingDay,
-          startTime: item.startTime,
-          endTime: item.endTime,
-        },
-      ]);
-    });
-    setPhoneNumber(data.result.hairDesignerProfileDto.phoneNumber);
-    setProfileImage([
-      {
-        uri: data.result.hairDesignerProfileDto.imageUrl,
-      },
-    ]);
+    } else {
+      Alert.alert("데이터를 불러오는데 실패했습니다.");
+    }
   }
 
   useEffect(() => {

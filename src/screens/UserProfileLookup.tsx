@@ -1,4 +1,5 @@
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -57,6 +58,8 @@ export default function UserProfileLookup({ route }) {
     console.log(result);
     if (result.data.status == "OK") {
       setProfileData(result.data.result);
+    } else {
+      Alert.alert("데이터를 불러오는데 실패했습니다.");
     }
     setDesignerFlag(await readData("@DESIGNER_FLAG"));
     setMemberId(await readData("@MEMBER_ID"));

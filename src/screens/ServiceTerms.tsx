@@ -1,19 +1,28 @@
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Dimensions } from "react-native";
-import { verticalScale } from "../utils/scale";
+import { scale, verticalScale } from "../utils/scale";
 import { useNavigation } from "@react-navigation/native";
+import CheckBox from "@react-native-community/checkbox";
+import CheckIcon from "../assets/icons/check.svg";
+import { term1 } from "../components/serviceTerms/term1";
+import { term2 } from "../components/serviceTerms/term2";
+import { term3 } from "../components/serviceTerms/term3";
 
 const { width, height } = Dimensions.get("window");
 
 export default function ServiceTerms() {
   const navigation = useNavigation();
+  const [check1, setCheck1] = useState(false);
+  const [check2, setCheck2] = useState(false);
+  const [check3, setCheck3] = useState(false);
 
   return (
     <View style={styles.frame}>
@@ -21,41 +30,189 @@ export default function ServiceTerms() {
         <Text style={styles.title}>이용약관</Text>
         <View style={styles.division} />
         <ScrollView style={styles.contents_container}>
-          <Text style={styles.contents}>
-            비포헤어샵('beforehairshop.com'이하 'beforehairshop')은(는)
-            「개인정보 보호법」 제30조에 따라 정보주체의 개인정보를 보호하고
-            이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여
-            다음과 같이 개인정보 처리방침을 수립·공개합니다. ○ 이
-            개인정보처리방침은 2022년 6월 28부터 적용됩니다. 제1조(개인정보의
-            처리 목적) 비포헤어샵('beforehairshop.com'이하
-            'beforehairshop')은(는) 다음의 목적을 위하여 개인정보를 처리합니다.
-            처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며
-            이용 목적이 변경되는 경우에는 「개인정보 보호법」 제18조에 따라
-            별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다. 1. 홈페이지
-            회원가입 및 관리 회원 가입의사 확인, 회원제 서비스 제공에 따른 본인
-            식별·인증, 회원자격 유지·관리, 서비스 부정이용 방지, 각종 고지·통지
-            목적으로 개인정보를 처리합니다. 2. 민원사무 처리 민원인의 신원 확인,
-            사실조사를 위한 연락·통지, 처리결과 통보 목적으로 개인정보를
-            처리합니다. 비포헤어샵('beforehairshop.com'이하
-            'beforehairshop')은(는) 「개인정보 보호법」 제30조에 따라 정보주체의
-            개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수
-            있도록 하기 위하여 다음과 같이 개인정보 처리방침을 수립·공개합니다.
-            ○ 이 개인정보처리방침은 2022년 6월 28부터 적용됩니다.
-            제1조(개인정보의 처리 목적) 비포헤어샵('beforehairshop.com'이하
-            'beforehairshop')은(는) 다음의 목적을 위하여 개인정보를 처리합니다.
-            처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며
-            이용 목적이 변경되는 경우에는 「개인정보 보호법」 제18조에 따라
-            별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다. 1. 홈페이지
-            회원가입 및 관리 회원 가입의사 확인, 회원제 서비스 제공에 따른 본인
-            식별·인증, 회원자격 유지·관리, 서비스 부정이용 방지, 각종 고지·통지
-            목적으로 개인정보를 처리합니다. 2. 민원사무 처리 민원인의 신원 확인,
-            사실조사를 위한 연락·통지, 처리결과 통보 목적으로 개인정보를
-            처리합니다.
-          </Text>
+          <View>
+            <View
+              style={{
+                height: verticalScale(55),
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}>
+              <View style={{ justifyContent: "center" }}>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: scale(15),
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    lineHeight: 32,
+                    textAlign: "left",
+                    color: "#ffffff",
+                  }}>
+                  비포헤어샵 이용약관
+                  <Text style={{ color: "red" }}> *</Text>
+                </Text>
+              </View>
+              <View style={{ justifyContent: "center" }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setCheck1(!check1);
+                  }}>
+                  <View
+                    style={[
+                      styles.circle,
+                      check1 && { backgroundColor: "#fc2a5b" },
+                    ]}>
+                    <CheckIcon fill={check1 ? "#ffffff" : "#5f5f5f"} />
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <ScrollView
+              style={{
+                borderRadius: 15,
+                height: verticalScale(120),
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                padding: verticalScale(10),
+              }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: verticalScale(10),
+                  fontWeight: "500",
+                  fontStyle: "normal",
+                  textAlign: "left",
+                  color: "#000000",
+                }}>
+                {term1}
+              </Text>
+            </ScrollView>
+          </View>
+
+          <View>
+            <View
+              style={{
+                height: verticalScale(55),
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}>
+              <View style={{ justifyContent: "center" }}>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: scale(15),
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    lineHeight: 32,
+                    textAlign: "left",
+                    color: "#ffffff",
+                  }}>
+                  비포헤어샵 위치정보 이용약관
+                  <Text style={{ color: "red" }}> *</Text>
+                </Text>
+              </View>
+              <View style={{ justifyContent: "center" }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setCheck2(!check2);
+                  }}>
+                  <View
+                    style={[
+                      styles.circle,
+                      check2 && { backgroundColor: "#fc2a5b" },
+                    ]}>
+                    <CheckIcon fill={check2 ? "#ffffff" : "#5f5f5f"} />
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <ScrollView
+              style={{
+                borderRadius: 15,
+                height: verticalScale(120),
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                padding: verticalScale(10),
+              }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: verticalScale(10),
+                  fontWeight: "500",
+                  fontStyle: "normal",
+                  textAlign: "left",
+                  color: "#000000",
+                }}>
+                {term2}
+              </Text>
+            </ScrollView>
+          </View>
+
+          <View>
+            <View
+              style={{
+                height: verticalScale(55),
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}>
+              <View style={{ justifyContent: "center" }}>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: scale(15),
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    lineHeight: 32,
+                    textAlign: "left",
+                    color: "#ffffff",
+                  }}>
+                  비포헤어샵 개인정보처리방침
+                  <Text style={{ color: "red" }}> *</Text>
+                </Text>
+              </View>
+              <View style={{ justifyContent: "center" }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setCheck3(!check3);
+                  }}>
+                  <View
+                    style={[
+                      styles.circle,
+                      check3 && { backgroundColor: "#fc2a5b" },
+                    ]}>
+                    <CheckIcon fill={check3 ? "#ffffff" : "#5f5f5f"} />
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <ScrollView
+              style={{
+                borderRadius: 15,
+                height: verticalScale(120),
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                padding: verticalScale(10),
+              }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: verticalScale(10),
+                  fontWeight: "500",
+                  fontStyle: "normal",
+                  textAlign: "left",
+                  color: "#000000",
+                }}>
+                {term3}
+              </Text>
+            </ScrollView>
+          </View>
         </ScrollView>
         <TouchableOpacity
           style={styles.accept_button}
-          onPress={() => navigation.navigate("UserCheck")}>
+          onPress={() => {
+            if (check1 && check2 && check3) {
+              navigation.navigate("UserCheck");
+            } else {
+              Alert.alert("이용약관에 모두 동의해주세요");
+            }
+          }}>
           <Text style={styles.accept_text}>동의 후 서비스 이용하기</Text>
         </TouchableOpacity>
       </View>
@@ -65,8 +222,9 @@ export default function ServiceTerms() {
 
 const styles = StyleSheet.create({
   frame: {
-    width: width,
-    height: height,
+    flex: 1,
+    // width: width,
+    // height: height,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#000000",
@@ -96,7 +254,7 @@ const styles = StyleSheet.create({
   },
   contents_container: {
     width: "100%",
-    marginTop: verticalScale(19),
+    // marginTop: verticalScale(19),
   },
   contents: {
     fontFamily: "Pretendard",
@@ -124,5 +282,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
     textAlign: "left",
     color: "#ffffff",
+  },
+  circle: {
+    width: 25,
+    height: 25,
+    borderRadius: 25 / 2,
+    backgroundColor: "#2f2f2f",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

@@ -33,7 +33,7 @@ export const RootNavigator = () => {
   return (
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="Loading">
+      initialRouteName="ServiceTerms">
       <mainStack.Screen
         name="Loading"
         component={Loading}

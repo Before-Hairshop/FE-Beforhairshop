@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -69,8 +70,12 @@ export default function Suggestion({ route }) {
 
   async function fetchData() {
     const result = await getRecommendation(route.params.recommendId);
-    console.log(result);
-    setRecommendData(result.data.result);
+    if (result.data.status == "OK") {
+      console.log(result);
+      setRecommendData(result.data.result);
+    } else {
+      Alert.alert("데이터를 불러오는데 실패했습니다.");
+    }
     setDesignerFlag(await readData("@DESIGNER_FLAG"));
   }
 

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import { Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -31,6 +31,8 @@ export default function UserCheck() {
         storeData("@DESIGNER_FLAG", "0");
         navigation.navigate("UserProfile");
       }
+    } else {
+      Alert.alert("요청에 실패했습니다.");
     }
   };
 

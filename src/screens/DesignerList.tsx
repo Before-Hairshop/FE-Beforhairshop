@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 
@@ -16,26 +17,16 @@ import { Dimensions } from "react-native";
 const { width } = Dimensions.get("window");
 import { scale, verticalScale } from "../utils/scale";
 
-import Header from "../components/Header";
 import GoBackIcon from "../assets/icons/goBack.svg";
 import GoHomeIcon from "../assets/icons/goHome.svg";
 import SearchIcon from "../assets/icons/search.svg";
 import StarIcon from "../assets/icons/star.svg";
 
 import DefaultDesignerImg from "../assets/images/default_designer.png";
-import axios from "axios";
 import ComplexityHeader from "../components/common/ComplexityHeader";
-import Contour from "../components/common/Contour";
 import { getDesignerListThroughLocation } from "../api/getDesignerListThroughLocation";
 import { getDesignerListThroughName } from "../api/getDesignerListThroughName";
 import { useNavigation } from "@react-navigation/native";
-
-const HeaderContents = () => (
-  <>
-    <GoBackIcon />
-    <GoHomeIcon />
-  </>
-);
 
 const TagItem = (props: { value: string }) => (
   <View
@@ -197,10 +188,14 @@ export default function DesignerList() {
       // setError(null);
       // setLoading(true);
       const { data } = await getDesignerListThroughLocation(page);
-      console.log(pageNum);
-      console.log([...prev, ...data.result]);
-      setDesignerList([...prev, ...data.result]);
-      setPageNum(page + 1);
+      if (data.status == "OK") {
+        console.log(pageNum);
+        console.log([...prev, ...data.result]);
+        setDesignerList([...prev, ...data.result]);
+        setPageNum(page + 1);
+      } else {
+        Alert.alert("데이터를 불러오는데 실패했습니다.");
+      }
     } catch (e) {
       setError(e);
     }
@@ -214,19 +209,19 @@ export default function DesignerList() {
   ) => {
     try {
       const { data } = await getDesignerListThroughName(keyw, page);
-      console.log(data);
-      console.log([...prev, ...data.result]);
-      setDesignerList([...prev, ...data.result]);
-      setPageNum(page + 1);
+      if (data.status == "OK") {
+        console.log(data);
+        console.log([...prev, ...data.result]);
+        setDesignerList([...prev, ...data.result]);
+        setPageNum(page + 1);
+      } else {
+        Alert.alert("데이터를 불러오는데 실패했습니다.");
+      }
     } catch (e) {
       setError(e);
     }
     setLoading(false);
   };
-
-  // useEffect(() => {
-  //   fetchDesignerList();
-  // }, []);
 
   useEffect(() => {
     // setDesignerList([]);

@@ -218,14 +218,18 @@ export default function DesignerRegistration() {
         schedule,
         phoneNumber,
       );
-      console.log(result);
-      // presigned url
-      const url = await postDesignerProfileImg();
-      console.log(url);
-      console.log(profileImage[0]);
-      const response = await putS3Img(url, profileImage[0].blob);
-      console.log(response);
-      navigation.navigate("NewMain");
+      if (result.data.statud == "OK") {
+        console.log(result);
+        // presigned url
+        const url = await postDesignerProfileImg();
+        console.log(url);
+        console.log(profileImage[0]);
+        const response = await putS3Img(url, profileImage[0].blob);
+        console.log(response);
+        navigation.navigate("NewMain");
+      } else {
+        Alert.alert("프로필 등록에 실패했습니다.");
+      }
     } else {
       Alert.alert("필수 항목을 모두 작성해주세요.");
     }

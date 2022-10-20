@@ -110,7 +110,11 @@ export default function UserProfile() {
       console.log(wantHairImage);
       const url = await postUserProfileImg(profileImage, wantHairImage);
       console.log(url);
-      navigation.navigate("Location");
+      if (result.data.status == "OK" && url.data.status == "OK") {
+        navigation.navigate("Location");
+      } else {
+        Alert.alert("프로필 등록에 실패했습니다.");
+      }
     }
   };
 

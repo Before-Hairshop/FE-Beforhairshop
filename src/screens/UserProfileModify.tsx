@@ -168,7 +168,11 @@ export default function UserProfileModify() {
       // console.log(wantHairImage);
       // const url = await postUserProfileImg(profileImage, wantHairImage);
       // console.log(url);
-      navigation.navigate("NewMain");
+      if (result.data.status == "OK" && result2.data.status == "OK") {
+        navigation.navigate("NewMain");
+      } else {
+        Alert.alert("프로필 수정에 실패했습니다.");
+      }
     }
   };
 

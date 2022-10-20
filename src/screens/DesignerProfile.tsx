@@ -6,10 +6,8 @@ import {
   Text,
   TouchableOpacity,
   Linking,
-  Platform,
   PermissionsAndroid,
   Modal,
-  Pressable,
   Alert,
   TouchableWithoutFeedback,
   Animated,
@@ -30,7 +28,6 @@ import LoveIcon from "../assets/icons/love.svg";
 import WriteIcon from "../assets/icons/write.svg";
 import DefaultMap from "../assets/images/default_map.png";
 import DashedLine from "react-native-dashed-line";
-import axios from "axios";
 import Map from "./Map";
 
 import ModifyIcon from "../assets/icons/modify.svg";
@@ -238,6 +235,9 @@ export default function DesignerProfile({ route }) {
       setError(null);
       setLoading(true);
       const response = await getDesignerProfileById(route.params.designerId);
+      if (response.data.status != "OK") {
+        Alert.alert("데이터를 불러오는데 실패했습니다.");
+      }
       console.log(response.data.result);
       setProfileData(response.data.result);
       fetchStar(response.data.result.averageStarRating);
@@ -246,6 +246,9 @@ export default function DesignerProfile({ route }) {
         response.data.result.hairDesignerProfileDto.id,
         // route.params.designerId,
       );
+      if (response2.data.status != "OK") {
+        Alert.alert("데이터를 불러오는데 실패했습니다.");
+      }
       console.log(response2);
       setReviewData(response2.data.result);
       setMemberId(await readData("@MEMBER_ID"));

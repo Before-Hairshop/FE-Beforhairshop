@@ -37,11 +37,15 @@ export default function CustomerList() {
       if (data.status == "OK") {
         setCustomerList([...customerList, ...data.result]);
         setPageNum(pageNum + 1);
+      } else {
+        Alert.alert("데이터를 불러오는데 실패했습니다.");
       }
       const result = await getRequestList();
       console.log(result);
       if (result.data.status == "OK") {
         setRequestList(result.data.result);
+      } else {
+        Alert.alert("데이터를 불러오는데 실패했습니다.");
       }
     } catch (error) {
       console.log(error);
