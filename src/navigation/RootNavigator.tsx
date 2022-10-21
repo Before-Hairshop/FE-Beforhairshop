@@ -26,6 +26,7 @@ import KakaoSocialLogin from "../screens/KakaoSocialLogin";
 import AppleSocialLogin from "../screens/AppleSocialLogin";
 import DesignerModify from "../screens/DesignerModify";
 import UserProfileModify from "../screens/UserProfileModify";
+import ReviewModify from "../screens/ReviewModify";
 
 const mainStack = createNativeStackNavigator();
 
@@ -33,7 +34,7 @@ export const RootNavigator = () => {
   return (
     <mainStack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="ServiceTerms">
+      initialRouteName="Loading">
       <mainStack.Screen
         name="Loading"
         component={Loading}
@@ -49,13 +50,18 @@ export const RootNavigator = () => {
         component={ServiceTerms}
         options={{ gestureEnabled: false }}
       />
+      <mainStack.Screen
+        name="Location"
+        component={Location}
+        options={{ gestureEnabled: false }}
+      />
       <mainStack.Screen name="DesignerProfile" component={DesignerProfile} />
       <mainStack.Screen name="DesignerList" component={DesignerList} />
       <mainStack.Screen name="Map" component={Map} />
       <mainStack.Screen name="UserCheck" component={UserCheck} />
       <mainStack.Screen name="UserProfile" component={UserProfile} />
       <mainStack.Screen name="Answer" component={Answer} />
-      <mainStack.Screen name="Location" component={Location} />
+
       <mainStack.Screen name="CustomerList" component={CustomerList} />
       <mainStack.Screen name="ChatList" component={ChatList} />
       <mainStack.Screen name="Suggestion" component={Suggestion} />
@@ -65,6 +71,7 @@ export const RootNavigator = () => {
       <mainStack.Screen name="KakaoSocialLogin" component={KakaoSocialLogin} />
       <mainStack.Screen name="AppleSocialLogin" component={AppleSocialLogin} />
       <mainStack.Screen name="DesignerModify" component={DesignerModify} />
+      <mainStack.Screen name="ReviewModify" component={ReviewModify} />
       <mainStack.Screen
         name="UserProfileModify"
         component={UserProfileModify}

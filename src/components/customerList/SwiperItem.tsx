@@ -3,10 +3,19 @@ import React from "react";
 
 import { scale, verticalScale } from "../../utils/scale";
 import HashTag from "./HashTag";
+import { useNavigation } from "@react-navigation/native";
 
 export default function SwiperItem(props) {
+  const navigation = useNavigation();
+
   return (
-    <TouchableOpacity style={{ flexDirection: "row", height: "100%" }}>
+    <TouchableOpacity
+      style={{ flexDirection: "row", height: "100%" }}
+      onPress={() => {
+        navigation.navigate("UserProfileLookup", {
+          userProfileId: props.data.id,
+        });
+      }}>
       <View
         style={{
           height: "100%",
@@ -15,7 +24,7 @@ export default function SwiperItem(props) {
         }}>
         <Image
           source={{
-            uri: "https://d2ce7t1l8ikrzi.cloudfront.net/profile/3/front_image.jpg",
+            uri: props.data.frontImageUrl,
           }}
           style={{
             width: verticalScale(110),
@@ -52,7 +61,7 @@ export default function SwiperItem(props) {
               textAlign: "left",
               color: "#737373",
             }}>
-            강남구 역삼동
+            {props.data.zipAddress}
           </Text>
           <Text
             style={{
@@ -64,11 +73,14 @@ export default function SwiperItem(props) {
               textAlign: "left",
               color: "#ffffff",
             }}>
-            짱구
+            {props.data.name}
           </Text>
           <View style={{ flexDirection: "row" }}>
-            <HashTag value="투블럭" />
-            <HashTag value="단발" />
+            {props.data.desiredHairstyle == null ? (
+              <HashTag value="#스타일을 추천받고 싶어요" />
+            ) : (
+              <HashTag value={`#${props.data.desiredHairstyle}`} />
+            )}
           </View>
           <Text
             style={{
@@ -79,7 +91,7 @@ export default function SwiperItem(props) {
               textAlign: "left",
               color: "#fc2a5b",
             }}>
-            {"20000".toLocaleString()}원
+            {props.data.payableAmount.toLocaleString()}원
           </Text>
         </View>
       </View>
