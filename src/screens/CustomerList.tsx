@@ -34,7 +34,10 @@ export default function CustomerList() {
     try {
       const { data } = await getCustomerList(pageNum);
       console.log(data);
-      if (data.status == "OK") {
+      if (data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (data.status == "OK") {
         setCustomerList([...customerList, ...data.result]);
         setPageNum(pageNum + 1);
       } else {
@@ -114,9 +117,11 @@ export default function CustomerList() {
             {item.name}
           </Text>
           <View style={{ flexDirection: "row", marginTop: verticalScale(7) }}>
-            <HashTag value={item.desiredHairstyle} />
-            {/* <HashTag />
-            <HashTag /> */}
+            {item.desiredHairstyle == null ? (
+              <HashTag value="#스타일을 추천받고 싶어요" />
+            ) : (
+              <HashTag value={`#${item.desiredHairstyle}`} />
+            )}
           </View>
           <Text
             style={{
@@ -219,8 +224,9 @@ export default function CustomerList() {
                 }}>
                 {requestList != undefined && requestList.length != 0 ? (
                   <Swiper loop={false} showsPagination={false}>
-                    <SwiperItem />
-                    <SwiperItem />
+                    {requestList.map((item, index) => (
+                      <SwiperItem data={item} />
+                    ))}
                   </Swiper>
                 ) : (
                   <View style={{ height: "100%", justifyContent: "center" }}>

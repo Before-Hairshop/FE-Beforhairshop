@@ -183,12 +183,15 @@ export default function DesignerList() {
     </View>
   );
 
-  const fetchDesignerList = async (prev: never[], page: number) => {
+  const fetchDesignerList = async (prev: any, page: number) => {
     try {
       // setError(null);
       // setLoading(true);
       const { data } = await getDesignerListThroughLocation(page);
-      if (data.status == "OK") {
+      if (data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (data.status == "OK") {
         console.log(pageNum);
         console.log([...prev, ...data.result]);
         setDesignerList([...prev, ...data.result]);
@@ -209,7 +212,10 @@ export default function DesignerList() {
   ) => {
     try {
       const { data } = await getDesignerListThroughName(keyw, page);
-      if (data.status == "OK") {
+      if (data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (data.status == "OK") {
         console.log(data);
         console.log([...prev, ...data.result]);
         setDesignerList([...prev, ...data.result]);
@@ -346,7 +352,6 @@ export default function DesignerList() {
                   onChangeText={text => {
                     setKeyword(text);
                   }}
-                  keyboardType="phone-pad"
                   style={{ color: "#cccccc" }}
                   autoCorrect={false}
                 />

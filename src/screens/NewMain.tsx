@@ -338,11 +338,9 @@ export default function NewMain() {
   function changeToggleStatus(value) {
     setToggle(value);
     if (value) {
-      const result = patchUserMatchingActive();
-      console.log(result);
+      patchUserMatchingActive();
     } else {
-      const result = patchUserMatchingDeactive();
-      console.log(result);
+      patchUserMatchingDeactive();
     }
   }
 
@@ -510,13 +508,20 @@ export default function NewMain() {
       setDesignerFlag(await readData("@DESIGNER_FLAG"));
       const { data } = await getMemberInfo();
       console.log(data);
+      if (data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      }
       setProfileImg(data.result.imageUrl);
       console.log(data.result.designerFlag);
       storeData("@MEMBER_ID", String(data.result.id));
       if (data.result.designerFlag == 1) {
         const result = await getDesignerProfile();
         console.log(result);
-        if (result.data.status == "OK") {
+        if (result.data.result == undefined) {
+          Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+          navigation.navigate("Loading");
+        } else if (result.data.status == "OK") {
           console.log(result.data.status);
           setProfileData(result.data.result);
         }

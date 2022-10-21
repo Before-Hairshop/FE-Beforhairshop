@@ -40,6 +40,7 @@ import { UnderLineContent } from "../components/designerProfile/UnderLineContent
 import { getReviewList } from "../api/getReviewList";
 import { readData } from "../utils/asyncStorage";
 import { postRequest } from "../api/postRequest";
+import { deleteReview } from "../api/deleteReview";
 
 const workingdayDict = {};
 workingdayDict["MON"] = "월요일";
@@ -90,14 +91,14 @@ const DivisionSpace = () => (
   />
 );
 
-const ReviewPhoto = () => (
+const ReviewPhoto = props => (
   <ScrollView
     horizontal={true}
     style={{
       marginBottom: verticalScale(20),
       flexDirection: "row",
     }}>
-    <View
+    {/* <View
       style={{
         width: 120,
         height: 120,
@@ -105,9 +106,38 @@ const ReviewPhoto = () => (
         borderRadius: 10,
         backgroundColor: "#d9d9d9",
         marginRight: scale(10),
+      }}> */}
+    <Image
+      style={{
+        width: 120,
+        height: 120,
+        // opacity: 0.15,
+        borderRadius: 10,
+        backgroundColor: "#d9d9d9",
+        marginRight: scale(10),
       }}
+      source={{ uri: props.imageDtoList[0].imageUrl }}
     />
-    <View style={{ justifyContent: "flex-end", marginRight: scale(10) }}>
+    {/* </View> */}
+    {props.imageDtoList.map((item, index) => {
+      if (index != 0) {
+        return (
+          <View style={{ justifyContent: "flex-end", marginRight: scale(10) }}>
+            <Image
+              style={{
+                width: 87.8,
+                height: 78.9,
+                // opacity: 0.15,
+                borderRadius: 10,
+                backgroundColor: "#d9d9d9",
+              }}
+              source={{ uri: item.imageUrl }}
+            />
+          </View>
+        );
+      }
+    })}
+    {/* <View style={{ justifyContent: "flex-end", marginRight: scale(10) }}>
       <View
         style={{
           width: 87.8,
@@ -139,7 +169,7 @@ const ReviewPhoto = () => (
           backgroundColor: "#d9d9d9",
         }}
       />
-    </View>
+    </View> */}
   </ScrollView>
 );
 
@@ -155,6 +185,9 @@ export default function DesignerProfile({ route }) {
   const [grayStar, setGrayStar] = useState([]);
   const [memberId, setMemberId] = useState(undefined);
   const [designerFlag, setDesignerFlag] = useState(undefined);
+  const [reviewId, setReviewId] = useState(undefined);
+  const [reviewerId, setReviewerId] = useState(undefined);
+  const [reviewIndex, setReviewIndex] = useState(undefined);
 
   const phoneNumber = "010-1234-1234";
 
@@ -230,12 +263,35 @@ export default function DesignerProfile({ route }) {
     }
   };
 
+  const fetchReview = async (prev, page) => {
+    try {
+      const result = await getReviewList(
+        page,
+        profileData.hairDesignerProfileDto.id,
+      );
+      console.log(result);
+      if (result.data.status == "OK") {
+        console.log(reviewPageNum);
+        console.log([...prev, ...result.data.result]);
+        setReviewData([...prev, ...result.data.result]);
+        setReviewPageNum(reviewPageNum + 1);
+      } else {
+        Alert.alert("데이터를 불러오는데 실패했습니다");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const fetchData = async () => {
     try {
       setError(null);
       setLoading(true);
       const response = await getDesignerProfileById(route.params.designerId);
-      if (response.data.status != "OK") {
+      if (response.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (response.data.status != "OK") {
         Alert.alert("데이터를 불러오는데 실패했습니다.");
       }
       console.log(response.data.result);
@@ -251,6 +307,7 @@ export default function DesignerProfile({ route }) {
       }
       console.log(response2);
       setReviewData(response2.data.result);
+      setReviewPageNum(reviewPageNum + 1);
       setMemberId(await readData("@MEMBER_ID"));
       setDesignerFlag(await readData("@DESIGNER_FLAG"));
     } catch (e) {
@@ -352,6 +409,9 @@ export default function DesignerProfile({ route }) {
         <TouchableOpacity
           style={{ height: verticalScale(24), justifyContent: "center" }}
           onPress={() => {
+            setReviewId(props.data.reviewDto.id);
+            setReviewerId(props.data.reviewDto.reviewerId);
+            setReviewIndex(props.index);
             setIsReviewModalVisible(true);
           }}>
           <MeatballIcon />
@@ -376,7 +436,10 @@ export default function DesignerProfile({ route }) {
           </Text>
         </View>
       </View>
-      <ReviewPhoto />
+      {props.data.imageDtoList.length != 0 && (
+        <ReviewPhoto imageDtoList={props.data.imageDtoList} />
+      )}
+
       <Text style={styles.review_contents}>{props.data.reviewDto.content}</Text>
       <View style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
         {props.data.hashtagDtoList.map((item, index) => (
@@ -393,6 +456,18 @@ export default function DesignerProfile({ route }) {
       </View>
     </View>
   );
+
+  const isCloseToBottom = ({
+    layoutMeasurement,
+    contentOffset,
+    contentSize,
+  }) => {
+    const paddingToBottom = 20;
+    return (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom
+    );
+  };
 
   useEffect(() => {
     console.log(route.params.designerId);
@@ -417,8 +492,13 @@ export default function DesignerProfile({ route }) {
           } else if (scroll >= reviewViewY) {
             setCurrentTab("review");
           }
+          if (isCloseToBottom(event.nativeEvent)) {
+            fetchReview(reviewData, reviewPageNum);
+            console.log("add review");
+          }
         }}
-        stickyHeaderIndices={[7]}>
+        stickyHeaderIndices={[7]}
+        scrollEventThrottle={400}>
         <Modal
           animationType={"slide"}
           transparent={true}
@@ -446,56 +526,58 @@ export default function DesignerProfile({ route }) {
                 borderTopRightRadius: 30,
                 paddingTop: verticalScale(40),
               }}>
-              {memberId != undefined && memberId == route.params.designerId && (
-                <>
-                  <TouchableOpacity
-                    style={{
-                      height: verticalScale(60),
-                      flexDirection: "row",
-                      paddingTop: verticalScale(20),
-                      paddingBottom: verticalScale(20),
-                      paddingLeft: scale(25),
-                    }}
-                    onPress={() => {
-                      setIsDesignerModalVisible(false);
-                      navigation.navigate("DesignerModify");
-                    }}>
-                    <View
+              {memberId != undefined &&
+                parseInt(memberId) == route.params.designerId && (
+                  <>
+                    <TouchableOpacity
                       style={{
-                        width: scale(35),
-                        height: "100%",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginRight: scale(10),
-                      }}>
-                      <ModifyIcon />
-                    </View>
-                    <View style={{ height: "100%", justifyContent: "center" }}>
-                      <Text
-                        style={{
-                          fontFamily: "Pretendard",
-                          fontSize: 15,
-                          fontWeight: "500",
-                          fontStyle: "normal",
-                          letterSpacing: -1,
-                          textAlign: "left",
-                          color: "rgba(255, 255, 255, 0.7)",
-                        }}>
-                        수정하기
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                  <View style={{ width: "100%", alignItems: "center" }}>
-                    <View
-                      style={{
-                        width: "89%",
-                        height: verticalScale(1),
-                        backgroundColor: "#333333",
+                        height: verticalScale(60),
+                        flexDirection: "row",
+                        paddingTop: verticalScale(20),
+                        paddingBottom: verticalScale(20),
+                        paddingLeft: scale(25),
                       }}
-                    />
-                  </View>
-                </>
-              )}
+                      onPress={() => {
+                        setIsDesignerModalVisible(false);
+                        navigation.navigate("DesignerModify");
+                      }}>
+                      <View
+                        style={{
+                          width: scale(35),
+                          height: "100%",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          marginRight: scale(10),
+                        }}>
+                        <ModifyIcon />
+                      </View>
+                      <View
+                        style={{ height: "100%", justifyContent: "center" }}>
+                        <Text
+                          style={{
+                            fontFamily: "Pretendard",
+                            fontSize: 15,
+                            fontWeight: "500",
+                            fontStyle: "normal",
+                            letterSpacing: -1,
+                            textAlign: "left",
+                            color: "rgba(255, 255, 255, 0.7)",
+                          }}>
+                          수정하기
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    <View style={{ width: "100%", alignItems: "center" }}>
+                      <View
+                        style={{
+                          width: "89%",
+                          height: verticalScale(1),
+                          backgroundColor: "#333333",
+                        }}
+                      />
+                    </View>
+                  </>
+                )}
               <TouchableOpacity
                 style={{
                   height: verticalScale(60),
@@ -541,52 +623,54 @@ export default function DesignerProfile({ route }) {
                   }}
                 />
               </View>
-              {memberId != undefined && memberId == route.params.designerId && (
-                <>
-                  <TouchableOpacity
-                    style={{
-                      height: verticalScale(60),
-                      flexDirection: "row",
-                      paddingTop: verticalScale(20),
-                      paddingBottom: verticalScale(20),
-                      paddingLeft: scale(25),
-                    }}>
-                    <View
+              {memberId != undefined &&
+                parseInt(memberId) == route.params.designerId && (
+                  <>
+                    <TouchableOpacity
                       style={{
-                        width: scale(35),
-                        height: "100%",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginRight: scale(10),
+                        height: verticalScale(60),
+                        flexDirection: "row",
+                        paddingTop: verticalScale(20),
+                        paddingBottom: verticalScale(20),
+                        paddingLeft: scale(25),
                       }}>
-                      <DeleteIcon />
-                    </View>
-                    <View style={{ height: "100%", justifyContent: "center" }}>
-                      <Text
+                      <View
                         style={{
-                          fontFamily: "Pretendard",
-                          fontSize: 15,
-                          fontWeight: "500",
-                          fontStyle: "normal",
-                          letterSpacing: -1,
-                          textAlign: "left",
-                          color: "rgba(255, 255, 255, 0.7)",
+                          width: scale(35),
+                          height: "100%",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          marginRight: scale(10),
                         }}>
-                        삭제하기
-                      </Text>
+                        <DeleteIcon />
+                      </View>
+                      <View
+                        style={{ height: "100%", justifyContent: "center" }}>
+                        <Text
+                          style={{
+                            fontFamily: "Pretendard",
+                            fontSize: 15,
+                            fontWeight: "500",
+                            fontStyle: "normal",
+                            letterSpacing: -1,
+                            textAlign: "left",
+                            color: "rgba(255, 255, 255, 0.7)",
+                          }}>
+                          삭제하기
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    <View style={{ width: "100%", alignItems: "center" }}>
+                      <View
+                        style={{
+                          width: "89%",
+                          height: verticalScale(1),
+                          backgroundColor: "#333333",
+                        }}
+                      />
                     </View>
-                  </TouchableOpacity>
-                  <View style={{ width: "100%", alignItems: "center" }}>
-                    <View
-                      style={{
-                        width: "89%",
-                        height: verticalScale(1),
-                        backgroundColor: "#333333",
-                      }}
-                    />
-                  </View>
-                </>
-              )}
+                  </>
+                )}
             </Animated.View>
           </View>
         </Modal>
@@ -684,12 +768,23 @@ export default function DesignerProfile({ route }) {
                     designerFlag != undefined &&
                     designerFlag == "0"
                   ) {
-                    const result = postRequest(
-                      profileData.hairDesignerProfileDto.id,
+                    postRequest(profileData.hairDesignerProfileDto.id).then(
+                      res => {
+                        console.log(res);
+                        if (res.data.result == undefined) {
+                          Alert.alert(
+                            "세션이 만료되었습니다. 다시 로그인 해주세요.",
+                          );
+                          navigation.navigate("Loading");
+                        } else if (res.data.status == "OK") {
+                          Alert.alert("추천서 요청이 완료되었습니다.");
+                        } else if (res.data.status == "CONFLICT") {
+                          Alert.alert("이미 추천서 요청을 보냈습니다.");
+                        } else {
+                          Alert.alert("추천서 요청에 실패했습니다.");
+                        }
+                      },
                     );
-                    if (result.data.status == "OK") {
-                      Alert.alert("추천서 요청이 완료되었습니다.");
-                    }
                   } else {
                     Alert.alert("추천서 요청은 고객만 가능합니다.");
                   }
@@ -715,7 +810,7 @@ export default function DesignerProfile({ route }) {
               <TouchableOpacity
                 style={styles.action_icon}
                 onPress={() => {
-                  if (profileData != undefined) {
+                  if (profileData != undefined && designerFlag == "0") {
                     console.log(
                       profileData.hairDesignerProfileDto.hairDesignerId,
                     );
@@ -726,6 +821,8 @@ export default function DesignerProfile({ route }) {
                       designerName: profileData.hairDesignerProfileDto.name,
                       designerImg: profileData.hairDesignerProfileDto.imageUrl,
                     });
+                  } else {
+                    Alert.alert("리뷰 작성은 고객만 가능합니다.");
                   }
                 }}>
                 <WriteIcon width={scale(19.1)} height={verticalScale(19.1)} />
@@ -1016,6 +1113,21 @@ export default function DesignerProfile({ route }) {
                     paddingTop: verticalScale(20),
                     paddingBottom: verticalScale(20),
                     paddingLeft: scale(35),
+                  }}
+                  onPress={() => {
+                    if (reviewerId == parseInt(memberId)) {
+                      console.log(reviewerId, memberId);
+                      console.log(reviewData[reviewIndex]);
+                      navigation.navigate("ReviewModify", {
+                        data: reviewData[reviewIndex],
+                        designerName: profileData.hairDesignerProfileDto.name,
+                        designerImg:
+                          profileData.hairDesignerProfileDto.imageUrl,
+                      });
+                      setIsReviewModalVisible(false);
+                    } else {
+                      Alert.alert("작성자만 수정 가능합니다.");
+                    }
                   }}>
                   <View style={{ height: "100%", justifyContent: "center" }}>
                     <Text
@@ -1047,6 +1159,9 @@ export default function DesignerProfile({ route }) {
                     paddingTop: verticalScale(20),
                     paddingBottom: verticalScale(20),
                     paddingLeft: scale(35),
+                  }}
+                  onPress={() => {
+                    Alert.alert("준비중");
                   }}>
                   <View style={{ height: "100%", justifyContent: "center" }}>
                     <Text
@@ -1078,6 +1193,32 @@ export default function DesignerProfile({ route }) {
                     paddingTop: verticalScale(20),
                     paddingBottom: verticalScale(20),
                     paddingLeft: scale(35),
+                  }}
+                  onPress={() => {
+                    if (reviewerId == parseInt(memberId)) {
+                      console.log(reviewerId, memberId);
+                      deleteReview(reviewId).then(res => {
+                        console.log(res);
+                        if (res.data.result == undefined) {
+                          Alert.alert(
+                            "세션이 만료되었습니다. 다시 로그인 해주세요.",
+                          );
+                          navigation.navigate("Loading");
+                        } else if (res.data.status == "OK") {
+                          setReviewData(
+                            reviewData.filter(
+                              item => item.reviewDto.id != reviewId,
+                            ),
+                          );
+                          Alert.alert("삭제 완료 했습니다.");
+                        } else {
+                          Alert.alert("삭제 실패");
+                        }
+                      });
+                      setIsReviewModalVisible(false);
+                    } else {
+                      Alert.alert("작성자만 삭제 가능합니다.");
+                    }
                   }}>
                   <View style={{ height: "100%", justifyContent: "center" }}>
                     <Text
@@ -1113,7 +1254,7 @@ export default function DesignerProfile({ route }) {
             {reviewData != undefined && (
               <>
                 {reviewData.map((review, index) => {
-                  console.log(review.reviewDto.totalRating);
+                  // console.log(review.reviewDto.totalRating);
                   let tempY = [];
                   for (
                     let i = 0;
@@ -1131,7 +1272,12 @@ export default function DesignerProfile({ route }) {
                     tempG.push(<GreyStar />);
                   }
                   return (
-                    <ReviewItem data={review} tempY={tempY} tempG={tempG} />
+                    <ReviewItem
+                      data={review}
+                      tempY={tempY}
+                      tempG={tempG}
+                      index={index}
+                    />
                   );
                 })}
               </>

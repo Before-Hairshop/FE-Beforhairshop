@@ -218,7 +218,10 @@ export default function DesignerRegistration() {
         schedule,
         phoneNumber,
       );
-      if (result.data.statud == "OK") {
+      if (result.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (result.data.statud == "OK") {
         console.log(result);
         // presigned url
         const url = await postDesignerProfileImg();
@@ -685,7 +688,6 @@ export default function DesignerRegistration() {
                   onChangeText={text => {
                     setPhoneNumber(text);
                   }}
-                  keyboardType="phone-pad"
                   style={styles.inputText}
                   autoCorrect={false}
                 />

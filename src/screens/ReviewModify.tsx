@@ -33,8 +33,8 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 import StarRating from "../components/common/StarRating";
 import ComplexityHeader from "../components/common/ComplexityHeader";
-import { postReview } from "../api/postReview";
-import { postReviewImg } from "../api/postReviewImg";
+import { patchReview } from "../api/patchReview";
+import { patchReviewImg } from "../api/patchReviewImg";
 
 const BASEWIDTH = 375;
 const BASEPADDING = 20;
@@ -87,7 +87,7 @@ const HeaderContents = () => {
   );
 };
 
-export default function Review({ route }) {
+export default function ReviewModify({ route }) {
   const resultLevel = ["별로에요", "그저 그랬어요", "만족스러워요"];
   const numHairRating = 3;
   const numDesignerRating = 3;
@@ -98,6 +98,7 @@ export default function Review({ route }) {
   const [tagInput, setTagInput] = useState("");
   const [hairTag, setHairTag] = useState([]);
   const [hairImage, setHairImage] = useState([]);
+  const [oldImg, setOldImg] = useState([]);
 
   const navigation = useNavigation();
 
@@ -153,8 +154,8 @@ export default function Review({ route }) {
     } else {
       console.log("완벽");
     }
-    const result = await postReview(
-      route.params.designerId,
+    const result = await patchReview(
+      route.params.data.reviewDto.id,
       starScore,
       hairRating + 1,
       designerRating + 1,
@@ -162,24 +163,39 @@ export default function Review({ route }) {
       hairTag,
     );
     console.log(result);
-    if (result.data.result == undefined) {
-      Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-      navigation.navigate("Loading");
-    } else if (result.data.status == "OK") {
-      const res = await postReviewImg(result.data.result.id, hairImage);
-      console.log(res);
-      if (res.data.status == "OK") {
-        navigation.navigate("NewMain");
-      } else {
-        Alert.alert("요청에 실패했습니다.");
-      }
+    const res = await patchReviewImg(
+      route.params.data.reviewDto.id,
+      hairImage,
+      oldImg,
+    );
+    console.log(res);
+    if (result.data.status == "OK" && res.data.status == "OK") {
+      navigation.navigate("NewMain");
     } else {
       Alert.alert("요청에 실패했습니다.");
     }
-    // navigation.navigate("DesignerProfile", {
-    //   designerId: route.params.designerId,
-    // });
   }
+
+  useEffect(() => {
+    console.log(route.params);
+    setStarScore(route.params.data.reviewDto.totalRating);
+    setHairRating(route.params.data.reviewDto.styleRating - 1);
+    setDesignerRating(route.params.data.reviewDto.serviceRating - 1);
+    setReview(route.params.data.reviewDto.content);
+    route.params.data.hashtagDtoList.map((item, index) => {
+      hairTag.push({
+        hashtag: item.hashtag,
+      });
+    });
+    route.params.data.imageDtoList.map((item, index) => {
+      hairImage.push({
+        uri: item.imageUrl,
+      });
+      oldImg.push({
+        uri: item.imageUrl,
+      });
+    });
+  }, []);
 
   return (
     <SafeAreaView style={styles.frame}>
@@ -201,7 +217,7 @@ export default function Review({ route }) {
                 textAlign: "left",
                 color: "#fc2a5b",
               }}>
-              등록
+              수정
             </Text>
           </TouchableOpacity>
         }

@@ -26,9 +26,6 @@ import WantedStyleButton from "../components/common/WantedStyleButton";
 import { Platform } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ComplexityHeader from "../components/common/ComplexityHeader";
-import { postUserProfile } from "../api/postUserProfile";
-import { postUserProfileImg } from "../api/postUserProfileImg";
-import { putS3Img } from "../api/putS3Img";
 import { getUserProfile } from "../api/getUserProfile";
 import { patchUserProfile } from "../api/patchUserProfile";
 import { patchUserProfileImg } from "../api/patchUserProfileImg";
@@ -166,9 +163,11 @@ export default function UserProfileModify() {
       // 이미지 업로드
       // console.log(profileImage);
       // console.log(wantHairImage);
-      // const url = await postUserProfileImg(profileImage, wantHairImage);
       // console.log(url);
-      if (result.data.status == "OK" && result2.data.status == "OK") {
+      if (result.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (result.data.status == "OK" && result2.data.status == "OK") {
         navigation.navigate("NewMain");
       } else {
         Alert.alert("프로필 수정에 실패했습니다.");
@@ -372,7 +371,6 @@ export default function UserProfileModify() {
                   onChangeText={text => setWantedStylingCost(text)}
                   placeholder="예) 30000"
                   placeholderTextColor="#555555"
-                  keyboardType="number-pad"
                   style={styles.highlightText}
                   autoCorrect={false}
                 />

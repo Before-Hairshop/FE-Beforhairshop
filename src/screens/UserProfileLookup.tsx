@@ -56,7 +56,10 @@ export default function UserProfileLookup({ route }) {
   async function fetchData() {
     const result = await getUserProfileById(route.params.userProfileId);
     console.log(result);
-    if (result.data.status == "OK") {
+    if (result.data.result == undefined) {
+      Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+      navigation.navigate("Loading");
+    } else if (result.data.status == "OK") {
       setProfileData(result.data.result);
     } else {
       Alert.alert("데이터를 불러오는데 실패했습니다.");
@@ -84,7 +87,7 @@ export default function UserProfileLookup({ route }) {
     return (
       <TouchableOpacity style={props.style} disabled>
         <Image
-          source={{ uri: wantHairImage[props.index] }}
+          source={{ uri: props.img.imageUrl }}
           style={{ width: "100%", aspectRatio: 1 }}
         />
       </TouchableOpacity>
@@ -322,13 +325,18 @@ export default function UserProfileLookup({ route }) {
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
               <View
                 style={{ flexDirection: "row", marginTop: verticalScale(12) }}>
-                {wantHairImage.map((item, index) => {
-                  return (
-                    <WantedStyleButton
-                      index={index}
-                      style={styles.wantStyleImage}></WantedStyleButton>
-                  );
-                })}
+                {profileData != undefined &&
+                  profileData.desiredHairstyleImageDtoList.map(
+                    (item, index) => {
+                      return (
+                        <WantedStyleButton
+                          index={index}
+                          img={item}
+                          style={styles.wantStyleImage}
+                        />
+                      );
+                    },
+                  )}
               </View>
             </View>
 
@@ -371,7 +379,6 @@ export default function UserProfileLookup({ route }) {
                   // onChangeText={text => setWantedStylingCost(text)}
                   placeholder="예) 30000"
                   placeholderTextColor={MAINCOLOR}
-                  keyboardType="number-pad"
                   style={styles.highlightText}></TextInput>
               </View>
             </View>
@@ -404,7 +411,6 @@ export default function UserProfileLookup({ route }) {
                   // onChangeText={text => setWantedStylingCost(text)}
                   // placeholder="예) 30000"
                   placeholderTextColor={MAINCOLOR}
-                  keyboardType="number-pad"
                   style={styles.highlightText}></TextInput>
               </View>
             </View>

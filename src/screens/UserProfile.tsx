@@ -110,7 +110,10 @@ export default function UserProfile() {
       console.log(wantHairImage);
       const url = await postUserProfileImg(profileImage, wantHairImage);
       console.log(url);
-      if (result.data.status == "OK" && url.data.status == "OK") {
+      if (result.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (result.data.status == "OK" && url.data.status == "OK") {
         navigation.navigate("Location");
       } else {
         Alert.alert("프로필 등록에 실패했습니다.");
@@ -313,7 +316,6 @@ export default function UserProfile() {
                   onChangeText={text => setWantedStylingCost(text)}
                   placeholder="예) 30000"
                   placeholderTextColor="#555555"
-                  keyboardType="number-pad"
                   style={styles.highlightText}
                   autoCorrect={false}
                 />

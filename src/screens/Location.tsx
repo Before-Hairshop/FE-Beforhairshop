@@ -1,4 +1,5 @@
 import {
+  Alert,
   PermissionsAndroid,
   Platform,
   StyleSheet,
@@ -57,7 +58,14 @@ export default function Location() {
     if (zip != undefined) {
       const response = await patchUserLocation(zip, addr, lati, longi);
       console.log(response);
-      navigation.navigate("NewMain");
+      if (response.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (response.data.status == "OK") {
+        navigation.navigate("NewMain");
+      } else {
+        Alert.alert("요청에 실패했습니다.");
+      }
     }
   }
 

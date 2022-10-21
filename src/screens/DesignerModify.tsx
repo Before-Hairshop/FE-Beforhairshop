@@ -215,6 +215,10 @@ export default function DesignerModify() {
         phoneNumber,
       );
       console.log(result);
+      if (result.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      }
       if (profileImage[0].blob != undefined) {
         console.log(profileImage[0].blob);
         const response = await patchDesignerProfileImg(profileImage[0].blob);
@@ -226,13 +230,6 @@ export default function DesignerModify() {
       } else if (result.data.status == "OK") {
         navigation.navigate("NewMain");
       }
-
-      // presigned url
-      // const url = await postDesignerProfileImg();
-      // console.log(url);
-      // console.log(profileImage[0]);
-      // const response = await putS3Img(url, profileImage[0].blob);
-      // console.log(response);
     } else {
       Alert.alert("필수 항목을 모두 작성해주세요.");
     }
@@ -240,7 +237,10 @@ export default function DesignerModify() {
 
   async function fetchData() {
     const { data } = await getDesignerProfileById(await readData("@MEMBER_ID"));
-    if (data.status == "OK") {
+    if (data.result == undefined) {
+      Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+      navigation.navigate("Loading");
+    } else if (data.status == "OK") {
       console.log(data.result);
       setName(data.result.hairDesignerProfileDto.name);
       setDescription(data.result.hairDesignerProfileDto.description);
@@ -740,7 +740,6 @@ export default function DesignerModify() {
                   onChangeText={text => {
                     setPhoneNumber(text);
                   }}
-                  keyboardType="phone-pad"
                   style={styles.inputText}
                   autoCorrect={false}
                 />

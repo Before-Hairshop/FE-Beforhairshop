@@ -1,6 +1,7 @@
 import {
   Alert,
   Image,
+  Modal,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -19,6 +20,8 @@ import MypageItem from "../components/mypage/MypageItem";
 import { useNavigation } from "@react-navigation/native";
 import { readData, removeData } from "../utils/asyncStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASEURL } from "../api/baseUrl";
+import { patchLogout } from "../api/patchLogout";
 
 export default function Mypage({ route }) {
   const [designerFlag, setDesignerFlag] = useState(undefined);
@@ -39,11 +42,15 @@ export default function Mypage({ route }) {
   }
 
   function logout() {
-    AsyncStorage.clear().then(() => {
-      navigation.navigate("Loading", {
-        reload: true,
-      });
+    patchLogout().then(res => {
+      console.log(res);
+      if (res.data.status == "OK") {
+        navigation.navigate("Loading");
+      } else {
+        Alert.alert("로그아웃 실패");
+      }
     });
+    // setModal(true);
     // await removeData("@SESSION_ID");
     // console.log(await readData("@SESSION_ID"));
   }

@@ -55,22 +55,37 @@ export default function Suggestion({ route }) {
   );
 
   const matchingAccept = id => {
-    patchRecommendAccept(id);
-    navigation.navigate("RecommendList", {
-      reload: true,
+    patchRecommendAccept(id).then(res => {
+      if (res.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (res.data.status == "OK") {
+        navigation.navigate("NewMain");
+      } else {
+        Alert.alert("요청에 실패했습니다.");
+      }
     });
   };
 
   const matchingReject = id => {
-    patchRecommendReject(id);
-    navigation.navigate("RecommendList", {
-      reload: true,
+    patchRecommendReject(id).then(res => {
+      if (res.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (res.data.status == "OK") {
+        navigation.navigate("NewMain");
+      } else {
+        Alert.alert("요청에 실패했습니다.");
+      }
     });
   };
 
   async function fetchData() {
     const result = await getRecommendation(route.params.recommendId);
-    if (result.data.status == "OK") {
+    if (result.data.result == undefined) {
+      Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+      navigation.navigate("Loading");
+    } else if (result.data.status == "OK") {
       console.log(result);
       setRecommendData(result.data.result);
     } else {

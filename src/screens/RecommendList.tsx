@@ -6,6 +6,7 @@ import {
   ScrollView,
   FlatList,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 
@@ -19,6 +20,7 @@ import Recommendation from "../components/recommendList/Recommendation";
 import { getRecommendListByUser } from "../api/getRecommendListByUser";
 import { readData } from "../utils/asyncStorage";
 import { getRecommendListByDesigner } from "../api/getRecommendListByDesigner";
+import { useNavigation } from "@react-navigation/native";
 
 export default function RecommendList({ route }) {
   const [approveIsOpen, setApproveIsOpen] = useState(false);
@@ -27,16 +29,28 @@ export default function RecommendList({ route }) {
   const [recommendList, setRecommendList] = useState(undefined);
   const [designerFlag, setDesignerFlag] = useState(undefined);
 
+  const navigation = useNavigation();
+
   async function fetchRecommendList() {
     setDesignerFlag(await readData("@DESIGNER_FLAG"));
     if ((await readData("@DESIGNER_FLAG")) == "0") {
       const response = await getRecommendListByUser();
-      setRecommendList(response.data.result);
-      console.log(response.data.result);
+      if (response.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (response.data.status == "OK") {
+        setRecommendList(response.data.result);
+        console.log(response.data.result);
+      }
     } else {
       const response = await getRecommendListByDesigner();
-      setRecommendList(response.data.result);
-      console.log(response.data.result);
+      if (response.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (response.data.status == "OK") {
+        setRecommendList(response.data.result);
+        console.log(response.data.result);
+      }
     }
   }
 
