@@ -13,32 +13,34 @@ const patchUserProfileImg = async (
     const B = wantHairImage.map(item => {
       return item.uri;
     });
-    console.log(A);
-    console.log(B);
     console.log(A.filter(n => !B.includes(n)));
     // console.log(B.filter(n => !A.includes(n)));
     const newArr = wantHairImage.filter(item => item.blob != undefined);
     console.log(newArr);
     const body = {
+      frontImageFlag: profileImage[0].blob == undefined ? 0 : 1,
+      sideImageFlag: profileImage[1].blob == undefined ? 0 : 1,
+      backImageFlag: profileImage[2].blob == undefined ? 0 : 1,
+      addDesiredHairstyleImageCount: newArr.length,
       deleteDesiredImageUrlList: A.filter(n => !B.includes(n)),
     };
-    const formData = new FormData();
-    A.filter(n => !B.includes(n)).map((item, index) =>
-      formData.append("deleteDesiredImageUrlList", item),
-    );
-    console.log(formData);
+    // const formData = new FormData();
+    // A.filter(n => !B.includes(n)).map((item, index) =>
+    //   formData.append("deleteDesiredImageUrlList", item),
+    // );
+    // console.log(formData);
     const result = await (
       await authInstance
-    ).patch("/api/v1/members/profiles/image", formData, {
+    ).patch("/api/v1/members/profiles/image", JSON.stringify(body), {
       headers: {
-        "Content-Type": "text/form-data",
+        "Content-Type": "application/json",
       },
-      params: {
-        front_image_flag: profileImage[0].blob == undefined ? 0 : 1,
-        side_image_flag: profileImage[1].blob == undefined ? 0 : 1,
-        back_image_flag: profileImage[2].blob == undefined ? 0 : 1,
-        add_desired_hairstyle_image_count: newArr.length,
-      },
+      // params: {
+      //   front_image_flag: profileImage[0].blob == undefined ? 0 : 1,
+      //   side_image_flag: profileImage[1].blob == undefined ? 0 : 1,
+      //   back_image_flag: profileImage[2].blob == undefined ? 0 : 1,
+      //   add_desired_hairstyle_image_count: newArr.length,
+      // },
     });
     if (result.data.result.frontPreSignedUrl != null) {
       putS3Img(result.data.result.frontPreSignedUrl, profileImage[0].blob);

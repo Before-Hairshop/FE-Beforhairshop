@@ -10,12 +10,16 @@ const axiosApi = () => {
 };
 
 const axiosAuthApi = async () => {
-  console.log(await readData("@SESSION_ID"));
+  // console.log(await readData("@SESSION_ID"));
+  // const instance = axios.create({
+  //   baseURL: BASEURL,
+  //   headers: {
+  //     Cookies: `SESSION=${await readData("@SESSION_ID")}`,
+  //   },
+  // });
+  // return instance;
   const instance = axios.create({
     baseURL: BASEURL,
-    headers: {
-      Cookies: `SESSION=${await readData("@SESSION_ID")}`,
-    },
   });
   return instance;
 };
