@@ -41,6 +41,14 @@ export default function Mypage({ route }) {
     }
   }
 
+  async function moveRegisterPage() {
+    if ((await readData("@DESIGNER_FLAG")) == "1") {
+      navigation.navigate("DesignerRegistration");
+    } else {
+      navigation.navigate("UserProfile");
+    }
+  }
+
   function logout() {
     patchLogout().then(res => {
       console.log(res);
@@ -249,6 +257,9 @@ export default function Mypage({ route }) {
               borderWidth: 1,
               borderColor: "rgba(255, 255, 255, 0)",
               alignItems: "center",
+            }}
+            onPress={() => {
+              moveRegisterPage();
             }}>
             <Text
               style={{

@@ -87,9 +87,9 @@ export default function DesignerList() {
         <Image
           source={{ uri: item.hairDesignerProfileDto.imageUrl }}
           style={{
-            width: "21%",
+            width: verticalScale(70),
             height: verticalScale(70),
-            borderRadius: 70,
+            borderRadius: verticalScale(70),
             borderWidth: 1,
             borderColor: "#373737",
           }}

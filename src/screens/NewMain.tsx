@@ -10,7 +10,7 @@ import {
 import React, { useEffect, useState } from "react";
 
 import { scale, verticalScale } from "../utils/scale";
-import DefaultPerson from "../assets/images/main/default_person.png";
+import DefaultPerson from "../assets/images/mypage/default_profile.png";
 import ToggleSwitch from "toggle-switch-react-native";
 // import DefaultPerson2 from "../assets/images/main/popular_thumbnail.jpeg";
 import ChatIcon from "../assets/icons/main/chat.svg";
@@ -346,29 +346,6 @@ export default function NewMain() {
               {props.profileData.desiredHairstyle}
             </Text>
           </View>
-          {/* <View
-              style={{
-                borderRadius: 100,
-                backgroundColor: "#ff2b64",
-                paddingTop: verticalScale(4),
-                paddingBottom: verticalScale(4),
-                paddingLeft: scale(7),
-                paddingRight: scale(7),
-                justifyContent: "center",
-              }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontSize: scale(12),
-                  fontWeight: "500",
-                  fontStyle: "normal",
-                  letterSpacing: -0.5,
-                  textAlign: "center",
-                  color: "#ffffff",
-                }}>
-                세팅펌
-              </Text>
-            </View> */}
           {/* </View> */}
         </View>
       </View>
@@ -474,10 +451,7 @@ export default function NewMain() {
       if (data.result.designerFlag == 1) {
         const result = await getDesignerProfile();
         console.log(result);
-        if (result.data.result == undefined) {
-          Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-          navigation.navigate("Loading");
-        } else if (result.data.status == "OK") {
+        if (result.data.status == "OK") {
           console.log(result.data.status);
           setProfileData(result.data.result);
           setProfileImg(result.data.result.imageUrl);
@@ -501,12 +475,67 @@ export default function NewMain() {
 
   return (
     <View style={styles.frame}>
-      {profileImg != undefined && profileData != undefined && (
+      {profileImg != undefined && profileData != undefined ? (
         <Header
           profileImg={profileImg}
           profileData={profileData}
           navigation={navigation}
         />
+      ) : (
+        <View
+          style={{
+            marginTop:
+              Platform.OS === "ios" ? verticalScale(40) : verticalScale(0),
+            height: verticalScale(70),
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <View
+            style={{
+              width: "89.4%",
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}>
+            <View style={{ justifyContent: "center" }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard-Bold",
+                  fontSize: verticalScale(18),
+                  fontWeight: "bold",
+                  fontStyle: "normal",
+                  letterSpacing: 0.07,
+                  textAlign: "left",
+                  color: "#ffffff",
+                }}>
+                BEFORE HAIRSHOP
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Mypage", {
+                  data: profileData,
+                });
+              }}>
+              <Image
+                source={DefaultPerson}
+                style={{
+                  width: scale(40),
+                  height: scale(40),
+                  borderRadius: scale(20),
+                  shadowColor: "rgba(0, 0, 0, 0.1)",
+                  shadowOffset: {
+                    width: 0,
+                    height: 10,
+                  },
+                  shadowRadius: 10,
+                  shadowOpacity: 1,
+                  borderWidth: 1,
+                  borderColor: "#191919",
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
       )}
       {designerFlag != undefined &&
       profileData != undefined &&
@@ -542,7 +571,11 @@ export default function NewMain() {
               borderColor: "rgba(255, 255, 255, 0)",
             }}
             onPress={() => {
-              navigation.navigate("DesignerRegistration");
+              if (designerFlag == "1") {
+                navigation.navigate("DesignerRegistration");
+              } else {
+                navigation.navigate("UserProfile");
+              }
             }}>
             <Text
               style={{
