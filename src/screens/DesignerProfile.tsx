@@ -1591,8 +1591,8 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(14.6),
   },
   review_tag: {
-    width: verticalScale(47),
-    height: verticalScale(18),
+    // width: verticalScale(47),
+    // height: verticalScale(18),
     borderRadius: 100,
     backgroundColor: "rgba(252, 42, 91, 0)",
     borderStyle: "solid",
@@ -1602,6 +1602,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: verticalScale(5.4),
     marginBottom: verticalScale(5.4),
+    padding: verticalScale(3),
   },
   review_tag_text: {
     fontFamily: "Pretendard",
