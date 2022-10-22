@@ -227,11 +227,7 @@ export default function DesignerRegistration() {
         console.log(url);
         const response = await putS3Img(url, profileImage[0].blob);
         console.log(response);
-        if (url.data.status == "OK" && response.status == 200) {
-          navigation.navigate("NewMain");
-        } else {
-          Alert.alert("프로필 등록에 실패했습니다.");
-        }
+        navigation.navigate("NewMain");
       } else {
         Alert.alert("프로필 등록에 실패했습니다.");
       }
