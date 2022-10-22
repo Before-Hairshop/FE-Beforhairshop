@@ -317,7 +317,7 @@ export default function DesignerList() {
               button={
                 <TouchableOpacity
                   onPress={() => {
-                    console.log();
+                    navigation.navigate("NewMain");
                   }}>
                   <GoHomeIcon />
                 </TouchableOpacity>
