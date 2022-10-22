@@ -326,6 +326,7 @@ export default function UserProfileLookup({ route }) {
               <View
                 style={{ flexDirection: "row", marginTop: verticalScale(12) }}>
                 {profileData != undefined &&
+                  profileData.desiredHairstyleImageDtoList != null &&
                   profileData.desiredHairstyleImageDtoList.map(
                     (item, index) => {
                       return (
