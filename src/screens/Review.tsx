@@ -151,34 +151,30 @@ export default function Review({ route }) {
     } else if (hairTag.length == 0) {
       Alert.alert("시술 받은 스타일을 입력해주세요");
     } else {
-      console.log("완벽");
-    }
-    const result = await postReview(
-      route.params.designerId,
-      starScore,
-      hairRating + 1,
-      designerRating + 1,
-      review,
-      hairTag,
-    );
-    console.log(result);
-    if (result.data.result == undefined) {
-      Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-      navigation.navigate("Loading");
-    } else if (result.data.status == "OK") {
-      const res = await postReviewImg(result.data.result.id, hairImage);
-      console.log(res);
-      if (res.data.status == "OK") {
-        navigation.navigate("NewMain");
+      const result = await postReview(
+        route.params.designerId,
+        starScore,
+        hairRating + 1,
+        designerRating + 1,
+        review,
+        hairTag,
+      );
+      console.log(result);
+      if (result.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (result.data.status == "OK") {
+        const res = await postReviewImg(result.data.result.id, hairImage);
+        console.log(res);
+        if (res.data.status == "OK") {
+          navigation.navigate("NewMain");
+        } else {
+          Alert.alert("요청에 실패했습니다.");
+        }
       } else {
         Alert.alert("요청에 실패했습니다.");
       }
-    } else {
-      Alert.alert("요청에 실패했습니다.");
     }
-    // navigation.navigate("DesignerProfile", {
-    //   designerId: route.params.designerId,
-    // });
   }
 
   return (

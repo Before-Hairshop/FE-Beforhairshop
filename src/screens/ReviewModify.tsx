@@ -152,27 +152,26 @@ export default function ReviewModify({ route }) {
     } else if (hairTag.length == 0) {
       Alert.alert("시술 받은 스타일을 입력해주세요");
     } else {
-      console.log("완벽");
-    }
-    const result = await patchReview(
-      route.params.data.reviewDto.id,
-      starScore,
-      hairRating + 1,
-      designerRating + 1,
-      review,
-      hairTag,
-    );
-    console.log(result);
-    const res = await patchReviewImg(
-      route.params.data.reviewDto.id,
-      hairImage,
-      oldImg,
-    );
-    console.log(res);
-    if (result.data.status == "OK" && res.data.status == "OK") {
-      navigation.navigate("NewMain");
-    } else {
-      Alert.alert("요청에 실패했습니다.");
+      const result = await patchReview(
+        route.params.data.reviewDto.id,
+        starScore,
+        hairRating + 1,
+        designerRating + 1,
+        review,
+        hairTag,
+      );
+      console.log(result);
+      const res = await patchReviewImg(
+        route.params.data.reviewDto.id,
+        hairImage,
+        oldImg,
+      );
+      console.log(res);
+      if (result.data.status == "OK" && res.data.status == "OK") {
+        navigation.navigate("NewMain");
+      } else {
+        Alert.alert("요청에 실패했습니다.");
+      }
     }
   }
 
