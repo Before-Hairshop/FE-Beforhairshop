@@ -70,8 +70,10 @@ const Header = props => (
           });
         }}>
         <Image
+          key={props.profileImg + new Date().getTime()}
           source={{
-            uri: props.profileImg != undefined ? props.profileImg : null,
+            uri: props.profileImg,
+            cache: "reload",
           }}
           style={{
             width: scale(40),
@@ -95,234 +97,189 @@ const Header = props => (
 
 const MainProfile = props => (
   <>
-    {props.designerFlag != undefined &&
-    props.profileData != undefined &&
-    props.profileImg != undefined ? (
-      <TouchableOpacity
-        style={{ alignItems: "center" }}
-        onPress={() => {
-          if (props.designerFlag == "1") {
-            props.navigation.navigate("DesignerProfile", {
-              designerId: props.profileData.hairDesignerId,
-            });
-          } else {
-            props.navigation.navigate("UserProfileLookup", {
-              userProfileId: props.profileData.id,
-            });
-          }
+    <TouchableOpacity
+      style={{ alignItems: "center" }}
+      onPress={() => {
+        if (props.designerFlag == "1") {
+          props.navigation.navigate("DesignerProfile", {
+            designerId: props.profileData.hairDesignerId,
+          });
+        } else {
+          props.navigation.navigate("UserProfileLookup", {
+            userProfileId: props.profileData.id,
+          });
+        }
+      }}>
+      <View
+        style={{
+          width: "89.4%",
+          paddingTop: verticalScale(20),
+          paddingBottom: verticalScale(20),
         }}>
+        <Text
+          style={{
+            fontFamily: "Pretendard",
+            fontSize: verticalScale(18),
+            fontWeight: "bold",
+            fontStyle: "normal",
+            textAlign: "left",
+            color: "#ffffff",
+          }}>
+          {props.profileData.name}
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontSize: verticalScale(15),
+              fontWeight: "bold",
+              fontStyle: "normal",
+              textAlign: "left",
+              color: "#ffffff",
+            }}>
+            {props.designerFlag == "1" ? " 디자이너 " : ""}
+          </Text>
+        </Text>
         <View
           style={{
-            width: "89.4%",
+            flexDirection: "row",
+            justifyContent: "space-between",
             paddingTop: verticalScale(20),
-            paddingBottom: verticalScale(20),
           }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: verticalScale(18),
-              fontWeight: "bold",
-              fontStyle: "normal",
-              textAlign: "left",
-              color: "#ffffff",
-            }}>
-            {props.profileData.name}
-            <Text
+          <View style={{ width: "27%" }}>
+            <Image
+              key={props.profileImg + new Date().getTime()}
+              source={{
+                uri: props.profileImg,
+                cache: "reload",
+              }}
               style={{
-                fontFamily: "Pretendard",
-                fontSize: verticalScale(15),
-                fontWeight: "bold",
-                fontStyle: "normal",
-                textAlign: "left",
-                color: "#ffffff",
-              }}>
-              {props.designerFlag == "1" ? " 디자이너 " : ""}
-            </Text>
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              paddingTop: verticalScale(20),
-            }}>
-            <View style={{ width: "27%" }}>
-              <Image
-                source={{
-                  uri: props.profileImg,
-                }}
-                style={{
-                  width: scale(70),
-                  height: scale(70),
-                  borderRadius: scale(35),
-                  borderWidth: scale(1),
-                  borderColor: "#323232",
-                }}
-              />
-            </View>
-            <View style={{ width: "73%", justifyContent: "space-around" }}>
-              {props.designerFlag == "1" ? (
-                <>
-                  <Text
-                    style={{
-                      fontFamily: "Pretendard",
-                      fontSize: scale(15),
-                      fontWeight: "500",
-                      fontStyle: "normal",
-                      letterSpacing: 0,
-                      textAlign: "left",
-                      color: "#c8c8c8",
-                    }}>
-                    {props.profileData.hairShopName}
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: "Pretendard",
-                      fontSize: scale(15),
-                      fontWeight: "500",
-                      fontStyle: "normal",
-                      letterSpacing: 0,
-                      textAlign: "left",
-                      color: "#c8c8c8",
-                    }}>
-                    {props.profileData.zipAddress}
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                    }}>
-                    <View style={{ justifyContent: "center" }}>
-                      <Text
-                        style={{
-                          fontFamily: "Pretendard",
-                          fontSize: scale(15),
-                          fontWeight: "500",
-                          fontStyle: "normal",
-                          letterSpacing: 0,
-                          textAlign: "center",
-                          color: "#c8c8c8",
-                        }}>
-                        모 발
-                      </Text>
-                    </View>
-                    <View
+                width: scale(70),
+                height: scale(70),
+                borderRadius: scale(35),
+                borderWidth: scale(1),
+                borderColor: "#323232",
+              }}
+            />
+          </View>
+          <View style={{ width: "73%", justifyContent: "space-around" }}>
+            {props.designerFlag == "1" ? (
+              <>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: scale(15),
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    letterSpacing: 0,
+                    textAlign: "left",
+                    color: "#c8c8c8",
+                  }}>
+                  {props.profileData.hairShopName}
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: scale(15),
+                    fontWeight: "500",
+                    fontStyle: "normal",
+                    letterSpacing: 0,
+                    textAlign: "left",
+                    color: "#c8c8c8",
+                  }}>
+                  {props.profileData.zipAddress}
+                </Text>
+              </>
+            ) : (
+              <>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}>
+                  <View style={{ justifyContent: "center" }}>
+                    <Text
                       style={{
-                        borderRadius: 100,
-                        backgroundColor: "#383838",
-                        paddingTop: verticalScale(4),
-                        paddingBottom: verticalScale(4),
-                        paddingLeft: scale(7),
-                        paddingRight: scale(7),
+                        fontFamily: "Pretendard",
+                        fontSize: scale(15),
+                        fontWeight: "500",
+                        fontStyle: "normal",
+                        letterSpacing: 0,
+                        textAlign: "center",
+                        color: "#c8c8c8",
                       }}>
-                      <Text
-                        style={{
-                          fontFamily: "Pretendard",
-                          fontSize: scale(12),
-                          fontWeight: "500",
-                          fontStyle: "normal",
-                          letterSpacing: -0.5,
-                          textAlign: "center",
-                          color: "#ffffff",
-                        }}>
-                        {hairConditionType[props.profileData.hairCondition]}
-                        {/* 매우 건강 */}
-                      </Text>
-                    </View>
+                      모 발
+                    </Text>
                   </View>
                   <View
                     style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
+                      borderRadius: 100,
+                      backgroundColor: "#383838",
+                      paddingTop: verticalScale(4),
+                      paddingBottom: verticalScale(4),
+                      paddingLeft: scale(7),
+                      paddingRight: scale(7),
                     }}>
-                    <View style={{ justifyContent: "center" }}>
-                      <Text
-                        style={{
-                          fontFamily: "Pretendard",
-                          fontSize: scale(15),
-                          fontWeight: "500",
-                          fontStyle: "normal",
-                          letterSpacing: 0,
-                          textAlign: "center",
-                          color: "#c8c8c8",
-                        }}>
-                        머리성향
-                      </Text>
-                    </View>
-                    <View
+                    <Text
                       style={{
-                        borderRadius: 100,
-                        backgroundColor: "#383838",
-                        paddingTop: verticalScale(4),
-                        paddingBottom: verticalScale(4),
-                        paddingLeft: scale(7),
-                        paddingRight: scale(7),
+                        fontFamily: "Pretendard",
+                        fontSize: scale(12),
+                        fontWeight: "500",
+                        fontStyle: "normal",
+                        letterSpacing: -0.5,
+                        textAlign: "center",
+                        color: "#ffffff",
                       }}>
-                      <Text
-                        style={{
-                          fontFamily: "Pretendard",
-                          fontSize: scale(12),
-                          fontWeight: "500",
-                          fontStyle: "normal",
-                          letterSpacing: -0.5,
-                          textAlign: "center",
-                          color: "#ffffff",
-                        }}>
-                        {hairTendencyType[props.profileData.hairTendency]}
-                        {/* 곱슬 */}
-                      </Text>
-                    </View>
+                      {hairConditionType[props.profileData.hairCondition]}
+                    </Text>
                   </View>
-                </>
-              )}
-            </View>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}>
+                  <View style={{ justifyContent: "center" }}>
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: scale(15),
+                        fontWeight: "500",
+                        fontStyle: "normal",
+                        letterSpacing: 0,
+                        textAlign: "center",
+                        color: "#c8c8c8",
+                      }}>
+                      머리성향
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      borderRadius: 100,
+                      backgroundColor: "#383838",
+                      paddingTop: verticalScale(4),
+                      paddingBottom: verticalScale(4),
+                      paddingLeft: scale(7),
+                      paddingRight: scale(7),
+                    }}>
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: scale(12),
+                        fontWeight: "500",
+                        fontStyle: "normal",
+                        letterSpacing: -0.5,
+                        textAlign: "center",
+                        color: "#ffffff",
+                      }}>
+                      {hairTendencyType[props.profileData.hairTendency]}
+                    </Text>
+                  </View>
+                </View>
+              </>
+            )}
           </View>
         </View>
-      </TouchableOpacity>
-    ) : (
-      <View
-        style={{ alignItems: "center", paddingVertical: verticalScale(20) }}>
-        <TouchableOpacity
-          style={{
-            width: "89.4%",
-            height: verticalScale(90),
-            justifyContent: "center",
-            paddingTop: verticalScale(20),
-            paddingBottom: verticalScale(20),
-            alignItems: "center",
-            backgroundColor: "#0c0c0c",
-            borderRadius: 15,
-            shadowColor: "rgba(0, 0, 0, 0.25)",
-            shadowOffset: {
-              width: 0,
-              height: 4,
-            },
-            shadowRadius: 10,
-            shadowOpacity: 1,
-            borderStyle: "solid",
-            borderWidth: 1,
-            borderColor: "rgba(255, 255, 255, 0)",
-          }}
-          onPress={() => {
-            props.navigation.navigate("DesignerRegistration");
-          }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: verticalScale(16),
-              fontWeight: "bold",
-              fontStyle: "normal",
-              letterSpacing: 0,
-              textAlign: "left",
-              color: "#ffffff",
-            }}>
-            프로필 등록하기
-          </Text>
-        </TouchableOpacity>
       </View>
-    )}
+    </TouchableOpacity>
   </>
 );
 
@@ -512,7 +469,6 @@ export default function NewMain() {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
         navigation.navigate("Loading");
       }
-      setProfileImg(data.result.imageUrl);
       console.log(data.result.designerFlag);
       storeData("@MEMBER_ID", String(data.result.id));
       if (data.result.designerFlag == 1) {
@@ -524,12 +480,14 @@ export default function NewMain() {
         } else if (result.data.status == "OK") {
           console.log(result.data.status);
           setProfileData(result.data.result);
+          setProfileImg(result.data.result.imageUrl);
         }
       } else {
         const result = await getUserProfile();
         if (result.data.status == "OK") {
-          console.log(result?.data.result.memberProfileDto);
+          console.log(result?.data.result);
           setProfileData(result?.data.result.memberProfileDto);
+          setProfileImg(result?.data.result.memberProfileDto.frontImageUrl);
           setToggle(
             result.data.result.memberProfileDto.matchingActivationFlag == 1
               ? true
@@ -543,34 +501,64 @@ export default function NewMain() {
 
   return (
     <View style={styles.frame}>
-      <Header
-        profileImg={profileImg}
-        profileData={profileData}
-        navigation={navigation}
-      />
-      {/* {profileImg != undefined && profileData != undefined && (
+      {profileImg != undefined && profileData != undefined && (
         <Header
           profileImg={profileImg}
           profileData={profileData}
           navigation={navigation}
         />
-      )} */}
-      <MainProfile
-        designerFlag={designerFlag}
-        profileData={profileData}
-        profileImg={profileImg}
-        navigation={navigation}
-      />
-      {/* {designerFlag != undefined &&
-        profileData != undefined &&
-        profileImg != undefined && (
-          <MainProfile
-            designerFlag={designerFlag}
-            profileData={profileData}
-            profileImg={profileImg}
-            navigation={navigation}
-          />
-        )} */}
+      )}
+      {designerFlag != undefined &&
+      profileData != undefined &&
+      profileImg != undefined ? (
+        <MainProfile
+          designerFlag={designerFlag}
+          profileData={profileData}
+          profileImg={profileImg}
+          navigation={navigation}
+        />
+      ) : (
+        <View
+          style={{ alignItems: "center", paddingVertical: verticalScale(20) }}>
+          <TouchableOpacity
+            style={{
+              width: "89.4%",
+              height: verticalScale(90),
+              justifyContent: "center",
+              paddingTop: verticalScale(20),
+              paddingBottom: verticalScale(20),
+              alignItems: "center",
+              backgroundColor: "#0c0c0c",
+              borderRadius: 15,
+              shadowColor: "rgba(0, 0, 0, 0.25)",
+              shadowOffset: {
+                width: 0,
+                height: 4,
+              },
+              shadowRadius: 10,
+              shadowOpacity: 1,
+              borderStyle: "solid",
+              borderWidth: 1,
+              borderColor: "rgba(255, 255, 255, 0)",
+            }}
+            onPress={() => {
+              navigation.navigate("DesignerRegistration");
+            }}>
+            <Text
+              style={{
+                fontFamily: "Pretendard",
+                fontSize: verticalScale(16),
+                fontWeight: "bold",
+                fontStyle: "normal",
+                letterSpacing: 0,
+                textAlign: "left",
+                color: "#ffffff",
+              }}>
+              프로필 등록하기
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
       {designerFlag != undefined && designerFlag == "0" && <BigContour />}
       {designerFlag != undefined && designerFlag == "1" && (
         <BigContour style={{ height: verticalScale(2) }} />

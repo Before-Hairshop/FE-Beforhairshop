@@ -202,8 +202,7 @@ export default function DesignerRegistration() {
       zipCode != "" &&
       specificLocation != "" &&
       schedule.length != 0 &&
-      phoneNumber != "" &&
-      profileImage[0].blob
+      phoneNumber != ""
     ) {
       // 프로필 생성
       const result = await postDesignerProfile(
@@ -226,10 +225,13 @@ export default function DesignerRegistration() {
         // presigned url
         const url = await postDesignerProfileImg();
         console.log(url);
-        console.log(profileImage[0]);
         const response = await putS3Img(url, profileImage[0].blob);
         console.log(response);
-        navigation.navigate("NewMain");
+        if (url.data.status == "OK" && response.status == 200) {
+          navigation.navigate("NewMain");
+        } else {
+          Alert.alert("프로필 등록에 실패했습니다.");
+        }
       } else {
         Alert.alert("프로필 등록에 실패했습니다.");
       }

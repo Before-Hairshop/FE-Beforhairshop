@@ -156,44 +156,44 @@ export default function Loading() {
     // }
   };
 
-  async function onNavigationStateChange(navigationState: WebViewNavigation) {
-    console.log(navigationState);
-    if (
-      navigationState.url == `${BASEURL}/#` ||
-      navigationState.url == `${BASEURL}/` ||
-      navigationState.url == "http://dev.beforehairshop.com/#" ||
-      navigationState.url == "http://dev.beforehairshop.com/"
-    ) {
-      const cookies = await CookieManager.get(`${BASEURL}#`);
-      console.log(cookies);
-      storeData("@SESSION_ID", cookies.SESSION.value);
-      setSocialLoginModalVisible(false);
-      await wait(1000);
-      try {
-        console.log(cookies.SESSION.value);
-        axios
-          .get(`${BASEURL}/api/v1/members`, {
-            headers: {
-              Cookies: `SESSION=${cookies.SESSION.value}`,
-            },
-          })
-          .then(result => {
-            console.log(result);
-            if (result.data.status == "BAD_REQUEST") {
-              navigation.navigate("ServiceTerms");
-            } else {
-              storeData(
-                "@DESIGNER_FLAG",
-                String(result.data.result.designerFlag),
-              );
-              navigation.navigate("NewMain");
-            }
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }
+  // async function onNavigationStateChange(navigationState: WebViewNavigation) {
+  //   console.log(navigationState);
+  //   if (
+  //     navigationState.url == `${BASEURL}/#` ||
+  //     navigationState.url == `${BASEURL}/` ||
+  //     navigationState.url == "http://dev.beforehairshop.com/#" ||
+  //     navigationState.url == "http://dev.beforehairshop.com/"
+  //   ) {
+  //     const cookies = await CookieManager.get(`${BASEURL}#`);
+  //     console.log(cookies);
+  //     storeData("@SESSION_ID", cookies.SESSION.value);
+  //     setSocialLoginModalVisible(false);
+  //     await wait(1000);
+  //     try {
+  //       console.log(cookies.SESSION.value);
+  //       axios
+  //         .get(`${BASEURL}/api/v1/members`, {
+  //           headers: {
+  //             Cookies: `SESSION=${cookies.SESSION.value}`,
+  //           },
+  //         })
+  //         .then(result => {
+  //           console.log(result);
+  //           if (result.data.status == "BAD_REQUEST") {
+  //             navigation.navigate("ServiceTerms");
+  //           } else {
+  //             storeData(
+  //               "@DESIGNER_FLAG",
+  //               String(result.data.result.designerFlag),
+  //             );
+  //             navigation.navigate("NewMain");
+  //           }
+  //         });
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  // }
 
   const callAPI = async () => {
     try {
@@ -293,7 +293,7 @@ export default function Loading() {
           </View>
         </Animated.View>
       </View>
-      <Modal
+      {/* <Modal
         animationType="slide"
         transparent={true}
         visible={socialLoginModalVisible}>
@@ -312,7 +312,7 @@ export default function Loading() {
             domStorageEnabled={true}
           />
         </SafeAreaView>
-      </Modal>
+      </Modal> */}
     </View>
   );
 }
