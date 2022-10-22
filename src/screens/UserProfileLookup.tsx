@@ -26,6 +26,7 @@ import SimpleHeader from "../components/common/SimpleHeader";
 import { readData } from "../utils/asyncStorage";
 import ComplexityHeader from "../components/common/ComplexityHeader";
 import { getUserProfileById } from "../api/getUserProfileById";
+import DefaultPerson from "../assets/images/default_user.png";
 
 const numHairStatus = 3;
 const numHairTendency = 5;
@@ -75,10 +76,14 @@ export default function UserProfileLookup({ route }) {
   const ImageUploadButton = props => {
     return (
       <TouchableOpacity style={props.style} disabled>
-        <Image
-          source={{ uri: props.uri }}
-          style={{ width: "100%", aspectRatio: 1 }}
-        />
+        {props.uri != null ? (
+          <Image
+            source={{ uri: props.uri }}
+            style={{ width: "100%", aspectRatio: 1 }}
+          />
+        ) : (
+          <Image source={DefaultPerson} style={{ width: "100%" }} />
+        )}
       </TouchableOpacity>
     );
   };
@@ -374,7 +379,7 @@ export default function UserProfileLookup({ route }) {
                   editable={false}
                   value={
                     profileData != undefined
-                      ? profileData.memberProfileDto.payableAmount.toLocaleString()
+                      ? `${profileData.memberProfileDto.payableAmount.toLocaleString()}원`
                       : null
                   }
                   // onChangeText={text => setWantedStylingCost(text)}
@@ -386,7 +391,6 @@ export default function UserProfileLookup({ route }) {
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
               <Text style={styles.itemTextStyle}>시술 받을 날짜</Text>
-
               <View style={styles.userTextUnderline}>
                 <TextInput
                   editable={false}
@@ -394,9 +398,19 @@ export default function UserProfileLookup({ route }) {
                     profileData != undefined
                       ? profileData.memberProfileDto.treatmentDate.substring(
                           0,
+                          4,
+                        ) +
+                        "년 " +
+                        profileData.memberProfileDto.treatmentDate.substring(
+                          5,
+                          7,
+                        ) +
+                        "월 " +
+                        profileData.memberProfileDto.treatmentDate.substring(
+                          8,
                           10,
                         ) +
-                        " " +
+                        "일 " +
                         profileData.memberProfileDto.treatmentDate.substring(
                           11,
                           13,
