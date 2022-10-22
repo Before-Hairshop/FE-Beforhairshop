@@ -41,21 +41,26 @@ export default function Answer({ route }) {
     console.log(route.params.treatmentDate.substring(0, 16));
     if (greetings != "") {
       suggestionList.map((data, index) => {
-        const result = postRecommendation(
-          route.params.memberId,
+        console.log(data);
+        postRecommendation(
+          route.params.memberProfileId,
           greetings,
           data.hairstyleName,
           data.reason,
           data.price,
           route.params.treatmentDate.substring(0, 16),
-        );
-        console.log(result);
-        if (result.data.result == undefined) {
-          Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-          navigation.navigate("Loading");
-        }
+        ).then(res => {
+          console.log(res);
+          if (res.data.result == undefined) {
+            Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+            navigation.navigate("Loading");
+          } else if (res.data.status == "OK") {
+            navigation.navigate("NewMain");
+          } else {
+            Alert.alert("요청에 실패했습니다.");
+          }
+        });
       });
-      navigation.navigate("NewMain");
     } else {
       Alert.alert("필수 항목을 모두 작성해주세요.");
     }
@@ -231,7 +236,7 @@ export default function Answer({ route }) {
               marginTop: 12,
               alignItems: "flex-start",
               width: "88.9%",
-              paddingBottom: verticalScale(120),
+              paddingBottom: verticalScale(300),
             }}>
             <Text style={styles.itemTextStyle}>
               인사말<Text style={{ color: "red" }}> *</Text>

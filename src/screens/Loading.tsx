@@ -7,6 +7,7 @@ import {
   Modal,
   SafeAreaView,
   Platform,
+  Image,
 } from "react-native";
 import React, { createRef, useEffect, useRef } from "react";
 import { useState } from "react";
@@ -38,6 +39,7 @@ import {
 import { postKakaoLogin } from "../api/postKakaoLogin";
 import { getMemberSession } from "../api/getMemberSession";
 import { postAppleLogin } from "../api/postAppleLogin";
+import AppLogo from "../assets/icons/BeforeHairshopLogo.png";
 
 const socialLoginURI = {
   google: `${BASEURL}/oauth2/authorization/google`,
@@ -253,12 +255,16 @@ export default function Loading() {
             {
               bottom: opacity.interpolate({
                 inputRange: [0, 1],
-                outputRange: [0, verticalScale(200)],
+                outputRange: [0, verticalScale(100)],
               }),
             },
           ]}>
-          <Text style={styles.mainText}>BEFORE</Text>
-          <Text style={styles.mainText}>HAIRSHOP</Text>
+          <Image
+            style={{ width: verticalScale(250), height: verticalScale(250) }}
+            source={AppLogo}
+          />
+          {/* <Text style={styles.mainText}>BEFORE</Text>
+          <Text style={styles.mainText}>HAIRSHOP</Text> */}
         </Animated.View>
       </View>
       <View style={styles.icon_animation_container}>

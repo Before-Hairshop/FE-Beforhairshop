@@ -148,7 +148,7 @@ export default function UserProfile() {
       />
       <ScrollView>
         <View
-          style={{ alignItems: "center", paddingBottom: verticalScale(120) }}>
+          style={{ alignItems: "center", paddingBottom: verticalScale(300) }}>
           <View style={{ width: "88.9%" }}>
             <View style={{ alignItems: "center" }}>
               <View style={{ flexDirection: "row" }}>

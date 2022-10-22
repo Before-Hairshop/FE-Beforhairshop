@@ -209,48 +209,29 @@ export default function Suggestion({ route }) {
               분석한 결과, 포마드 헤어스타일이 잘 어울릴 것 같아요! 제가 시술한
               헤어스타일들을 보시고, 괜찮으시면 저에게 연락주세요. 감사합니다. */}
             </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                marginTop: verticalScale(10),
-              }}>
-              <Image
-                source={DefaultImg}
-                style={{
-                  width: "30%",
-                  aspectRatio: 1,
-                  marginHorizontal: verticalScale(4),
-                  borderRadius: 10,
-                  overflow: "hidden",
-                  borderWidth: 1,
-                  borderColor: "#373737",
-                }}
-              />
-              <Image
-                source={DefaultImg}
-                style={{
-                  width: "30%",
-                  aspectRatio: 1,
-                  marginHorizontal: verticalScale(4),
-                  borderRadius: 10,
-                  overflow: "hidden",
-                  borderWidth: 1,
-                  borderColor: "#373737",
-                }}
-              />
-              <Image
-                source={DefaultImg}
-                style={{
-                  width: "30%",
-                  aspectRatio: 1,
-                  marginHorizontal: verticalScale(4),
-                  borderRadius: 10,
-                  overflow: "hidden",
-                  borderWidth: 1,
-                  borderColor: "#373737",
-                }}
-              />
-            </View>
+            {recommendData != undefined &&
+              recommendData.recommendImageDtoList != null && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    marginTop: verticalScale(10),
+                  }}>
+                  {recommendData.recommendImageDtoList.map((item, index) => (
+                    <Image
+                      source={{ uri: item.imageUrl }}
+                      style={{
+                        width: "30%",
+                        aspectRatio: 1,
+                        marginHorizontal: verticalScale(4),
+                        borderRadius: 10,
+                        overflow: "hidden",
+                        borderWidth: 1,
+                        borderColor: "#373737",
+                      }}
+                    />
+                  ))}
+                </View>
+              )}
           </View>
           <View style={{ marginTop: verticalScale(18) }}>
             <UnderLineContent value="시술 날짜" fontSize={scale(20)} />

@@ -225,7 +225,7 @@ export default function ReviewModify({ route }) {
       {/* <Header contents={<HeaderContents></HeaderContents>}></Header> */}
       <ScrollView>
         <View
-          style={{ alignItems: "center", paddingBottom: verticalScale(120) }}>
+          style={{ alignItems: "center", paddingBottom: verticalScale(300) }}>
           <View style={{ width: "88.9%" }}>
             <View style={{ alignItems: "center", margin: verticalScale(10) }}>
               <ImageBackground

@@ -221,7 +221,7 @@ export default function DesignerRegistration() {
       if (result.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
         navigation.navigate("Loading");
-      } else if (result.data.statud == "OK") {
+      } else if (result.data.status == "OK") {
         console.log(result);
         // presigned url
         const url = await postDesignerProfileImg();
@@ -265,7 +265,7 @@ export default function DesignerRegistration() {
       />
       <ScrollView>
         <View
-          style={{ alignItems: "center", paddingBottom: verticalScale(120) }}>
+          style={{ alignItems: "center", paddingBottom: verticalScale(300) }}>
           <View style={{ width: "88.9%" }}>
             <View style={{ alignItems: "center" }}>
               <View style={{ flexDirection: "row" }}>

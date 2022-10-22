@@ -145,7 +145,7 @@ export default function UserProfileLookup({ route }) {
               }}
               onPress={() =>
                 navigation.navigate("Answer", {
-                  memberId: profileData.memberProfileDto.memberId,
+                  memberProfileId: profileData.memberProfileDto.id,
                   treatmentDate: profileData.memberProfileDto.treatmentDate,
                 })
               }>

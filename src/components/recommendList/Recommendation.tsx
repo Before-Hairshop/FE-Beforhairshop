@@ -51,7 +51,7 @@ export default function Recommendation(props) {
                 }}>
                 <View style={{ justifyContent: "center" }}>
                   <Image
-                    source={{ uri: props.data.designerName }}
+                    source={{ uri: props.data.designerImage }}
                     // source={DefaultDesignerImg}
                     style={{
                       width: scale(40),
