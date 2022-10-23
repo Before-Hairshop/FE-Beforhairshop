@@ -345,7 +345,7 @@ export default function UserProfile() {
                       fontWeight: "normal",
                       fontStyle: "normal",
                       textAlign: "left",
-                      color: "#555555",
+                      color: "#ffffff",
                     }}>
                     {stylingDate != undefined
                       ? `${stylingDate.getFullYear()}. ${
@@ -385,7 +385,7 @@ export default function UserProfile() {
                       fontWeight: "normal",
                       fontStyle: "normal",
                       textAlign: "left",
-                      color: "#555555",
+                      color: "#ffffff",
                     }}>
                     {stylingTime != undefined
                       ? `${stylingTime.getHours()}시 ${stylingTime.getMinutes()}분`
@@ -409,7 +409,15 @@ export default function UserProfile() {
             </View>
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
               <Text style={styles.itemTextStyle}>
-                전화번호 <Text style={{ color: "red" }}> *</Text>
+                전화번호 <Text style={{ color: "red" }}> * </Text>
+                <Text
+                  style={{
+                    fontFamily: "Pretendard",
+                    fontSize: scale(10),
+                    color: "#6e6e6e",
+                  }}>
+                  매칭 성공시 디자이너에게 전달됩니다.
+                </Text>
               </Text>
 
               <View style={styles.userTextUnderline}>

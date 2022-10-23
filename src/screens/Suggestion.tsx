@@ -284,6 +284,25 @@ export default function Suggestion({ route }) {
                 recommendData.recommendDto.price.toLocaleString() + "원"}
             </Text>
           </View>
+          {recommendData != undefined &&
+            recommendData.recommendDto.recommendStatus == 2 && (
+              <View style={{ marginTop: verticalScale(18) }}>
+                <UnderLineContent value={"고객 연락처"} fontSize={scale(20)} />
+                <Text
+                  style={{
+                    marginTop: verticalScale(15),
+                    fontFamily: "Pretendard",
+                    fontSize: scale(17),
+                    fontWeight: "normal",
+                    fontStyle: "normal",
+                    lineHeight: 22,
+                    textAlign: "left",
+                    color: "#eeeeee",
+                  }}>
+                  {recommendData.userPhoneNumber}
+                </Text>
+              </View>
+            )}
         </View>
       </ScrollView>
       {recommendData != undefined &&

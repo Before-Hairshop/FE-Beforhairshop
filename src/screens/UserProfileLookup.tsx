@@ -315,8 +315,6 @@ export default function UserProfileLookup({ route }) {
               <Text style={styles.itemTextStyle}>원하는 스타일</Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
-                  placeholder="예) 투블럭"
-                  placeholderTextColor={MAINCOLOR}
                   value={
                     profileData != undefined
                       ? profileData.memberProfileDto.desiredHairstyle
@@ -358,9 +356,6 @@ export default function UserProfileLookup({ route }) {
                       ? profileData.memberProfileDto.desiredHairstyleDescription
                       : null
                   }
-                  onChangeText={text => setWantedStyleDescription(text)}
-                  placeholder="자유롭게 작성해주세요."
-                  placeholderTextColor={MAINCOLOR}
                   multiline
                   numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
                   minHeight={
@@ -382,9 +377,6 @@ export default function UserProfileLookup({ route }) {
                       ? `${profileData.memberProfileDto.payableAmount.toLocaleString()}원`
                       : null
                   }
-                  // onChangeText={text => setWantedStylingCost(text)}
-                  placeholder="예) 30000"
-                  placeholderTextColor={MAINCOLOR}
                   style={styles.highlightText}></TextInput>
               </View>
             </View>
@@ -423,9 +415,6 @@ export default function UserProfileLookup({ route }) {
                         "분"
                       : null
                   }
-                  // onChangeText={text => setWantedStylingCost(text)}
-                  // placeholder="예) 30000"
-                  placeholderTextColor={MAINCOLOR}
                   style={styles.highlightText}></TextInput>
               </View>
             </View>

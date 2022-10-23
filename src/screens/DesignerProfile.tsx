@@ -1405,14 +1405,15 @@ const styles = StyleSheet.create({
     marginBottom: verticalScale(10.5),
   },
   introduction_tag: {
-    width: verticalScale(54),
-    height: verticalScale(22),
+    // width: verticalScale(54),
+    // height: verticalScale(22),
     borderRadius: 100,
     backgroundColor: "#fc2a5b",
     alignItems: "center",
     justifyContent: "center",
     marginRight: verticalScale(8),
     marginBottom: verticalScale(8),
+    padding: verticalScale(3),
   },
   introduction_tag_text: {
     fontFamily: "Pretendard",
