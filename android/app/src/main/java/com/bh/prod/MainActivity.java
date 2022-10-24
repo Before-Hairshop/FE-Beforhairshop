@@ -1,4 +1,4 @@
-package com.bh;
+package com.bh.prod;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
