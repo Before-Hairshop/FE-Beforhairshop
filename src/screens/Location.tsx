@@ -66,6 +66,8 @@ export default function Location() {
       } else {
         Alert.alert("요청에 실패했습니다.");
       }
+    } else {
+      Alert.alert("유효한 위치로 설정해주세요.");
     }
   }
 

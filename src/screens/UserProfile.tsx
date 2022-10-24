@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   SafeAreaView,
   ScrollView,
@@ -51,6 +52,7 @@ export default function UserProfile() {
   const [stylingTime, setStylingTime] = useState(undefined);
   const [phoneNumber, setPhoneNumber] = useState(undefined);
   const [nickname, setNickname] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const hairStatus = ["많이 상했어요", "보통이에요", "매우 건강해요"];
   const hairTendency = ["심한 곱슬", "곱슬", "반곱슬", "반직모", "직모"];
@@ -65,6 +67,7 @@ export default function UserProfile() {
   // }, []);
 
   const saveProfile = async () => {
+    setLoading(true);
     console.log(nickname); // 닉네임
     console.log(hairStatusIndex); // 모발상태
     console.log(hairTendencyIndex); // 머리성향
@@ -77,20 +80,28 @@ export default function UserProfile() {
     console.log(wantHairImage);
     if (profileImage[0] == "") {
       Alert.alert("정면 이미지를 첨부해주세요");
+      setLoading(false);
     } else if (nickname == "") {
       Alert.alert("닉네임을 입력해주세요");
+      setLoading(false);
     } else if (hairStatusIndex == -1) {
       Alert.alert("모발 상태를 선택해주세요");
+      setLoading(false);
     } else if (hairTendencyIndex == -1) {
       Alert.alert("머리 성향을 선택해주세요");
+      setLoading(false);
     } else if (wantedStyleDescription == "") {
       Alert.alert("원하는 스타일을 설명해주세요");
+      setLoading(false);
     } else if (wantedStylingCost == "") {
       Alert.alert("원하는 스타일링 비용을 입력해주세요");
+      setLoading(false);
     } else if (stylingDate == undefined || stylingTime == undefined) {
       Alert.alert("시술일정을 선택해주세요");
+      setLoading(false);
     } else if (phoneNumber == undefined) {
       Alert.alert("전화번호를 입력해주세요");
+      setLoading(false);
     } else {
       // 프로필 생성
       const result = await postUserProfile(
@@ -118,6 +129,7 @@ export default function UserProfile() {
       } else {
         Alert.alert("프로필 등록에 실패했습니다.");
       }
+      setLoading(false);
     }
   };
 
@@ -434,6 +446,22 @@ export default function UserProfile() {
           </View>
         </View>
       </ScrollView>
+      {loading && (
+        <View
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            opacity: 0.6,
+            backgroundColor: "black",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+          <ActivityIndicator color={"#ffffff"} />
+        </View>
+      )}
     </SafeAreaView>
   );
 }

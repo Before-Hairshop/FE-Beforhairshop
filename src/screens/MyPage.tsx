@@ -22,6 +22,7 @@ import { readData, removeData } from "../utils/asyncStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASEURL } from "../api/baseUrl";
 import { patchLogout } from "../api/patchLogout";
+import { deleteMember } from "../api/deleteMember";
 
 export default function Mypage({ route }) {
   const [designerFlag, setDesignerFlag] = useState(undefined);
@@ -52,7 +53,10 @@ export default function Mypage({ route }) {
   function logout() {
     patchLogout().then(res => {
       console.log(res);
-      if (res.data.status == "OK") {
+      if (res.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (res.data.status == "OK") {
         navigation.navigate("Loading");
       } else {
         Alert.alert("로그아웃 실패");
@@ -61,6 +65,21 @@ export default function Mypage({ route }) {
     // setModal(true);
     // await removeData("@SESSION_ID");
     // console.log(await readData("@SESSION_ID"));
+  }
+
+  function resignMember() {
+    deleteMember().then(res => {
+      console.log(res);
+      if (res.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading");
+      } else if (res.data.status == "OK") {
+        Alert.alert("회원탈퇴가 완료되었습니다.");
+        navigation.navigate("Loading");
+      } else {
+        Alert.alert("회원탈퇴 실패");
+      }
+    });
   }
 
   useEffect(() => {
@@ -309,7 +328,15 @@ export default function Mypage({ route }) {
         title="회원탈퇴"
         navigate="Main"
         action={() => {
-          Alert.alert("준비중");
+          Alert.alert("회원탈퇴", "정말로 탈퇴하시겠습니까?", [
+            { text: "취소" },
+            {
+              text: "탈퇴",
+              onPress: () => {
+                resignMember();
+              },
+            },
+          ]);
         }}
       />
     </SafeAreaView>

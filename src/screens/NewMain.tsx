@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 
@@ -87,7 +88,7 @@ const Header = props => (
             shadowRadius: 10,
             shadowOpacity: 1,
             borderWidth: 1,
-            borderColor: "#545454",
+            borderColor: "#191919",
           }}
         />
       </TouchableOpacity>
@@ -288,6 +289,7 @@ export default function NewMain() {
   const [designerFlag, setDesignerFlag] = useState(undefined);
   const [profileData, setProfileData] = useState(undefined);
   const [profileImg, setProfileImg] = useState(undefined);
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -343,7 +345,10 @@ export default function NewMain() {
                 textAlign: "center",
                 color: "#ffffff",
               }}>
-              {props.profileData.desiredHairstyle}
+              {props.profileData.desiredHairstyle != null &&
+              props.profileData.desiredHairstyle.length != 0
+                ? props.profileData.desiredHairstyle
+                : "스타일을 추천받고 싶어요"}
             </Text>
           </View>
           {/* </View> */}
@@ -373,7 +378,7 @@ export default function NewMain() {
               textAlign: "left",
               color: "#c8c8c8",
             }}>
-            지불 가능 비용
+            원하는 스타일링 비용
           </Text>
           <Text
             style={{
@@ -455,6 +460,7 @@ export default function NewMain() {
           console.log(result.data.status);
           setProfileData(result.data.result);
           setProfileImg(result.data.result.imageUrl);
+          // setLoading(false);
         }
       } else {
         const result = await getUserProfile();
@@ -467,6 +473,7 @@ export default function NewMain() {
               ? true
               : false,
           );
+          // setLoading(false);
         }
       }
     }
@@ -765,6 +772,22 @@ export default function NewMain() {
           </View>
         </TouchableOpacity>
       </View>
+      {/* {loading && (
+        <View
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            opacity: 0.6,
+            backgroundColor: "black",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+          <ActivityIndicator color={"#ffffff"} />
+        </View>
+      )} */}
     </View>
   );
 }

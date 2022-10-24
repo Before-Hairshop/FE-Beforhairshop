@@ -11,6 +11,7 @@ import {
   Linking,
   Alert,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 
@@ -114,6 +115,7 @@ export default function DesignerRegistration() {
   const [isEndTime, setIsEndTime] = useState(false);
   const [endTime, setEndTime] = useState("영업 종료 시간");
   const [isDatepickerShown, setIsDatePickerShown] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
 
@@ -182,6 +184,7 @@ export default function DesignerRegistration() {
   };
 
   const saveProfile = async () => {
+    setLoading(true);
     console.log(name);
     console.log(description);
     console.log(hairTag);
@@ -231,8 +234,10 @@ export default function DesignerRegistration() {
       } else {
         Alert.alert("프로필 등록에 실패했습니다.");
       }
+      setLoading(false);
     } else {
       Alert.alert("필수 항목을 모두 작성해주세요.");
+      setLoading(false);
     }
   };
 
@@ -722,6 +727,22 @@ export default function DesignerRegistration() {
         setLocation={setLocation}
         setZipCode={setZipCode}
       />
+      {loading && (
+        <View
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            opacity: 0.6,
+            backgroundColor: "black",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+          <ActivityIndicator color={"#ffffff"} />
+        </View>
+      )}
     </SafeAreaView>
   );
 }
