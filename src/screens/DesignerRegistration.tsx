@@ -293,11 +293,11 @@ export default function DesignerRegistration() {
 
             <View style={{ marginTop: 12 }}>
               <Text style={styles.itemTextStyle}>
-                이름<Text style={{ color: "red" }}> *</Text>
+                디자이너 이름<Text style={{ color: "red" }}> *</Text>
               </Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
-                  placeholder="이름을 작성해주세요."
+                  placeholder="디자이너 이름을 작성해주세요."
                   placeholderTextColor={GRAYCOLOR}
                   defaultValue={name}
                   onEndEditing={e => {
