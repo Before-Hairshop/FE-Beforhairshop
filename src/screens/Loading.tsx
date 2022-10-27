@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   Platform,
   Image,
+  Alert,
 } from "react-native";
 import React, { createRef, useEffect, useRef } from "react";
 import { useState } from "react";
@@ -59,6 +60,8 @@ const opacity = new Animated.Value(0);
 export default function Loading() {
   const [socialLoginModalVisible, setSocialLoginModalVisible] = useState(false);
   const [loginType, setLoginType] = useState("");
+  const [res, setRes] = useState<string>("");
+  const [pro, setPro] = useState<string>("");
 
   const navigation = useNavigation();
   const webViewRef = createRef<WebView>();
@@ -74,14 +77,21 @@ export default function Loading() {
       // });
 
       const token = await loginWithKakaoAccount();
+      // const token = await login();
+      // setRes(JSON.stringify(token));
+      // Alert.alert(token);
       console.log(token);
       const profile = await getKakaoProfile();
+      // setPro(JSON.stringify(profile));
+      // Alert.alert(profile);
       console.log(profile);
       const result = await postKakaoLogin(
         profile.id,
         profile.email,
         token.accessToken,
       );
+      // setRes(res.concat(result.toString()));
+      // Alert.alert(result);
       console.log(result);
       if (result.data.result.status == 0) {
         navigation.navigate("ServiceTerms");
@@ -263,6 +273,8 @@ export default function Loading() {
             style={{ width: verticalScale(250), height: verticalScale(250) }}
             source={AppLogo}
           />
+          {/* <Text style={{ color: "white" }}>{res}</Text>
+          <Text style={{ color: "white" }}>{pro}</Text> */}
           {/* <Text style={styles.mainText}>BEFORE</Text>
           <Text style={styles.mainText}>HAIRSHOP</Text> */}
         </Animated.View>
