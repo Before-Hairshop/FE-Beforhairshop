@@ -4,12 +4,14 @@ const postAppleLogin = async (
   providerId: any,
   email: any,
   accessToken: any,
+  deviceToken: any,
 ) => {
   try {
     const body = {
       providerId: providerId,
       email: email,
       accessToken: accessToken,
+      deviceToken: deviceToken,
     };
     console.log(body);
     const result = await defaultInstance.post(
