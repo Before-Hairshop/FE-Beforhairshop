@@ -29,7 +29,9 @@ export default function ServiceTerms() {
       <View style={styles.container}>
         <Text style={styles.title}>이용약관</Text>
         <View style={styles.division} />
-        <ScrollView style={styles.contents_container}>
+        <ScrollView
+          style={styles.contents_container}
+          nestedScrollEnabled={true}>
           <View>
             <View
               style={{
@@ -68,6 +70,7 @@ export default function ServiceTerms() {
               </View>
             </View>
             <ScrollView
+              nestedScrollEnabled={true}
               style={{
                 borderRadius: 15,
                 height: verticalScale(120),
@@ -126,6 +129,7 @@ export default function ServiceTerms() {
               </View>
             </View>
             <ScrollView
+              nestedScrollEnabled={true}
               style={{
                 borderRadius: 15,
                 height: verticalScale(120),
@@ -184,6 +188,7 @@ export default function ServiceTerms() {
               </View>
             </View>
             <ScrollView
+              nestedScrollEnabled={true}
               style={{
                 borderRadius: 15,
                 height: verticalScale(120),
