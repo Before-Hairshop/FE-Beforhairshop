@@ -293,10 +293,9 @@ export default function UserProfile() {
                 ) : null}
               </View>
             </View>
-
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
               <Text style={styles.itemTextStyle}>
-                원하는 헤어스타일을 자세히 설명해주세요
+                디자이너에게 전하고 싶은 말
                 <Text style={{ color: "red" }}> *</Text>
               </Text>
               <View style={styles.userTextUnderline}>
@@ -357,7 +356,7 @@ export default function UserProfile() {
                       fontWeight: "normal",
                       fontStyle: "normal",
                       textAlign: "left",
-                      color: "#ffffff",
+                      color: stylingDate == undefined ? "#555555" : "#ffffff",
                     }}>
                     {stylingDate != undefined
                       ? `${stylingDate.getFullYear()}. ${
@@ -397,7 +396,7 @@ export default function UserProfile() {
                       fontWeight: "normal",
                       fontStyle: "normal",
                       textAlign: "left",
-                      color: "#ffffff",
+                      color: stylingTime == undefined ? "#555555" : "#ffffff",
                     }}>
                     {stylingTime != undefined
                       ? `${stylingTime.getHours()}시 ${stylingTime.getMinutes()}분`
