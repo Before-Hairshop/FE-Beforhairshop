@@ -170,7 +170,12 @@ export default function DesignerModify() {
             style={{
               fontFamily: "Pretendard",
               fontSize: scale(16),
-              color: "#cccccc",
+              color:
+                isBeginButton && beginTime == "영업 시작 시간"
+                  ? GRAYCOLOR
+                  : !isBeginButton && endTime == "영업 종료 시간"
+                  ? GRAYCOLOR
+                  : "#ffffff",
             }}>
             {isBeginButton ? beginTime.substr(0, 5) : endTime.substr(0, 5)}
           </Text>

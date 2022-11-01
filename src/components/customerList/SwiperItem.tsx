@@ -76,7 +76,8 @@ export default function SwiperItem(props) {
             {props.data.name}
           </Text>
           <View style={{ flexDirection: "row" }}>
-            {props.data.desiredHairstyle == null ? (
+            {props.data.desiredHairstyle == null ||
+            props.data.desiredHairstyle == "" ? (
               <HashTag value="#스타일을 추천받고 싶어요" />
             ) : (
               <HashTag value={`#${props.data.desiredHairstyle}`} />
