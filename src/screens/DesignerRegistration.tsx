@@ -408,6 +408,7 @@ export default function DesignerRegistration() {
                   <View style={[styles.userTextUnderline]}>
                     <Dropdown
                       style={[styles.inputText, styles.dropdownStyle]}
+                      itemTextStyle={{ color: "black" }}
                       placeholderStyle={{ color: GRAYCOLOR }}
                       selectedTextStyle={{ color: "#cccccc" }}
                       data={categoryItem}
@@ -585,6 +586,7 @@ export default function DesignerRegistration() {
                   <View style={[styles.userTextUnderline]}>
                     <Dropdown
                       style={[styles.inputText, styles.dropdownStyle]}
+                      itemTextStyle={{ color: "black" }}
                       placeholderStyle={{ color: GRAYCOLOR }}
                       selectedTextStyle={{ color: "#cccccc" }}
                       data={workingDayItem}
