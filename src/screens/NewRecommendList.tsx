@@ -54,7 +54,9 @@ export default function NewRecommendList({ route }) {
 
   return (
     <SafeAreaView style={styles.frame}>
-      {recommendList != undefined ? (
+      {recommendList != undefined &&
+      designerFlag != undefined &&
+      designerFlag == "1" ? (
         <SimpleHeader
           title={"스타일 추천서 " + "(" + recommendList.length + ")"}
           goBack="Main"
