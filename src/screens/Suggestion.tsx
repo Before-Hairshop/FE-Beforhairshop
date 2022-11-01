@@ -71,6 +71,7 @@ export default function Suggestion({ route }) {
   };
 
   const matchingReject = id => {
+    console.log(id);
     patchRecommendReject(id).then(res => {
       if (res.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
