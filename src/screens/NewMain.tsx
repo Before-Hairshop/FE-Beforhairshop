@@ -32,7 +32,7 @@ const hairTendencyType = [
   "악성 곱슬",
   "심한 곱슬",
   "반곱슬",
-  "약간 직모",
+  "반직모",
   "직모",
 ];
 
@@ -630,7 +630,7 @@ export default function NewMain() {
           }}
           onPress={() => {
             if (profileData != undefined) {
-              navigation.navigate("RecommendList");
+              navigation.navigate("NewRecommendList");
             } else {
               Alert.alert("프로필을 먼저 등록해주세요.");
             }
