@@ -1,16 +1,23 @@
 import { authInstance } from "./api";
+import { putS3Img } from "./putS3Img";
 
-const postRecommendationImg = async () => {
+const postRecommendationImg = async (
+  recommendId: any,
+  recommendationImg: any,
+) => {
   try {
     const result = await (
       await authInstance
     ).post("/api/v1/recommend/image", null, {
       params: {
-        recommend_id: "",
-        image_count: "",
+        recommend_id: recommendId,
+        image_count: recommendationImg.length,
       },
     });
-    return result.data.result.preSignedUrl;
+    result.data.result.map((url, index) => {
+      putS3Img(url, recommendationImg[index].blob);
+    });
+    return result;
   } catch (error) {
     console.log(error);
   }

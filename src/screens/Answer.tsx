@@ -18,6 +18,7 @@ import PlusIcon from "../assets/icons/plus.png";
 import { launchImageLibrary } from "react-native-image-picker";
 import SimpleHeader from "../components/common/SimpleHeader";
 import { postRecommendation } from "../api/postRecommendation";
+import { postRecommendationImg } from "../api/postRecommendationImg";
 
 const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
 
@@ -55,6 +56,7 @@ export default function Answer({ route }) {
             Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
             navigation.navigate("Loading");
           } else if (res.data.status == "OK") {
+            postRecommendationImg(res.data.result.id, data.imageUrl);
             navigation.navigate("NewMain");
           } else {
             Alert.alert("요청에 실패했습니다.");
@@ -137,13 +139,13 @@ export default function Answer({ route }) {
             return (
               <HairImageButton
                 itemIndex={index}
-                suggestionIndex={props.itemIndex}></HairImageButton>
+                suggestionIndex={props.itemIndex}
+              />
             );
           })}
 
           {suggestionList[props.itemIndex].imageUrl.length < 3 ? (
-            <HairImageAddButton
-              suggestionIndex={props.itemIndex}></HairImageAddButton>
+            <HairImageAddButton suggestionIndex={props.itemIndex} />
           ) : null}
         </View>
 
@@ -192,9 +194,8 @@ export default function Answer({ route }) {
         }}>
         <Image
           source={{
-            uri: suggestionList[props.suggestionIndex].imageUrl[
-              props.itemIndex
-            ],
+            uri: suggestionList[props.suggestionIndex].imageUrl[props.itemIndex]
+              .uri,
           }}
           style={{ width: "100%", aspectRatio: 1 }}
         />
@@ -210,11 +211,13 @@ export default function Answer({ route }) {
           const result = await launchImageLibrary();
           console.log(result);
           let newArray = [...suggestionList];
-          console.log(props.suggestionIndex);
-          console.log(newArray);
-          newArray[props.suggestionIndex].imageUrl.push(result.assets[0].uri);
+          const res = await fetch(result.assets[0].uri);
+          const blob = await res.blob();
+          newArray[props.suggestionIndex].imageUrl.push({
+            uri: result.assets[0].uri,
+            blob: blob,
+          });
           setSuggestionList(newArray);
-          console.log(props.suggestionIndex, props.itemIndex);
         }}>
         <Image
           source={{ uri: baseImageURL }}
@@ -253,9 +256,19 @@ export default function Answer({ route }) {
                 autoCorrect={false}
               />
             </View>
-            <Text style={styles.itemTextStyle}>시술 일정</Text>
+            <Text style={styles.itemTextStyle}>
+              시술 일정<Text style={{ color: "#cccccc" }}> * </Text>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: scale(10),
+                  color: "#cccccc",
+                }}>
+                고객이 선택한 날짜이므로 변경은 불가합니다.
+              </Text>
+            </Text>
             <View style={styles.userTextUnderline}>
-              <Text style={[styles.highlightText, { color: "#555555" }]}>
+              <Text style={[styles.highlightText]}>
                 {route.params.treatmentDate.substring(0, 4) +
                   "년 " +
                   route.params.treatmentDate.substring(5, 7) +

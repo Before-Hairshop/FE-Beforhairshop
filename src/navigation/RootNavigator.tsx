@@ -62,7 +62,6 @@ export const RootNavigator = () => {
       <mainStack.Screen name="UserCheck" component={UserCheck} />
       <mainStack.Screen name="UserProfile" component={UserProfile} />
       <mainStack.Screen name="Answer" component={Answer} />
-
       <mainStack.Screen name="CustomerList" component={CustomerList} />
       <mainStack.Screen name="ChatList" component={ChatList} />
       <mainStack.Screen name="Suggestion" component={Suggestion} />
