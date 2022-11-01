@@ -1,5 +1,5 @@
 apply plugin: "com.android.application"
-// apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
 
@@ -277,7 +277,7 @@ dependencies {
     implementation group: 'com.kakao.sdk', name: 'usermgmt', version: '1.30.7'
 
     // Add the SDK for Firebase Cloud Messaging
-    // implementation 'com.google.firebase:firebase-messaging:20.2.3' 
+    implementation 'com.google.firebase:firebase-messaging:20.2.3' 
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'

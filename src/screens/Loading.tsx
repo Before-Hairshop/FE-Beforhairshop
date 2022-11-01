@@ -41,6 +41,7 @@ import { postKakaoLogin } from "../api/postKakaoLogin";
 import { getMemberSession } from "../api/getMemberSession";
 import { postAppleLogin } from "../api/postAppleLogin";
 import AppLogo from "../assets/icons/BeforeHairshopLogo.png";
+import messaging from "@react-native-firebase/messaging";
 
 const socialLoginURI = {
   google: `${BASEURL}/oauth2/authorization/google`,
@@ -85,10 +86,24 @@ export default function Loading() {
       // setPro(JSON.stringify(profile));
       // Alert.alert(profile);
       console.log(profile);
+
+      const enabled = await messaging().hasPermission();
+      console.log("permission", enabled);
+      // if (enabled == -1) {
+      const authorized = await messaging().requestPermission();
+      console.log("authorized", authorized);
+      // if (authorized == 1) {
+      const fcmToken = await messaging().getToken();
+      console.log("fcmToken", fcmToken);
+      if (!messaging().isDeviceRegisteredForRemoteMessages) {
+        messaging().registerDeviceForRemoteMessages();
+      }
+
       const result = await postKakaoLogin(
         profile.id,
         profile.email,
         token.accessToken,
+        fcmToken,
       );
       // setRes(res.concat(result.toString()));
       // Alert.alert(result);
@@ -126,12 +141,26 @@ export default function Loading() {
       appleAuthRequestResponse.identityToken,
     );
 
+    const enabled = await messaging().hasPermission();
+    console.log("permission", enabled);
+    // if (enabled == -1) {
+    const authorized = await messaging().requestPermission();
+    console.log("authorized", authorized);
+    // if (authorized == 1) {
+    const fcmToken = await messaging().getToken();
+    console.log("fcmToken", fcmToken);
+    if (!messaging().isDeviceRegisteredForRemoteMessages) {
+      messaging().registerDeviceForRemoteMessages();
+    }
+
     const result = await postAppleLogin(
       appleAuthRequestResponse.user,
       appleAuthRequestResponse.email,
       appleAuthRequestResponse.identityToken,
+      fcmToken,
     );
     console.log(result);
+
     if (result.data.result.status == 0) {
       navigation.navigate("ServiceTerms");
     } else {
