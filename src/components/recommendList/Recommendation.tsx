@@ -225,7 +225,6 @@ export default function Recommendation(props) {
                           fontFamily: "Pretendard",
                           fontSize: scale(11),
                           fontWeight: "normal",
-                          fontStyle: "italic",
                           textAlign: "left",
                           color: "#676767",
                         }}>

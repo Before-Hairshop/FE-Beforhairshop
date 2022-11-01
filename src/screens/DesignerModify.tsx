@@ -26,6 +26,7 @@ import { patchDesignerProfile } from "../api/patchDesignerProfile";
 import { getDesignerProfileById } from "../api/getDesignerProfileById";
 import { readData } from "../utils/asyncStorage";
 import { patchDesignerProfileImg } from "../api/patchDesignerProfileImg";
+import { onlyPhoneNum } from "../utils/regularExpression";
 
 const BASEWIDTH = 375;
 const BASEPADDING = 20;
@@ -750,10 +751,11 @@ export default function DesignerModify() {
                   placeholderTextColor={GRAYCOLOR}
                   value={phoneNumber}
                   onChangeText={text => {
-                    setPhoneNumber(text);
+                    setPhoneNumber(onlyPhoneNum(text));
                   }}
                   style={styles.inputText}
                   autoCorrect={false}
+                  keyboardType="numeric"
                 />
               </View>
             </View>

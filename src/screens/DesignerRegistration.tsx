@@ -29,6 +29,7 @@ import { useNavigation } from "@react-navigation/native";
 import { postDesignerProfileImg } from "../api/postDesignerProfileImg";
 import { putS3Img } from "../api/putS3Img";
 import axios from "axios";
+import { onlyPhoneNum } from "../utils/regularExpression";
 // import Postcode from "@actbase/react-daum-postcode";
 
 const BASEWIDTH = 375;
@@ -696,10 +697,11 @@ export default function DesignerRegistration() {
                   placeholderTextColor={GRAYCOLOR}
                   value={phoneNumber}
                   onChangeText={text => {
-                    setPhoneNumber(text);
+                    setPhoneNumber(onlyPhoneNum(text));
                   }}
                   style={styles.inputText}
                   autoCorrect={false}
+                  keyboardType="numeric"
                 />
               </View>
             </View>

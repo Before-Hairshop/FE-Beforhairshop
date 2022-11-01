@@ -150,7 +150,7 @@ export default function Answer({ route }) {
         </View>
 
         <Text style={styles.itemTextStyle}>
-          제안 비용<Text style={{ color: "red" }}> *</Text>
+          제안 비용 (단위: 원)<Text style={{ color: "red" }}> *</Text>
         </Text>
 
         <View style={styles.userTextUnderline}>
@@ -173,6 +173,7 @@ export default function Answer({ route }) {
               // newArray[props.itemIndex].price = text;
               // setSuggestionList(newArray);
             }}
+            keyboardType="numeric"
           />
         </View>
       </>

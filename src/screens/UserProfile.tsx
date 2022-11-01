@@ -30,6 +30,7 @@ import ComplexityHeader from "../components/common/ComplexityHeader";
 import { postUserProfile } from "../api/postUserProfile";
 import { postUserProfileImg } from "../api/postUserProfileImg";
 import { putS3Img } from "../api/putS3Img";
+import { onlyPhoneNum } from "../utils/regularExpression";
 
 const numHairStatus = 3;
 const numHairTendency = 5;
@@ -319,7 +320,8 @@ export default function UserProfile() {
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
               <Text style={styles.itemTextStyle}>
-                원하는 스타일링 비용<Text style={{ color: "red" }}> *</Text>
+                원하는 스타일링 비용 (단위: 원)
+                <Text style={{ color: "red" }}> *</Text>
               </Text>
               <View style={styles.userTextUnderline}>
                 <TextInput
@@ -329,6 +331,7 @@ export default function UserProfile() {
                   placeholderTextColor="#555555"
                   style={styles.highlightText}
                   autoCorrect={false}
+                  keyboardType="numeric"
                 />
               </View>
             </View>
@@ -433,12 +436,13 @@ export default function UserProfile() {
 
               <View style={styles.userTextUnderline}>
                 <TextInput
-                  onChangeText={num => setPhoneNumber(num)}
+                  onChangeText={num => setPhoneNumber(onlyPhoneNum(num))}
                   placeholder="예) 010-1234-5678"
                   placeholderTextColor="#555555"
                   value={phoneNumber}
                   style={styles.highlightText}
                   autoCorrect={false}
+                  keyboardType="numeric"
                 />
               </View>
             </View>
