@@ -126,6 +126,22 @@ export default function DesignerList() {
               }}>
               {item.hairDesignerProfileDto.hairShopName}
             </Text>
+            <View style={{ justifyContent: "center" }}>
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontStyle: "normal",
+                  fontWeight: "400",
+                  fontSize: 12,
+                  textAlign: "left",
+                  color: "#FC2A5B",
+                }}>
+                {" "}
+                {item.distance > 1000
+                  ? (item.distance / 1000).toFixed(1) + "km"
+                  : item.distance + "m"}
+              </Text>
+            </View>
           </View>
           <Text
             style={{
@@ -142,7 +158,11 @@ export default function DesignerList() {
               item.hairDesignerProfileDto.detailAddress}
           </Text>
           <View
-            style={{ width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
+            style={{
+              width: "100%",
+              flexDirection: "row",
+              flexWrap: "wrap",
+            }}>
             {item.hairDesignerHashtagDtoList.length == 0 ? (
               <TagItem value="등록된 태그가 없습니다." />
             ) : (

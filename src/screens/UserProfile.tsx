@@ -55,7 +55,7 @@ export default function UserProfile() {
   const [loading, setLoading] = useState(false);
 
   const hairStatus = ["많이 상했어요", "보통이에요", "매우 건강해요"];
-  const hairTendency = ["심한 곱슬", "곱슬", "반곱슬", "반직모", "직모"];
+  const hairTendency = ["악성 곱슬", "심한 곱슬", "반곱슬", "반직모", "직모"];
   const profileExplanation = ["정면", "측면", "후면"];
 
   const navigation = useNavigation();

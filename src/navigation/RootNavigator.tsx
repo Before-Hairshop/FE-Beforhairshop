@@ -27,6 +27,7 @@ import AppleSocialLogin from "../screens/AppleSocialLogin";
 import DesignerModify from "../screens/DesignerModify";
 import UserProfileModify from "../screens/UserProfileModify";
 import ReviewModify from "../screens/ReviewModify";
+import NewRecommendList from "../screens/NewRecommendList";
 
 const mainStack = createNativeStackNavigator();
 
@@ -72,6 +73,7 @@ export const RootNavigator = () => {
       <mainStack.Screen name="AppleSocialLogin" component={AppleSocialLogin} />
       <mainStack.Screen name="DesignerModify" component={DesignerModify} />
       <mainStack.Screen name="ReviewModify" component={ReviewModify} />
+      <mainStack.Screen name="NewRecommendList" component={NewRecommendList} />
       <mainStack.Screen
         name="UserProfileModify"
         component={UserProfileModify}

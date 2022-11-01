@@ -60,11 +60,13 @@ export default function RecommendList({ route }) {
 
   return (
     <SafeAreaView style={styles.frame}>
-      {recommendList != undefined && (
+      {recommendList != undefined ? (
         <SimpleHeader
           title={"스타일 추천서 " + "(" + recommendList.length + ")"}
           goBack="Main"
         />
+      ) : (
+        <SimpleHeader title="스타일 추천서" goBack="Main" />
       )}
       <Contour />
       <ScrollView>

@@ -117,7 +117,7 @@ export default function CustomerList() {
             {item.name}
           </Text>
           <View style={{ flexDirection: "row", marginTop: verticalScale(7) }}>
-            {item.desiredHairstyle == null ? (
+            {item.desiredHairstyle == null || item.desiredHairstyle == "" ? (
               <HashTag value="#스타일을 추천받고 싶어요" />
             ) : (
               <HashTag value={`#${item.desiredHairstyle}`} />

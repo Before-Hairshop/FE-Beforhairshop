@@ -6,7 +6,7 @@ buildscript {
     ext {
         buildToolsVersion = "31.0.0"
         minSdkVersion = 21
-        compileSdkVersion = 31
+        compileSdkVersion = 33
         targetSdkVersion = 31
         kotlinVersion = "1.6.21"
 
@@ -27,6 +27,7 @@ buildscript {
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("de.undercouch:gradle-download-task:5.0.1")
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath 'com.google.gms:google-services:4.3.14'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -57,7 +58,7 @@ allprojects {
 allprojects {
     repositories {
         google()
-        jcenter()
+        // jcenter()
         // 네이버 지도 저장소
         maven {
             url 'https://naver.jfrog.io/artifactory/maven/'
