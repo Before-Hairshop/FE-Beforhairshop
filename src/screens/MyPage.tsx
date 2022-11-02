@@ -314,7 +314,7 @@ export default function Mypage({ route }) {
         title="고객센터"
         navigate="Main"
         action={() => {
-          Alert.alert("준비중");
+          navigation.navigate("ServiceCenter");
         }}
       />
       <MypageItem
