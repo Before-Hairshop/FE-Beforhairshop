@@ -346,7 +346,7 @@ export default function UserProfileLookup({ route }) {
 
             <View style={{ marginTop: 12, alignItems: "flex-start" }}>
               <Text style={styles.itemTextStyle}>
-                원하는 헤어스타일을 자세히 설명해주세요.
+                디자이너에게 전하고 싶은 말
               </Text>
               <View style={styles.userTextUnderline}>
                 <TextInput

@@ -28,6 +28,7 @@ import DesignerModify from "../screens/DesignerModify";
 import UserProfileModify from "../screens/UserProfileModify";
 import ReviewModify from "../screens/ReviewModify";
 import NewRecommendList from "../screens/NewRecommendList";
+import ServiceCenter from "../screens/ServiceCenter";
 
 const mainStack = createNativeStackNavigator();
 
@@ -73,6 +74,7 @@ export const RootNavigator = () => {
       <mainStack.Screen name="DesignerModify" component={DesignerModify} />
       <mainStack.Screen name="ReviewModify" component={ReviewModify} />
       <mainStack.Screen name="NewRecommendList" component={NewRecommendList} />
+      <mainStack.Screen name="ServiceCenter" component={ServiceCenter} />
       <mainStack.Screen
         name="UserProfileModify"
         component={UserProfileModify}
