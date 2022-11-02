@@ -359,12 +359,11 @@ export default function DesignerList() {
                   backgroundColor: "#272728",
                   borderRadius: 15,
                   flexDirection: "row",
-                  paddingTop: verticalScale(13),
-                  paddingBottom: verticalScale(13),
-                  paddingLeft: scale(18),
                 }}>
-                <SearchIcon style={{ marginRight: scale(10) }} />
-                {/* <Text style={{ color: "#C8C8C8" }}>키워드를 검색해 주세요</Text> */}
+                <View
+                  style={{ justifyContent: "center", paddingLeft: scale(18) }}>
+                  <SearchIcon style={{ marginRight: scale(10) }} />
+                </View>
                 <TextInput
                   placeholder="키워드를 검색해 주세요"
                   placeholderTextColor="#C8C8C8"
@@ -372,7 +371,10 @@ export default function DesignerList() {
                   onChangeText={text => {
                     setKeyword(text);
                   }}
-                  style={{ color: "#cccccc" }}
+                  style={{
+                    fontFamily: "Pretendard",
+                    color: "#ffffff",
+                  }}
                   autoCorrect={false}
                 />
               </View>

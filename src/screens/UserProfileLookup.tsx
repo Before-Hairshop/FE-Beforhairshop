@@ -82,7 +82,9 @@ export default function UserProfileLookup({ route }) {
             style={{ width: "100%", aspectRatio: 1 }}
           />
         ) : (
-          <Image source={DefaultPerson} style={{ width: "100%" }} />
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <Image source={DefaultPerson} style={{ width: "100%" }} />
+          </View>
         )}
       </TouchableOpacity>
     );
@@ -456,7 +458,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
 
     overflow: "hidden",
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: "#373737",
   },
 

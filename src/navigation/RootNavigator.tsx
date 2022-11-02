@@ -75,6 +75,9 @@ export const RootNavigator = () => {
       <mainStack.Screen name="ReviewModify" component={ReviewModify} />
       <mainStack.Screen name="NewRecommendList" component={NewRecommendList} />
       <mainStack.Screen name="ServiceCenter" component={ServiceCenter} />
+      {/* <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />
+      <mainStack.Screen name="ProfileSelection" component={ProfileSelection} /> */}
+
       <mainStack.Screen
         name="UserProfileModify"
         component={UserProfileModify}
@@ -88,8 +91,6 @@ export const RootNavigator = () => {
         component={DesignerRegistration}
       />
       {/* <mainStack.Screen name="Main" component={Main} /> */}
-      {/* <mainStack.Screen name="VirtualStyling" component={VirtualStyling} /> */}
-      {/* <mainStack.Screen name="ProfileSelection" component={ProfileSelection} /> */}
     </mainStack.Navigator>
   );
 };

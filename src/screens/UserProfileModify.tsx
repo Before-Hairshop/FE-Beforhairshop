@@ -494,7 +494,7 @@ export default function UserProfileModify() {
               <View style={styles.userTextUnderline}>
                 <TextInput
                   onChangeText={num => setPhoneNumber(onlyPhoneNum(num))}
-                  placeholder="예) 010-1234-5678"
+                  placeholder="전화번호를 입력해주세요."
                   placeholderTextColor="#555555"
                   value={phoneNumber}
                   style={styles.highlightText}
