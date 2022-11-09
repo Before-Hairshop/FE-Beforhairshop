@@ -29,6 +29,10 @@ import UserProfileModify from "../screens/UserProfileModify";
 import ReviewModify from "../screens/ReviewModify";
 import NewRecommendList from "../screens/NewRecommendList";
 import ServiceCenter from "../screens/ServiceCenter";
+import NewProfileSelection from "../screens/NewProfileSelection";
+import NewVirtualStyling from "../screens/NewVirtualStyling";
+import AllDesignerList from "../screens/AllDesignerList";
+import OnlyDesignerProfile from "../screens/OnlyDesignerProfile";
 
 const mainStack = createNativeStackNavigator();
 
@@ -75,9 +79,17 @@ export const RootNavigator = () => {
       <mainStack.Screen name="ReviewModify" component={ReviewModify} />
       <mainStack.Screen name="NewRecommendList" component={NewRecommendList} />
       <mainStack.Screen name="ServiceCenter" component={ServiceCenter} />
-      {/* <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />
-      <mainStack.Screen name="ProfileSelection" component={ProfileSelection} /> */}
-
+      <mainStack.Screen name="VirtualStyling" component={VirtualStyling} />
+      <mainStack.Screen name="ProfileSelection" component={ProfileSelection} />
+      <mainStack.Screen name="AllDesignerList" component={AllDesignerList} />
+      <mainStack.Screen
+        name="NewVirtualStyling"
+        component={NewVirtualStyling}
+      />
+      <mainStack.Screen
+        name="NewProfileSelection"
+        component={NewProfileSelection}
+      />
       <mainStack.Screen
         name="UserProfileModify"
         component={UserProfileModify}
@@ -89,6 +101,10 @@ export const RootNavigator = () => {
       <mainStack.Screen
         name="DesignerRegistration"
         component={DesignerRegistration}
+      />
+      <mainStack.Screen
+        name="OnlyDesignerProfile"
+        component={OnlyDesignerProfile}
       />
       {/* <mainStack.Screen name="Main" component={Main} /> */}
     </mainStack.Navigator>
