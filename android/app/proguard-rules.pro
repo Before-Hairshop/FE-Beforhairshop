@@ -65,3 +65,7 @@
 
 -keep class com.kakao.sdk.**.model.* { <fields>; }
 -keep class * extends com.google.gson.TypeAdapter
+
+# svg
+
+-keep public class com.horcrux.svg.** {*;}
