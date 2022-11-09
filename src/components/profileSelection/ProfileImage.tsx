@@ -11,19 +11,22 @@ import React, { useState } from "react";
 import LinearGradient from "react-native-linear-gradient";
 import { Button } from "@rneui/themed";
 import { scale, moderateScale, verticalScale } from "../../utils/scale";
+import DeleteIcon from "../../assets/icons/delete_icon.svg";
+import SelectedIcon from "../../assets/icons/selected_icon.svg";
+import PlugIcon from "../../assets/icons/plus.svg";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const imageSize = 155;
-const borderSize = 7;
+const borderSize = 2;
 
 const BASE = "base";
 const EDIT = "edit";
 const SELECTED = "selected";
 const ADD = "add";
 
-export default function PopularHairstyle(props) {
+export default function ProfileImage(props) {
   const ImageBackgroundContents = () => {
     if (props.status == BASE || props.status == ADD) {
       return (
@@ -31,10 +34,10 @@ export default function PopularHairstyle(props) {
           style={{
             flex: 1,
 
-            backgroundColor: "#000000a0",
+            backgroundColor: "#000000",
             borderRadius: 15,
 
-            // opacity: 0.3,
+            opacity: 0.3,
           }}>
           <Text></Text>
         </View>
@@ -45,30 +48,23 @@ export default function PopularHairstyle(props) {
           style={{
             flex: 1,
             alignItems: "flex-end",
-            padding: verticalScale(13),
+            padding: verticalScale(10),
           }}>
-          <Image
-            source={require("../../assets/images/profile_selected_icon.png")}
-            style={{
-              width: verticalScale(22),
-              height: verticalScale(22),
-            }}></Image>
+          <SelectedIcon width={verticalScale(22)} height={verticalScale(22)} />
         </View>
       );
     } else {
       return (
         <View
           style={{
-            flex: 1,
             alignItems: "flex-end",
-            padding: verticalScale(13),
           }}>
-          <Image
-            source={require("../../assets/images/delete_icon.png")}
+          <View
             style={{
-              width: verticalScale(22),
-              height: verticalScale(22),
-            }}></Image>
+              padding: verticalScale(10),
+            }}>
+            <DeleteIcon width={verticalScale(22)} height={verticalScale(22)} />
+          </View>
         </View>
       );
     }
@@ -78,7 +74,7 @@ export default function PopularHairstyle(props) {
     if (props.status == ADD) {
       return "#000000";
     } else if (props.status == BASE || props.status == EDIT) {
-      return "#888888";
+      return "#222222";
     } else {
       return "#FC2A5B";
     }
@@ -86,15 +82,11 @@ export default function PopularHairstyle(props) {
 
   return (
     <Button
-      //
       title={
         <View>
           {props.status == ADD ? (
-            <View style={{}}>
-              <Image
-                source={require("../../assets/images/plus.png")}
-                style={{ width: verticalScale(62), height: verticalScale(62) }}
-              />
+            <View>
+              <PlugIcon />
             </View>
           ) : (
             <ImageBackground
@@ -103,7 +95,7 @@ export default function PopularHairstyle(props) {
               resizeMode="cover"
               style={[styles.image]}
               imageStyle={{ borderRadius: 15 }}>
-              <ImageBackgroundContents></ImageBackgroundContents>
+              <ImageBackgroundContents />
             </ImageBackground>
           )}
         </View>
@@ -126,7 +118,6 @@ export default function PopularHairstyle(props) {
         padding: 0,
         margin: 0,
         width: scale(imageSize + borderSize),
-
         height: scale(imageSize + borderSize),
       }}
       color={buttonColor()}
@@ -147,10 +138,7 @@ const styles = StyleSheet.create({
     padding: 0,
     borderRadius: 15,
   },
-
   imageBase: {},
-
   imageSelected: {},
-
   imageEdit: {},
 });

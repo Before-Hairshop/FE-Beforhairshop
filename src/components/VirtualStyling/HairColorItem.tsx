@@ -3,17 +3,16 @@ import {
   Text,
   View,
   ImageBackground,
-  Dimensions,
   Image,
-  Alert,
+  Pressable,
 } from "react-native";
 import React, { useState } from "react";
 
 import { Button } from "@rneui/themed";
 import { scale, moderateScale, verticalScale } from "../../utils/scale";
 
-const imageSize = 65;
-const borderSize = verticalScale(7);
+const imageSize = 80;
+const borderSize = verticalScale(10);
 const borderWidth = scale(imageSize + borderSize / 4);
 
 const BASE = "base";
@@ -22,58 +21,60 @@ const EDIT = "edit";
 export default function HairColorItem(props) {
   const buttonColor = () => {
     if (props.status == BASE || props.status == EDIT) {
-      return "#888888";
+      return "#666666";
     } else {
       return "#FC2A5B";
     }
   };
 
   return (
-    <View style={{ alignItems: "center" }}>
-      <Button
-        //
-        title={
-          <View>
-            <ImageBackground
-              source={props.thumbnail}
-              resizeMode="cover"
-              style={[styles.image]}
-              imageStyle={{ borderRadius: borderSize }}></ImageBackground>
-          </View>
-        }
-        buttonStyle={{
-          padding: 0,
-          margin: 0,
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: borderSize,
-          width: borderWidth,
-          borderColor: "#000000",
-
-          height: borderWidth,
-        }}
-        containerStyle={{
-          borderRadius: borderSize,
-
-          padding: 0,
-          marginHorizontal: verticalScale(7),
-          width: borderWidth,
-
-          height: borderWidth,
-        }}
-        color={buttonColor()}
-        useForeground
-        onPress={props.onPressImage}
-      />
-      <Text
+    <View style={{ alignItems: "center", justifyContent: "center" }}>
+      <Pressable
+        // title={
+        //   <Image
+        //     source={props.thumbnail}
+        //     style={styles.image}
+        //     // imageStyle={{ borderRadius: borderSize }}
+        //   />
+        // }
         style={{
-          color: props.status == BASE ? "#888888" : "#fc2a5b",
-          marginTop: verticalScale(5),
-          fontFamily: "pretendard",
-          fontSize: verticalScale(11),
-        }}>
-        {props.content}
-      </Text>
+          // alignItems: "center",
+          // justifyContent: "center",
+          // width: borderWidth,
+          // height: borderWidth,
+          // borderRadius: borderSize,
+          // borderStyle: "solid",
+          // borderColor: buttonColor(),
+          // borderWidth: 1,
+          marginHorizontal: verticalScale(6),
+        }}
+        // containerStyle={
+        //   {
+        //     marginHorizontal: verticalScale(7),
+        //     width: borderWidth,
+        //     height: borderWidth,
+        //   }
+        // }
+        // color={buttonColor()}
+        // useForeground
+        onPress={props.onPressImage}>
+        <Image
+          source={props.thumbnail}
+          style={[styles.image, { borderColor: buttonColor() }]}
+          // imageStyle={{ borderRadius: borderSize }}
+        />
+        <Text
+          style={{
+            color: props.status == BASE ? "#888888" : "#fc2a5b",
+            fontFamily: "pretendard",
+            fontSize: verticalScale(11),
+            fontWeight: props.status == BASE ? "normal" : "bold",
+            textAlign: "center",
+            marginTop: verticalScale(5),
+          }}>
+          {props.content}
+        </Text>
+      </Pressable>
     </View>
   );
 }
@@ -85,16 +86,11 @@ const styles = StyleSheet.create({
   image: {
     width: scale(imageSize),
     height: scale(imageSize),
-    // height: "30%",
-    // width: "30%",
-    margin: 0,
-    padding: 0,
-    borderRadius: borderSize,
+    borderRadius: 10,
+    borderStyle: "solid",
+    borderWidth: 1,
   },
-
   imageBase: {},
-
   imageSelected: {},
-
   imageEdit: {},
 });

@@ -63,5 +63,6 @@ const styles = StyleSheet.create({
     width: scale(40),
     height: verticalScale(40),
     justifyContent: "center",
+    alignItems: "center",
   },
 });
