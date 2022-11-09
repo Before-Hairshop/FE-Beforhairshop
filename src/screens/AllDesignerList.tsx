@@ -24,7 +24,7 @@ import StarIcon from "../assets/icons/star.svg";
 
 import DefaultDesignerImg from "../assets/images/default_designer.png";
 import ComplexityHeader from "../components/common/ComplexityHeader";
-import { getDesignerListThroughLocation } from "../api/getDesignerListThroughLocation";
+import { getDesignerListThroughRating } from "../api/getDesignerListThroughRating";
 import { getDesignerListThroughName } from "../api/getDesignerListThroughName";
 import { useNavigation } from "@react-navigation/native";
 
@@ -59,7 +59,7 @@ const TagItem = (props: { value: string }) => (
   </View>
 );
 
-export default function DesignerList() {
+export default function AllDesignerList() {
   const [designerList, setDesignerList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -80,7 +80,7 @@ export default function DesignerList() {
           alignItems: "center",
         }}
         onPress={() => {
-          navigation.navigate("DesignerProfile", {
+          navigation.navigate("OnlyDesignerProfile", {
             designerId: item.hairDesignerProfileDto.hairDesignerId,
           });
         }}>
@@ -126,22 +126,6 @@ export default function DesignerList() {
               }}>
               {item.hairDesignerProfileDto.hairShopName}
             </Text>
-            <View style={{ justifyContent: "center" }}>
-              <Text
-                style={{
-                  fontFamily: "Pretendard",
-                  fontStyle: "normal",
-                  fontWeight: "400",
-                  fontSize: 12,
-                  textAlign: "left",
-                  color: "#FC2A5B",
-                }}>
-                {" "}
-                {item.distance > 1000
-                  ? (item.distance / 1000).toFixed(1) + "km"
-                  : item.distance + "m"}
-              </Text>
-            </View>
           </View>
           <Text
             style={{
@@ -207,7 +191,7 @@ export default function DesignerList() {
     try {
       // setError(null);
       // setLoading(true);
-      const { data } = await getDesignerListThroughLocation(page);
+      const { data } = await getDesignerListThroughRating(page);
       if (data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
         navigation.navigate("Loading", {
@@ -268,70 +252,6 @@ export default function DesignerList() {
 
   return (
     <SafeAreaView style={styles.frame}>
-      {/* <ComplexityHeader
-        title="헤어 디자이너 목록"
-        goBack="NewMain"
-        button={
-          <TouchableOpacity
-            onPress={() => {
-              console.log();
-            }}>
-            <GoHomeIcon />
-          </TouchableOpacity>
-        }
-      /> */}
-      {/* <View style={{ width: width, backgroundColor: "#191919" }}> */}
-      {/* <View
-        style={{
-          position: "relative",
-          paddingTop:
-            Platform.OS === "ios" ? verticalScale(45) : verticalScale(20),
-          alignItems: "center",
-        }}>
-        <Text
-          style={{
-            fontFamily: "Pretendard",
-            fontStyle: "normal",
-            fontWeight: "bold",
-            fontSize: 18,
-            textAlign: "center",
-            color: "#FFFFFF",
-          }}>
-          헤어 디자이너 목록
-        </Text>
-      </View>
-      <View
-        style={{
-          width: "100%",
-          position: "absolute",
-        }}>
-        <Header contents={<HeaderContents />} />
-      </View> */}
-      {/* <View
-          style={{
-            width: "100%",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: verticalScale(24),
-            paddingTop: verticalScale(10),
-            paddingBottom: verticalScale(10),
-          }}>
-          <View
-            style={{
-              width: "89%",
-              height: verticalScale(45),
-              backgroundColor: "#272728",
-              borderRadius: 15,
-              flexDirection: "row",
-              paddingTop: verticalScale(13),
-              paddingBottom: verticalScale(13),
-              paddingLeft: scale(18),
-            }}>
-            <SearchIcon style={{ marginRight: scale(10) }} />
-            <Text style={{ color: "#C8C8C8" }}>키워드를 검색해 주세요</Text>
-          </View>
-        </View> */}
-      {/* <View style={{ flex: 1 }}> */}
       <FlatList
         ListHeaderComponent={
           <>

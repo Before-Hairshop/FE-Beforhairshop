@@ -6,10 +6,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-
 import { scale, verticalScale } from "../utils/scale";
 import DefaultPerson from "../assets/images/mypage/default_profile.png";
 import ToggleSwitch from "toggle-switch-react-native";
@@ -25,6 +23,7 @@ import { getDesignerProfile } from "../api/getDesignerProfile";
 import { patchUserMatchingActive } from "../api/patchUserMatchingActive";
 import { patchUserMatchingDeactive } from "../api/patchUserMatchingDeactive";
 import { getMemberInfo } from "../api/getMemberInfo";
+import Spinner from "../components/common/Spinner";
 
 const hairConditionType = ["", "많이 상했어요", "보통이에요", "매우 건강해요"];
 const hairTendencyType = [
@@ -289,7 +288,7 @@ export default function NewMain() {
   const [designerFlag, setDesignerFlag] = useState(undefined);
   const [profileData, setProfileData] = useState(undefined);
   const [profileImg, setProfileImg] = useState(undefined);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -449,7 +448,9 @@ export default function NewMain() {
       console.log(data);
       if (data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       }
       console.log(data.result.designerFlag);
       storeData("@MEMBER_ID", String(data.result.id));
@@ -460,12 +461,12 @@ export default function NewMain() {
           console.log(result.data.status);
           setProfileData(result.data.result);
           setProfileImg(result.data.result.imageUrl);
-          // setLoading(false);
         }
+        setLoading(false);
       } else {
         const result = await getUserProfile();
-        if (result.data.status == "OK") {
-          console.log(result?.data.result);
+        console.log(result);
+        if (result.data.status == "OK" && result.data.result != null) {
           setProfileData(result?.data.result.memberProfileDto);
           setProfileImg(result?.data.result.memberProfileDto.frontImageUrl);
           setToggle(
@@ -473,8 +474,8 @@ export default function NewMain() {
               ? true
               : false,
           );
-          // setLoading(false);
         }
+        setLoading(false);
       }
     }
     fetchData();
@@ -714,7 +715,11 @@ export default function NewMain() {
                 navigation.navigate("DesignerList");
               }
             } else {
-              Alert.alert("프로필을 먼저 등록해주세요.");
+              if (designerFlag == "1") {
+                Alert.alert("프로필을 먼저 등록해주세요.");
+              } else {
+                navigation.navigate("AllDesignerList");
+              }
             }
           }}>
           <View
@@ -788,6 +793,7 @@ export default function NewMain() {
           <ActivityIndicator color={"#ffffff"} />
         </View>
       )} */}
+      {loading && <Spinner />}
     </View>
   );
 }

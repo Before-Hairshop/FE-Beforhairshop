@@ -18,7 +18,6 @@ import { Image } from "react-native";
 import { Dimensions } from "react-native";
 import { useState } from "react";
 import HairButton from "../components/UserProfile/HairButton";
-import { launchImageLibrary, launchCamera } from "react-native-image-picker";
 import PlusIcon from "../assets/icons/plus.png";
 import { useNavigation } from "@react-navigation/native";
 import ProfileUploadButton from "../components/common/ProfileUploadButton";
@@ -178,7 +177,9 @@ export default function UserProfileModify() {
       // console.log(url);
       if (result.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (result.data.status == "OK" && result2.data.status == "OK") {
         navigation.navigate("NewMain");
       } else {

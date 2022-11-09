@@ -60,7 +60,9 @@ export default function Location() {
       console.log(response);
       if (response.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (response.data.status == "OK") {
         navigation.navigate("NewMain");
       } else {

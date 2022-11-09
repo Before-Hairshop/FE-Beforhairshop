@@ -35,6 +35,7 @@ import StarRating from "../components/common/StarRating";
 import ComplexityHeader from "../components/common/ComplexityHeader";
 import { patchReview } from "../api/patchReview";
 import { patchReviewImg } from "../api/patchReviewImg";
+import Spinner from "../components/common/Spinner";
 
 const BASEWIDTH = 375;
 const BASEPADDING = 20;
@@ -99,6 +100,7 @@ export default function ReviewModify({ route }) {
   const [hairTag, setHairTag] = useState([]);
   const [hairImage, setHairImage] = useState([]);
   const [oldImg, setOldImg] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
 
@@ -135,6 +137,7 @@ export default function ReviewModify({ route }) {
   };
 
   async function saveReview() {
+    setLoading(true);
     console.log(starScore);
     console.log(hairRating);
     console.log(designerRating);
@@ -143,14 +146,19 @@ export default function ReviewModify({ route }) {
     console.log(hairImage);
     if (starScore == 0) {
       Alert.alert("별점을 등록해주세요");
+      setLoading(false);
     } else if (hairRating == -1) {
       Alert.alert("시술 만족도를 선택해주세요");
+      setLoading(false);
     } else if (designerRating == -1) {
       Alert.alert("디자이너 만족도를 선택해주세요");
+      setLoading(false);
     } else if (review == "") {
       Alert.alert("후기를 남겨주세요");
+      setLoading(false);
     } else if (hairTag.length == 0) {
       Alert.alert("시술 받은 스타일을 입력해주세요");
+      setLoading(false);
     } else {
       const result = await patchReview(
         route.params.data.reviewDto.id,
@@ -172,6 +180,7 @@ export default function ReviewModify({ route }) {
       } else {
         Alert.alert("요청에 실패했습니다.");
       }
+      setLoading(false);
     }
   }
 
@@ -450,6 +459,7 @@ export default function ReviewModify({ route }) {
           메시지 보내기
         </Text>
       </TouchableOpacity> */}
+      {loading && <Spinner />}
     </SafeAreaView>
   );
 }

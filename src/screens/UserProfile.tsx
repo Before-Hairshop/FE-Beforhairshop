@@ -18,7 +18,6 @@ import { Image } from "react-native";
 import { Dimensions } from "react-native";
 import { useState } from "react";
 import HairButton from "../components/UserProfile/HairButton";
-import { launchImageLibrary, launchCamera } from "react-native-image-picker";
 import PlusIcon from "../assets/icons/plus.png";
 import { useNavigation } from "@react-navigation/native";
 import ProfileUploadButton from "../components/common/ProfileUploadButton";
@@ -124,7 +123,9 @@ export default function UserProfile() {
       console.log(url);
       if (result.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (result.data.status == "OK" && url.data.status == "OK") {
         navigation.navigate("Location");
       } else {
@@ -203,9 +204,8 @@ export default function UserProfile() {
                   placeholder="사용할 닉네임을 작성해주세요"
                   placeholderTextColor="#555555"
                   defaultValue={nickname}
-                  onEndEditing={e => {
-                    console.log(nickname);
-                    setNickname(e.nativeEvent.text);
+                  onChangeText={text => {
+                    setNickname(text);
                   }}
                   autoCorrect={false}
                   style={styles.itemTextStyle}
@@ -449,6 +449,33 @@ export default function UserProfile() {
           </View>
         </View>
       </ScrollView>
+      <View style={{ alignItems: "center" }}>
+        <TouchableOpacity
+          style={{
+            width: "88.9%",
+            height: verticalScale(55),
+            borderRadius: verticalScale(10),
+            backgroundColor: "#616161",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onPress={() => {
+            navigation.navigate("NewMain");
+          }}>
+          <Text
+            style={{
+              fontFamily: "Pretendard",
+              fontSize: verticalScale(16),
+              fontWeight: "600",
+              fontStyle: "normal",
+              letterSpacing: 0,
+              textAlign: "left",
+              color: "#ffffff",
+            }}>
+            나중에 등록할게요
+          </Text>
+        </TouchableOpacity>
+      </View>
       {loading && (
         <View
           style={{

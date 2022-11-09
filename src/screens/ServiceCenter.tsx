@@ -27,7 +27,9 @@ export default function ServiceCenter() {
     postUserFeedback(await readData("@MEMBER_ID"), feedback).then(res => {
       if (res.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (res.data.status == "OK") {
         Alert.alert("전송이 완료되었습니다. 감사합니다.");
       } else {

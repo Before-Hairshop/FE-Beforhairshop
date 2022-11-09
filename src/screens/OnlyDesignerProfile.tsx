@@ -145,7 +145,7 @@ function numberWithCommas(x: number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-export default function DesignerProfile({ route }) {
+export default function OnlyDesignerProfile({ route }) {
   const [profileData, setProfileData] = useState(undefined);
   const [reviewData, setReviewData] = useState(undefined);
   const [reviewPageNum, setReviewPageNum] = useState(0);
@@ -156,8 +156,6 @@ export default function DesignerProfile({ route }) {
   const [reviewId, setReviewId] = useState(undefined);
   const [reviewerId, setReviewerId] = useState(undefined);
   const [reviewIndex, setReviewIndex] = useState(undefined);
-
-  const phoneNumber = "010-1234-1234";
 
   const [ref, setRef] = useState(null);
 
@@ -746,33 +744,7 @@ export default function DesignerProfile({ route }) {
               <TouchableOpacity
                 style={styles.action_icon}
                 onPress={() => {
-                  if (
-                    profileData != undefined &&
-                    designerFlag != undefined &&
-                    designerFlag == "0"
-                  ) {
-                    postRequest(profileData.hairDesignerProfileDto.id).then(
-                      res => {
-                        console.log(res);
-                        if (res.data.result == undefined) {
-                          Alert.alert(
-                            "세션이 만료되었습니다. 다시 로그인 해주세요.",
-                          );
-                          navigation.navigate("Loading", {
-                            reload: true,
-                          });
-                        } else if (res.data.status == "OK") {
-                          Alert.alert("추천서 요청이 완료되었습니다.");
-                        } else if (res.data.status == "CONFLICT") {
-                          Alert.alert("이미 추천서 요청을 보냈습니다.");
-                        } else {
-                          Alert.alert("추천서 요청에 실패했습니다.");
-                        }
-                      },
-                    );
-                  } else {
-                    Alert.alert("추천서 요청은 고객만 가능합니다.");
-                  }
+                  Alert.alert("프로필 등록 후 이용 가능합니다.");
                 }}>
                 <LoveIcon width={scale(19.1)} height={verticalScale(19.1)} />
               </TouchableOpacity>
@@ -795,20 +767,7 @@ export default function DesignerProfile({ route }) {
               <TouchableOpacity
                 style={styles.action_icon}
                 onPress={() => {
-                  if (profileData != undefined && designerFlag == "0") {
-                    console.log(
-                      profileData.hairDesignerProfileDto.hairDesignerId,
-                    );
-                    console.log(profileData.hairDesignerProfileDto.name);
-                    navigation.navigate("Review", {
-                      designerId:
-                        profileData.hairDesignerProfileDto.hairDesignerId,
-                      designerName: profileData.hairDesignerProfileDto.name,
-                      designerImg: profileData.hairDesignerProfileDto.imageUrl,
-                    });
-                  } else {
-                    Alert.alert("리뷰 작성은 고객만 가능합니다.");
-                  }
+                  Alert.alert("프로필 등록 후 이용 가능합니다.");
                 }}>
                 <WriteIcon width={scale(19.1)} height={verticalScale(19.1)} />
               </TouchableOpacity>

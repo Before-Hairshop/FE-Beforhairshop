@@ -1,5 +1,7 @@
 import {
   Alert,
+  Modal,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -8,25 +10,21 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import GoBackIcon from "../assets/icons/goBack.svg";
 import React, { useEffect } from "react";
-import Header from "../components/Header";
 import { verticalScale, scale } from "../utils/scale";
 import { Button } from "@rneui/themed";
 import { Image } from "react-native";
-import { Dimensions } from "react-native";
 import { useState } from "react";
 import HairButton from "../components/UserProfile/HairButton";
-import { launchImageLibrary, launchCamera } from "react-native-image-picker";
 import PlusIcon from "../assets/icons/plus.png";
 import { useNavigation } from "@react-navigation/native";
-
 import { Platform } from "react-native";
 import SimpleHeader from "../components/common/SimpleHeader";
 import { readData } from "../utils/asyncStorage";
 import ComplexityHeader from "../components/common/ComplexityHeader";
 import { getUserProfileById } from "../api/getUserProfileById";
 import DefaultPerson from "../assets/images/default_user.png";
+import ImageModal from "../components/common/ImageModal";
 
 const numHairStatus = 3;
 const numHairTendency = 5;
@@ -36,16 +34,10 @@ const numberOfLines = 4;
 const MAINCOLOR = "#fc2a5b";
 
 export default function UserProfileLookup({ route }) {
-  const [profileImage, setProfileImage] = useState(["", "", ""]);
-  const [wantHairImage, setWantHairImage] = useState([]);
-  const [wantedStyle, setWantedStyle] = useState("");
-  const [wantedStyleDescription, setWantedStyleDescription] = useState("");
-  const [wantedStylingCost, setWantedStylingCost] = useState(0);
-  const [hairStatusIndex, setHairStatusIndex] = useState(-1);
-  const [hairTendencyIndex, setHairTendencyIndex] = useState(-1);
   const [profileData, setProfileData] = useState();
   const [designerFlag, setDesignerFlag] = useState(undefined);
   const [memberId, setMemberId] = useState(undefined);
+  const [openImgUri, setOpenImgUri] = useState(null);
 
   const hairStatus = ["많이 상했어요", "보통이에요", "매우 건강해요"];
   const hairTendency = ["악성 곱슬", "심한 곱슬", "반곱슬", "반직모", "직모"];
@@ -59,7 +51,9 @@ export default function UserProfileLookup({ route }) {
     console.log(result);
     if (result.data.result == undefined) {
       Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-      navigation.navigate("Loading");
+      navigation.navigate("Loading", {
+        reload: true,
+      });
     } else if (result.data.status == "OK") {
       setProfileData(result.data.result);
     } else {
@@ -75,7 +69,11 @@ export default function UserProfileLookup({ route }) {
 
   const ImageUploadButton = props => {
     return (
-      <TouchableOpacity style={props.style} disabled>
+      <Pressable
+        style={props.style}
+        onPress={() => {
+          setOpenImgUri(props.uri);
+        }}>
         {props.uri != null ? (
           <Image
             source={{ uri: props.uri }}
@@ -86,18 +84,22 @@ export default function UserProfileLookup({ route }) {
             <Image source={DefaultPerson} style={{ width: "100%" }} />
           </View>
         )}
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 
   const WantedStyleButton = props => {
     return (
-      <TouchableOpacity style={props.style} disabled>
+      <Pressable
+        style={props.style}
+        onPress={() => {
+          setOpenImgUri(props.img.imageUrl);
+        }}>
         <Image
           source={{ uri: props.img.imageUrl }}
           style={{ width: "100%", aspectRatio: 1 }}
         />
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 
@@ -163,6 +165,7 @@ export default function UserProfileLookup({ route }) {
 
       <ScrollView>
         <View style={{ alignItems: "center" }}>
+          <ImageModal uri={openImgUri} setUri={setOpenImgUri} />
           <View style={{ width: "88.9%", paddingBottom: verticalScale(120) }}>
             <View style={{ alignItems: "center", margin: verticalScale(10) }}>
               <View style={{ flexDirection: "row" }}>
@@ -173,7 +176,7 @@ export default function UserProfileLookup({ route }) {
                     margin: verticalScale(10),
                   }}>
                   <ImageUploadButton
-                    // index={index}
+                    index={0}
                     uri={
                       profileData != undefined
                         ? profileData.memberProfileDto.frontImageUrl
@@ -198,7 +201,7 @@ export default function UserProfileLookup({ route }) {
                     margin: verticalScale(10),
                   }}>
                   <ImageUploadButton
-                    // index={index}
+                    index={1}
                     uri={
                       profileData != undefined
                         ? profileData.memberProfileDto.sideImageUrl
@@ -223,7 +226,7 @@ export default function UserProfileLookup({ route }) {
                     margin: verticalScale(10),
                   }}>
                   <ImageUploadButton
-                    // index={index}
+                    index={2}
                     uri={
                       profileData != undefined
                         ? profileData.memberProfileDto.backImageUrl

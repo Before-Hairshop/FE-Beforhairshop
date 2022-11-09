@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  Pressable,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -20,6 +21,9 @@ import { getRecommendation } from "../api/getRecommendation";
 import { readData } from "../utils/asyncStorage";
 import { patchRecommendAccept } from "../api/patchRecommendAccept";
 import { patchRecommendReject } from "../api/patchRecommendReject";
+import ImageModal from "../components/common/ImageModal";
+import SearchIcon from "../assets/icons/search.svg";
+import DownArrowIcon from "../assets/icons/down_arrow.svg";
 
 const MAINCOLOR = "#fc2a5b";
 const GRAYCOLOR = "#555555";
@@ -33,6 +37,7 @@ export default function Suggestion({ route }) {
 
   const [designerName, setDesignerName] = useState("adasdfdsdf");
   const [greeting, setGreeting] = useState("");
+  const [openImgUri, setOpenImgUri] = useState(null);
 
   const navigation = useNavigation();
 
@@ -58,7 +63,9 @@ export default function Suggestion({ route }) {
     patchRecommendAccept(id).then(res => {
       if (res.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (res.data.status == "OK") {
         Alert.alert(
           `${recommendData.designerName}님의 스타일 추천서를 수락하였습니다.`,
@@ -75,7 +82,9 @@ export default function Suggestion({ route }) {
     patchRecommendReject(id).then(res => {
       if (res.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (res.data.status == "OK") {
         Alert.alert(
           `${recommendData.designerName}님의 스타일 추천서를 거절하였습니다.`,
@@ -91,7 +100,9 @@ export default function Suggestion({ route }) {
     const result = await getRecommendation(route.params.recommendId);
     if (result.data.result == undefined) {
       Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-      navigation.navigate("Loading");
+      navigation.navigate("Loading", {
+        reload: true,
+      });
     } else if (result.data.status == "OK") {
       console.log(result);
       setRecommendData(result.data.result);
@@ -115,12 +126,23 @@ export default function Suggestion({ route }) {
       <SimpleHeader title="스타일 추천서" goBack="Main" />
       <Contour />
       <ScrollView contentContainerStyle={{ alignItems: "center" }}>
+        <ImageModal uri={openImgUri} setUri={setOpenImgUri} />
         <View
           style={{
             width: "88.8%",
             paddingTop: verticalScale(22),
             paddingBottom: verticalScale(30),
           }}>
+          {/* {recommendData != undefined && (
+            <Image
+              source={{ uri: recommendData.designerImage }}
+              style={{
+                width: verticalScale(100),
+                height: verticalScale(100),
+                borderRadius: verticalScale(100),
+              }}
+            />
+          )} */}
           <View>
             <Text
               style={{
@@ -137,29 +159,65 @@ export default function Suggestion({ route }) {
             <View style={{ flexDirection: "row" }}>
               {recommendData != undefined && (
                 <UnderLineContent
-                  value={`헤어디자이너 ${recommendData.designerName} `}
+                  value={`헤어디자이너 ${recommendData.designerName}`}
                   fontSize={scale(20)}
                 />
               )}
-
-              <Text>
-                <Text
+              {/* <DownArrowIcon
+                width={verticalScale(30)}
+                height={verticalScale(30)}
+              /> */}
+              {/* <View style={{ justifyContent: "center" }}>
+                <Image
+                  source={{ uri: recommendData.designerImage }}
                   style={{
-                    fontFamily: "Pretendard",
-                    fontSize: scale(20),
-                    fontWeight: "normal",
-                    fontStyle: "normal",
-                    lineHeight: 30,
-                    textAlign: "left",
-                    color: "#ffffff",
-                  }}>
-                  입니다.
-                </Text>
+                    width: verticalScale(20),
+                    height: verticalScale(20),
+                  }}
+                />
+              </View> */}
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: scale(20),
+                  fontWeight: "normal",
+                  fontStyle: "normal",
+                  lineHeight: 30,
+                  textAlign: "left",
+                  color: "#ffffff",
+                }}>
+                {" "}
+                입니다.
               </Text>
             </View>
+            <TouchableOpacity
+              style={{ flexDirection: "row" }}
+              onPress={() => {
+                navigation.navigate("DesignerProfile", {
+                  designerId: recommendData.designerId,
+                });
+              }}>
+              <SearchIcon
+                width={verticalScale(15)}
+                height={verticalScale(15)}
+              />
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: scale(11),
+                  fontWeight: "normal",
+                  fontStyle: "normal",
+                  lineHeight: 20,
+                  textAlign: "left",
+                  color: "#d8d8d8",
+                }}>
+                {" "}
+                프로필 보러가기
+              </Text>
+            </TouchableOpacity>
             <Text
               style={{
-                marginTop: verticalScale(15),
+                marginTop: verticalScale(7),
                 fontFamily: "Pretendard",
                 fontSize: scale(14),
                 fontWeight: "normal",
@@ -224,18 +282,25 @@ export default function Suggestion({ route }) {
                     marginTop: verticalScale(10),
                   }}>
                   {recommendData.recommendImageDtoList.map((item, index) => (
-                    <Image
-                      source={{ uri: item.imageUrl }}
+                    <Pressable
                       style={{
                         width: "30%",
-                        aspectRatio: 1,
-                        marginHorizontal: verticalScale(4),
-                        borderRadius: 10,
-                        overflow: "hidden",
-                        borderWidth: 1,
-                        borderColor: "#373737",
+                        marginRight: verticalScale(4),
                       }}
-                    />
+                      onPress={() => {
+                        setOpenImgUri(item.imageUrl);
+                      }}>
+                      <Image
+                        source={{ uri: item.imageUrl }}
+                        style={{
+                          aspectRatio: 1,
+                          borderRadius: verticalScale(10),
+                          overflow: "hidden",
+                          borderWidth: 1,
+                          borderColor: "#373737",
+                        }}
+                      />
+                    </Pressable>
                   ))}
                 </View>
               )}

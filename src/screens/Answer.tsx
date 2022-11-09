@@ -19,6 +19,8 @@ import { launchImageLibrary } from "react-native-image-picker";
 import SimpleHeader from "../components/common/SimpleHeader";
 import { postRecommendation } from "../api/postRecommendation";
 import { postRecommendationImg } from "../api/postRecommendationImg";
+import { resizeImage } from "../utils/resizeImage";
+import Spinner from "../components/common/Spinner";
 
 const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
 
@@ -32,15 +34,29 @@ export default function Answer({ route }) {
     },
   ]);
   const [greetings, setGreetings] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
 
   function sendRecommendation() {
+    setLoading(true);
     console.log(greetings);
     console.log(suggestionList);
     console.log(route.params);
     console.log(route.params.treatmentDate.substring(0, 16));
-    if (greetings != "") {
+    if (greetings == "") {
+      Alert.alert("인사말을 적어주세요");
+      setLoading(false);
+    } else if (suggestionList[0].hairstyleName == "") {
+      Alert.alert("추천 헤어스타일을 입력해주세요");
+      setLoading(false);
+    } else if (suggestionList[0].reason == "") {
+      Alert.alert("추천 이유를 적어주세요");
+      setLoading(false);
+    } else if (suggestionList[0].price == "") {
+      Alert.alert("제안 비용을 입력해주세요");
+      setLoading(false);
+    } else {
       suggestionList.map((data, index) => {
         console.log(data);
         postRecommendation(
@@ -54,17 +70,18 @@ export default function Answer({ route }) {
           console.log(res);
           if (res.data.result == undefined) {
             Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-            navigation.navigate("Loading");
+            navigation.navigate("Loading", {
+              reload: true,
+            });
           } else if (res.data.status == "OK") {
             postRecommendationImg(res.data.result.id, data.imageUrl);
             navigation.navigate("NewMain");
           } else {
             Alert.alert("요청에 실패했습니다.");
           }
+          setLoading(false);
         });
       });
-    } else {
-      Alert.alert("필수 항목을 모두 작성해주세요.");
     }
   }
 
@@ -73,7 +90,8 @@ export default function Answer({ route }) {
       <>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={styles.SuggestionTitleText}>
-            추천 {props.itemIndex + 1}
+            {/* 추천 {props.itemIndex + 1} */}
+            추천
           </Text>
 
           {props.itemIndex == 0 ? null : (
@@ -210,12 +228,16 @@ export default function Answer({ route }) {
         style={styles.wantStyleImage}
         onPress={async () => {
           const result = await launchImageLibrary();
-          console.log(result);
+          const resize_result = await resizeImage(result.assets[0].uri);
+          console.log(resize_result);
           let newArray = [...suggestionList];
-          const res = await fetch(result.assets[0].uri);
+          // const res = await fetch(result.assets[0].uri);
+          // const blob = await res.blob();
+          const res = await fetch(resize_result.uri);
           const blob = await res.blob();
           newArray[props.suggestionIndex].imageUrl.push({
-            uri: result.assets[0].uri,
+            // uri: result.assets[0].uri,
+            uri: resize_result.uri,
             blob: blob,
           });
           setSuggestionList(newArray);
@@ -285,7 +307,7 @@ export default function Answer({ route }) {
                 {suggestionList.map((item, index) => (
                   <SuggestionItem itemIndex={index} />
                 ))}
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={{
                     alignItems: "center",
                     backgroundColor: "#2e2e2e",
@@ -306,7 +328,7 @@ export default function Answer({ route }) {
                   <Text style={{ fontSize: scale(14), color: "#a0a0a0" }}>
                     스타일 추천서 추가 +
                   </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </>
             </View>
           </View>
@@ -328,6 +350,7 @@ export default function Answer({ route }) {
           <Text style={{ fontSize: scale(16), color: "#ffffff" }}>보내기</Text>
         </TouchableOpacity>
       </View>
+      {loading && <Spinner />}
     </SafeAreaView>
   );
 }

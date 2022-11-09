@@ -202,17 +202,45 @@ export default function DesignerRegistration() {
     console.log(schedule);
     console.log(phoneNumber);
     // console.log(profileImage);
-    if (
-      name != "" &&
-      description != "" &&
-      menuInfo.length != 0 &&
-      shopName != "" &&
-      location != "" &&
-      zipCode != "" &&
-      specificLocation != "" &&
-      schedule.length != 0 &&
-      phoneNumber != ""
-    ) {
+    // if (
+    //   name != "" &&
+    //   description != "" &&
+    //   menuInfo.length != 0 &&
+    //   shopName != "" &&
+    //   location != "" &&
+    //   zipCode != "" &&
+    //   specificLocation != "" &&
+    //   schedule.length != 0 &&
+    //   phoneNumber != ""
+    // ) {
+    if (profileImage[0] == "") {
+      Alert.alert("프로필 이미지를 첨부해주세요");
+      setLoading(false);
+    } else if (name == "") {
+      Alert.alert("디자이너 이름을 입력해주세요");
+      setLoading(false);
+    } else if (description == "") {
+      Alert.alert("자기소개를 입력해주세요");
+      setLoading(false);
+    } else if (menuInfo.length == 0) {
+      Alert.alert("가격 정보를 입력해주세요");
+      setLoading(false);
+    } else if (shopName == "") {
+      Alert.alert("헤어샵 이름을 입력해주세요");
+      setLoading(false);
+    } else if (location == "") {
+      Alert.alert("헤어샵 위치를 입력해주세요");
+      setLoading(false);
+    } else if (specificLocation == "") {
+      Alert.alert("상세 주소를 입력해주세요");
+      setLoading(false);
+    } else if (schedule.length == 0) {
+      Alert.alert("근무 일정을 입력해주세요");
+      setLoading(false);
+    } else if (phoneNumber == "") {
+      Alert.alert("전화번호를 입력해주세요");
+      setLoading(false);
+    } else {
       // 프로필 생성
       const result = await postDesignerProfile(
         name,
@@ -228,7 +256,9 @@ export default function DesignerRegistration() {
       );
       if (result.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (result.data.status == "OK") {
         console.log(result);
         // presigned url
@@ -240,9 +270,6 @@ export default function DesignerRegistration() {
       } else {
         Alert.alert("프로필 등록에 실패했습니다.");
       }
-      setLoading(false);
-    } else {
-      Alert.alert("필수 항목을 모두 작성해주세요.");
       setLoading(false);
     }
   };
@@ -296,7 +323,6 @@ export default function DesignerRegistration() {
                 ))}
               </View>
             </View>
-
             <View style={{ marginTop: 12 }}>
               <Text style={styles.itemTextStyle}>
                 디자이너 이름<Text style={{ color: "red" }}> *</Text>
@@ -306,9 +332,7 @@ export default function DesignerRegistration() {
                   placeholder="디자이너 이름을 작성해주세요."
                   placeholderTextColor={GRAYCOLOR}
                   defaultValue={name}
-                  onEndEditing={e => {
-                    setName(e.nativeEvent.text);
-                  }}
+                  onChangeText={text => setName(text)}
                   autoCorrect={false}
                   style={styles.inputText}
                 />
@@ -325,9 +349,7 @@ export default function DesignerRegistration() {
                   placeholder="프로필에 들어갈 자기소개를 작성해주세요."
                   placeholderTextColor={GRAYCOLOR}
                   defaultValue={description}
-                  onEndEditing={e => {
-                    setDescription(e.nativeEvent.text);
-                  }}
+                  onChangeText={text => setDescription(text)}
                   multiline
                   numberOfLines={Platform.OS === "ios" ? null : numberOfLines}
                   minHeight={
