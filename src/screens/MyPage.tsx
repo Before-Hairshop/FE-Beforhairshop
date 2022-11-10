@@ -122,19 +122,34 @@ export default function Mypage({ route }) {
                 navigation.navigate("Location");
               }}>
               <View style={{ height: "100%", justifyContent: "center" }}>
-                <Text
-                  style={{
-                    fontFamily: "Pretendard",
-                    fontSize: scale(10),
-                    fontWeight: "600",
-                    letterSpacing: -0.5,
-                    textAlign: "center",
-                    color: "#ffffff",
-                  }}>
-                  {route.params.data.zipAddress.split(" ")[1]}{" "}
-                  {route.params.data.zipAddress.split(" ")[2]}
-                  {"   "}
-                </Text>
+                {route.params.data.zipAddress == null ? (
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(10),
+                      fontWeight: "600",
+                      letterSpacing: -0.5,
+                      textAlign: "center",
+                      color: "#ffffff",
+                    }}>
+                    등록된 위치가 없습니다
+                    {"   "}
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(10),
+                      fontWeight: "600",
+                      letterSpacing: -0.5,
+                      textAlign: "center",
+                      color: "#ffffff",
+                    }}>
+                    {route.params.data.zipAddress.split(" ")[1]}{" "}
+                    {route.params.data.zipAddress.split(" ")[2]}
+                    {"   "}
+                  </Text>
+                )}
               </View>
               <View style={{ height: "100%", justifyContent: "center" }}>
                 <LocationIcon />
