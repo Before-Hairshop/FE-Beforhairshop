@@ -33,6 +33,8 @@ import NewProfileSelection from "../screens/NewProfileSelection";
 import NewVirtualStyling from "../screens/NewVirtualStyling";
 import AllDesignerList from "../screens/AllDesignerList";
 import OnlyDesignerProfile from "../screens/OnlyDesignerProfile";
+import ProfileRegistration from "../screens/ProfileRegistration";
+import VirtualServiceCenter from "../screens/VirtualServiceCenter";
 
 const mainStack = createNativeStackNavigator();
 
@@ -105,6 +107,14 @@ export const RootNavigator = () => {
       <mainStack.Screen
         name="OnlyDesignerProfile"
         component={OnlyDesignerProfile}
+      />
+      <mainStack.Screen
+        name="ProfileRegistration"
+        component={ProfileRegistration}
+      />
+      <mainStack.Screen
+        name="VirtualServiceCenter"
+        component={VirtualServiceCenter}
       />
       {/* <mainStack.Screen name="Main" component={Main} /> */}
     </mainStack.Navigator>

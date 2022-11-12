@@ -11,6 +11,12 @@ import React, { useState } from "react";
 import { Button } from "@rneui/themed";
 import { scale, moderateScale, verticalScale } from "../../utils/scale";
 
+import FirstStyle from "../../assets/icons/virtual/hair_1.svg";
+import SecondStyle from "../../assets/icons/virtual/hair_2.svg";
+import ThirdStyle from "../../assets/icons/virtual/hair_3.svg";
+import FourthStyle from "../../assets/icons/virtual/hair_4.svg";
+import FifthStyle from "../../assets/icons/virtual/hair_5.svg";
+
 const imageSize = 80;
 const borderSize = verticalScale(10);
 const borderWidth = scale(imageSize + borderSize / 4);
@@ -58,11 +64,14 @@ export default function HairColorItem(props) {
         // color={buttonColor()}
         // useForeground
         onPress={props.onPressImage}>
-        <Image
+        <View style={[styles.image, { borderColor: buttonColor() }]}>
+          {props.thumbnail}
+          {/* <Image
           source={props.thumbnail}
           style={[styles.image, { borderColor: buttonColor() }]}
           // imageStyle={{ borderRadius: borderSize }}
-        />
+        /> */}
+        </View>
         <Text
           style={{
             color: props.status == BASE ? "#888888" : "#fc2a5b",
@@ -84,11 +93,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   image: {
+    alignItems: "center",
+    justifyContent: "center",
     width: scale(imageSize),
     height: scale(imageSize),
     borderRadius: 10,
     borderStyle: "solid",
     borderWidth: 1,
+    backgroundColor: "#E3E2D0",
   },
   imageBase: {},
   imageSelected: {},

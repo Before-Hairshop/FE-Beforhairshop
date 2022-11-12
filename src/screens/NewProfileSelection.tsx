@@ -5,19 +5,24 @@ import {
   FlatList,
   SafeAreaView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@rneui/themed";
 import { scale, verticalScale } from "../utils/scale";
 import ProfileImage from "../components/profileSelection/ProfileImage";
 import { useNavigation } from "@react-navigation/native";
 import HighlightText from "react-native-highlight-underline-text";
-import uuid from "react-native-uuid";
 import { setSelectedImage } from "../store/actions/profile_actions";
 import { useDispatch, useStore } from "react-redux";
-import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import Modal from "react-native-modal";
 import ComplexityHeader from "../components/common/ComplexityHeader";
+import ProfileRegistration from "./ProfileRegistration";
+import { getVirtualStylingImg } from "../api/getVirtualStylingImg";
+import { deleteVirtualStylingImg } from "../api/deleteVirtualStylingImg";
+import Spinner from "../components/common/Spinner";
+import TestW from "../assets/images/virtual/test_w.jpeg";
+import TestM from "../assets/images/virtual/test_m.jpeg";
 
 const BASE = "base";
 const EDIT = "edit";
@@ -28,188 +33,137 @@ const placeholderUrl =
   "https://user-images.githubusercontent.com/55876368/199949845-66656d25-1c84-4445-8cc1-4ce13ff14ce3.png";
 // "https://user-images.githubusercontent.com/55876368/199634630-db396173-517d-4e9a-939a-53f5cdb23228.png";
 // "https://via.placeholder.com/300.png/09f/fffC/O%20https://placeholder.com/";
+// const addedPlaceholderUrl =
+//   "https://via.placeholder.com/150/0000FF/808080%20?Text=Digital.com";
 
-const addedPlaceholderUrl =
-  "https://via.placeholder.com/150/0000FF/808080%20?Text=Digital.com";
-
-export default function NewProfileSelection(props) {
+export default function NewProfileSelection() {
   const dispatch = useDispatch();
   const store = useStore();
   const navigation = useNavigation();
 
-  let [imageInfo, setImageInfo] = useState([
-    {
-      id: "bd7acbeafasd3abb28ba",
-      uri: placeholderUrl,
-      title: "1 Item",
-      status: BASE,
-    },
-    {
-      id: "3ac68afc-c605-48d3-aafsdfasdf4f8-fbd91aa97f63",
-      uri: placeholderUrl,
-      title: "2 Item",
-      status: BASE,
-    },
-    {
-      id: "58694a0f-3da1-471f-asdfasdfbd96-145571e29d72",
-      uri: placeholderUrl,
-      title: "3 Item",
-      status: BASE,
-    },
-    {
-      id: "58694a0f-3da1-471f-bd9sadfadsf6-145571e29d72",
-      uri: placeholderUrl,
-      title: "4 Item",
-      status: BASE,
-    },
-    {
-      id: "58694a0ffasdfdasf71f-bd96-145571e29d72",
-      uri: placeholderUrl,
-      title: "5 Item",
-      status: BASE,
-    },
-    {
-      id: "58694a0f-3daasdfas1-471f-bd9sd6-145571e29d72",
-      uri: placeholderUrl,
-      title: "6 Item",
-      status: BASE,
-    },
-    {
-      id: "58694a0f-3daasdfsdfasdas1-471f-bd9sd6-145571e29d72",
-      uri: placeholderUrl,
-      title: "7 Ifsdaftem",
-      status: BASE,
-    },
-    {
-      id: "58694a0f-3daasadfsadffsdfasdas1-471f-bd9sd6-145571e29d72",
-      uri: placeholderUrl,
-      title: "8 Ifsdaftem",
-      status: ADD,
-    },
-  ]);
-
-  let [selectedImageId, setSelectedImageId] = useState("");
-  let [screenStatus, setScreenStatus] = useState(BASE);
-  let [isModalVisible, setIsModalVisible] = useState(false);
+  const [imageInfo, setImageInfo] = useState([]);
+  const [imageModal, setImageModal] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
+  const [selectedImageId, setSelectedImageId] = useState("");
+  const [selectedImageUri, setSelectedImageUri] = useState("");
+  const [screenStatus, setScreenStatus] = useState(BASE);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const startEdit = () => {
     setScreenStatus(EDIT);
     let newArray = [...imageInfo];
-
     let arrayLength = newArray.length;
     for (let i = 0; i < arrayLength; i++) {
       if (newArray[i].status != ADD) {
         newArray[i].status = EDIT;
       }
     }
-
     setImageInfo(newArray);
   };
 
   const finishEdit = () => {
     setScreenStatus(BASE);
     let newArray = [...imageInfo];
-
     let arrayLength = newArray.length;
     for (let i = 0; i < arrayLength; i++) {
       if (newArray[i].status != ADD) {
         newArray[i].status = BASE;
       }
     }
-
     setImageInfo(newArray);
   };
 
-  const deleteSelectedImage = () => {
-    let newArray = [...imageInfo];
-    newArray = newArray.filter(item => item.id != selectedImageId);
-    setImageInfo(newArray);
+  const deleteSelectedImage = async () => {
     setIsModalVisible(false);
+    setLoading(true);
+    const result = await deleteVirtualStylingImg(selectedImageUri);
+    console.log(result);
+    if (result.data.result == undefined) {
+      setLoading(false);
+      Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+      navigation.navigate("Loading", {
+        reload: true,
+      });
+    } else if (result.data.status == "OK") {
+      let newArray = [...imageInfo];
+      newArray = newArray.filter(item => item.id != selectedImageId);
+      setImageInfo(newArray);
+      setLoading(false);
+    } else {
+      setLoading(false);
+      Alert.alert("삭제 실패");
+    }
   };
 
-  const handleSelection = async (id, status) => {
+  const handleSelection = async (id, status, uri, inferenceStatus) => {
     if (status == ADD) {
-      try {
-        const result = await launchImageLibrary({}, response => {
-          let uri = addedPlaceholderUrl;
-          let newImage = {
-            id: uuid.v4(),
-            uri: uri,
-            status: BASE,
-          };
-
-          let newArray = [...imageInfo];
-          let toInsertIndex = newArray.length - 1;
-          newArray.splice(toInsertIndex, 0, newImage);
-
-          setImageInfo(newArray);
-        });
-      } catch (error) {
-        console.log(error);
-      }
+      setImageModal(true);
     } else {
-      setSelectedImageId(id);
       if (screenStatus == EDIT) {
-        setIsModalVisible(true);
+        setSelectedImageId(id);
+        setSelectedImageUri(uri);
+        if (id == 1 || id == 2) {
+          Alert.alert("기본 이미지는 삭제할 수 없습니다.");
+        } else if (inferenceStatus == 1)
+          [Alert.alert("변환중인 이미지는 삭제할 수 없습니다.")];
+        else {
+          setIsModalVisible(true);
+        }
       } else {
-        imageInfo.forEach((item, index) => {
-          if (item.status == ADD) {
-          } else if (item.id != id) {
-            //reset image selection
-            imageInfo[index].status = BASE;
-          } else if (
-            item.id == id &&
-            item.id != store.getState().Profile.selectedImage
-          ) {
-            //when user choose new image
-            console.log(item);
-            let newArray = [...imageInfo];
-            newArray[index].status = SELECTED;
-            setImageInfo(newArray);
-
-            setScreenStatus(SELECTED);
-            dispatch(setSelectedImage(item));
-          } else {
-            console.log(item);
-            //when user choose already selected image
-            let newArray = [...imageInfo];
-            imageInfo[index].status = BASE;
-            setImageInfo(newArray);
-
-            setScreenStatus(BASE);
-
-            dispatch(setSelectedImage(item));
-          }
-        });
+        if (inferenceStatus == 1) {
+          Alert.alert(`이미지 변환 진행중입니다. ${"\n"}조금만 기다려주세요.`);
+        } else if (inferenceStatus == 0) {
+          Alert.alert(
+            `이미지 변환에 실패했습니다. ${"\n"}다른 이미지를 선택해주세요.`,
+          );
+        } else {
+          setSelectedImageId(id);
+          setSelectedImageUri(uri);
+          imageInfo.forEach((item, index) => {
+            if (item.status == ADD) {
+              //
+            } else if (item.id != id) {
+              //reset image selection
+              imageInfo[index].status = BASE;
+            } else if (
+              item.id == id &&
+              item.id != store.getState().Profile.selectedImage
+            ) {
+              //when user choose new image
+              console.log(item);
+              let newArray = [...imageInfo];
+              newArray[index].status = SELECTED;
+              setImageInfo(newArray);
+              setScreenStatus(SELECTED);
+              // dispatch(setSelectedImage(item));
+            } else {
+              console.log(item);
+              //when user choose already selected image
+              let newArray = [...imageInfo];
+              imageInfo[index].status = BASE;
+              setImageInfo(newArray);
+              setScreenStatus(BASE);
+              // dispatch(setSelectedImage(item));
+            }
+          });
+        }
       }
     }
   };
+
   const HeaderButton = () => {
     if (screenStatus == SELECTED) {
       return (
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("NewVirtualStyling");
+            navigation.navigate("NewVirtualStyling", {
+              id: selectedImageId,
+              uri: selectedImageUri,
+            });
           }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: scale(16),
-              fontWeight: "500",
-              fontStyle: "normal",
-              letterSpacing: -0.5,
-              textAlign: "left",
-              color: "#fc2a5b",
-            }}>
-            다음
-          </Text>
+          <Text style={styles.next_text}>다음</Text>
         </TouchableOpacity>
-        // <Button
-        //   title="다음"
-        //   type="clear"
-        //   titleStyle={styles.headerRightButton}
-        //   onPress={() => navigation.navigate("VirtualStyling")}
-        // />
       );
     } else if (screenStatus == BASE) {
       return (
@@ -217,25 +171,8 @@ export default function NewProfileSelection(props) {
           onPress={() => {
             startEdit();
           }}>
-          <Text
-            style={{
-              fontFamily: "Pretendard",
-              fontSize: scale(16),
-              fontWeight: "500",
-              fontStyle: "normal",
-              letterSpacing: -0.5,
-              textAlign: "left",
-              color: "#fc2a5b",
-            }}>
-            편집
-          </Text>
+          <Text style={styles.edit_text}>편집</Text>
         </TouchableOpacity>
-        // <Button
-        //   title="편집"
-        //   type="clear"
-        //   titleStyle={styles.headerRightButton}
-        //   onPress={startEdit}
-        // />
       );
     } else {
       return (
@@ -256,12 +193,6 @@ export default function NewProfileSelection(props) {
             완료
           </Text>
         </TouchableOpacity>
-        // <Button
-        //   title="완료"
-        //   type="clear"
-        //   titleStyle={styles.headerRightButton}
-        //   onPress={finishEdit}
-        // />
       );
     }
   };
@@ -272,13 +203,88 @@ export default function NewProfileSelection(props) {
         thumbnail={item.uri}
         status={item.status}
         id={item.id}
-        onPressImage={() => handleSelection(item.id, item.status)}
+        onPressImage={() =>
+          handleSelection(item.id, item.status, item.uri, item.inferenceStatus)
+        }
+        inferenceStatus={item.inferenceStatus}
       />
     );
   };
+
+  useEffect(() => {
+    setProfileImage(null);
+  }, [imageInfo]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const res = await getVirtualStylingImg();
+      if (res.data.result == undefined) {
+        Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
+      } else if (res.data.status == "OK") {
+        console.log(res);
+        let newArray = [];
+        newArray.push({
+          id: 1,
+          uri: TestM,
+          status: BASE,
+          inferenceStatus: 2,
+        });
+        newArray.push({
+          id: 2,
+          uri: TestW,
+          status: BASE,
+          inferenceStatus: 2,
+        });
+        res.data.result.map(item => {
+          newArray.push({
+            id: item.id,
+            uri: item.imageUrl,
+            status: BASE,
+            inferenceStatus: item.inferenceStatus,
+          });
+        });
+        if (
+          res.data.result.length >= 2 ||
+          res.data.result.filter(item => item.inferenceStatus == 1).length > 0
+        ) {
+          setImageInfo(newArray);
+        } else {
+          setImageInfo([
+            ...newArray,
+            ...[
+              {
+                id: "58694a0f-3daasadfsadffsdfasdas1-471f-bd9sd6-145571e29d72",
+                uri: placeholderUrl,
+                status: ADD,
+                inferenceStatus: 2,
+              },
+            ],
+          ]);
+        }
+      } else {
+        Alert.alert("데이터를 불러오는데 실패했습니다.");
+      }
+    }
+    fetchData();
+  }, [imageModal]);
+
   return (
     <SafeAreaView style={styles.frame}>
-      <Modal isVisible={isModalVisible}>
+      <ProfileRegistration
+        isVisible={imageModal}
+        setIsVisible={setImageModal}
+        profileImage={profileImage}
+        setProfileImage={setProfileImage}
+        imageInfo={imageInfo}
+        setImageInfo={setImageInfo}
+      />
+      <Modal
+        isVisible={isModalVisible}
+        animationIn="fadeIn"
+        animationOut="fadeOut">
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
           <View
@@ -293,11 +299,14 @@ export default function NewProfileSelection(props) {
               <Text
                 style={{
                   fontFamily: "Pretendard",
-                  color: "#000",
-                  fontSize: verticalScale(20),
+                  fontSize: verticalScale(18),
+                  fontWeight: "600",
+                  fontStyle: "normal",
+                  textAlign: "left",
+                  color: "#000000",
                   marginTop: verticalScale(33),
                 }}>
-                이 프로필을 삭제하시겠어요?
+                이 프로필을 삭제하시겠습니까?
               </Text>
             </View>
             <View style={{ height: "35%", flexDirection: "row" }}>
@@ -331,7 +340,7 @@ export default function NewProfileSelection(props) {
             />
             <View style={{ alignItems: "center" }}>
               <View style={{ width: "88.9%" }}>
-                <View style={{ paddingBottom: verticalScale(30) }}>
+                <View style={{ paddingBottom: verticalScale(18) }}>
                   <Text
                     style={{
                       fontFamily: "Pretendard",
@@ -341,20 +350,16 @@ export default function NewProfileSelection(props) {
                     }}>
                     가상 헤어를 적용할
                   </Text>
-                  <View style={{ flexDirection: "row" }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      marginBottom: verticalScale(18),
+                    }}>
                     <HighlightText
                       isFixed={false}
                       ratio={0.26}
                       underlineColor="rgba(252, 42, 91, 0.5)"
-                      textStyle={{
-                        fontFamily: "Pretendard",
-                        fontSize: verticalScale(22),
-                        fontWeight: "bold",
-                        fontStyle: "normal",
-                        letterSpacing: 0,
-                        textAlign: "left",
-                        color: "#ffffff",
-                      }}
+                      textStyle={styles.title}
                       text="프로필을 선택"
                     />
                     <Text>
@@ -366,6 +371,92 @@ export default function NewProfileSelection(props) {
                         }}>
                         해주세요
                       </Text>
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}>
+                    <View
+                      style={{
+                        width: verticalScale(10),
+                        height: verticalScale(10),
+                        borderRadius: verticalScale(10),
+                        backgroundColor: "#47CE5F",
+                        opacity: 0.8,
+                      }}
+                    />
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: scale(11),
+                        fontWeight: "500",
+                        fontStyle: "normal",
+                        letterSpacing: -0.5,
+                        textAlign: "left",
+                        color: "#ffffff",
+                      }}>
+                      {"  "}
+                      이미지 변환 완료
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      marginTop: verticalScale(3),
+                      alignItems: "center",
+                    }}>
+                    <View
+                      style={{
+                        width: verticalScale(10),
+                        height: verticalScale(10),
+                        borderRadius: verticalScale(10),
+                        backgroundColor: "#F2B53C",
+                        opacity: 0.8,
+                      }}
+                    />
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: scale(11),
+                        fontWeight: "500",
+                        fontStyle: "normal",
+                        letterSpacing: -0.5,
+                        textAlign: "left",
+                        color: "#ffffff",
+                      }}>
+                      {"  "}
+                      이미지 변환 진행중
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      marginTop: verticalScale(3),
+                      alignItems: "center",
+                    }}>
+                    <View
+                      style={{
+                        width: verticalScale(10),
+                        height: verticalScale(10),
+                        borderRadius: verticalScale(10),
+                        backgroundColor: "#F2382D",
+                        opacity: 0.8,
+                      }}
+                    />
+                    <Text
+                      style={{
+                        fontFamily: "Pretendard",
+                        fontSize: scale(11),
+                        fontWeight: "500",
+                        fontStyle: "normal",
+                        letterSpacing: -0.5,
+                        textAlign: "left",
+                        color: "#ffffff",
+                      }}>
+                      {"  "}
+                      이미지 변환 실패
                     </Text>
                   </View>
                 </View>
@@ -388,6 +479,7 @@ export default function NewProfileSelection(props) {
           paddingBottom: 100,
         }}
       />
+      {loading && <Spinner />}
     </SafeAreaView>
   );
 }
@@ -405,8 +497,38 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
   },
   headerRightButton: {
-    fontFamily: "Pretendard-Bold",
+    fontFamily: "Pretendard",
+    fontWeight: "500",
+    fontStyle: "normal",
+    textAlign: "left",
     fontSize: verticalScale(16),
     color: "#fc2a5b",
+  },
+  next_text: {
+    fontFamily: "Pretendard",
+    fontSize: scale(16),
+    fontWeight: "500",
+    fontStyle: "normal",
+    letterSpacing: -0.5,
+    textAlign: "left",
+    color: "#fc2a5b",
+  },
+  edit_text: {
+    fontFamily: "Pretendard",
+    fontSize: scale(16),
+    fontWeight: "500",
+    fontStyle: "normal",
+    letterSpacing: -0.5,
+    textAlign: "left",
+    color: "#fc2a5b",
+  },
+  title: {
+    fontFamily: "Pretendard",
+    fontSize: verticalScale(22),
+    fontWeight: "bold",
+    fontStyle: "normal",
+    letterSpacing: 0,
+    textAlign: "left",
+    color: "#ffffff",
   },
 });

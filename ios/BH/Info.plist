@@ -57,6 +57,8 @@
 	<string>지도에서 현재 위치를 확인할 수 있어요.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to the photo library.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Required for Taking Photos</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Ionicons.ttf</string>
