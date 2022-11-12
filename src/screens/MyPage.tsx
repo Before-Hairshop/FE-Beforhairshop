@@ -179,8 +179,8 @@ export default function Mypage({ route }) {
                 source={{
                   uri:
                     designerFlag == "1"
-                      ? route.params.data.imageUrl
-                      : route.params.data.frontImageUrl,
+                      ? route.params.data.imageUrl + "?" + new Date()
+                      : route.params.data.frontImageUrl + "?" + new Date(),
                 }}
                 style={{
                   width: scale(70),

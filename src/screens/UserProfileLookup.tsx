@@ -76,7 +76,7 @@ export default function UserProfileLookup({ route }) {
         }}>
         {props.uri != null ? (
           <Image
-            source={{ uri: props.uri }}
+            source={{ uri: props.uri + "?" + new Date() }}
             style={{ width: "100%", aspectRatio: 1 }}
           />
         ) : (
@@ -96,7 +96,7 @@ export default function UserProfileLookup({ route }) {
           setOpenImgUri(props.img.imageUrl);
         }}>
         <Image
-          source={{ uri: props.img.imageUrl }}
+          source={{ uri: props.img.imageUrl + "?" + new Date() }}
           style={{ width: "100%", aspectRatio: 1 }}
         />
       </Pressable>
@@ -423,6 +423,20 @@ export default function UserProfileLookup({ route }) {
                   style={styles.highlightText}></TextInput>
               </View>
             </View>
+
+            {memberId != undefined &&
+              profileData != undefined &&
+              memberId == profileData.memberProfileDto.memberId && (
+                <View style={{ marginTop: 12, alignItems: "flex-start" }}>
+                  <Text style={styles.itemTextStyle}>전화번호</Text>
+                  <View style={styles.userTextUnderline}>
+                    <TextInput
+                      editable={false}
+                      value={profileData.memberProfileDto.phoneNumber}
+                      style={styles.highlightText}></TextInput>
+                  </View>
+                </View>
+              )}
           </View>
         </View>
       </ScrollView>

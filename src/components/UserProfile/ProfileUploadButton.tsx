@@ -27,7 +27,9 @@ export default function ProfileUploadButton(props) {
         props.toChangeFunction(newArray);
       }}>
       <Image
-        source={{ uri: props.toChangeArray[props.index].uri }}
+        source={{
+          uri: props.toChangeArray[props.index].uri + "?" + new Date(),
+        }}
         style={{ width: "100%", aspectRatio: 1 }}
       />
     </TouchableOpacity>

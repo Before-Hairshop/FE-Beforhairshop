@@ -17,7 +17,7 @@ export default function ImageModal(props) {
         <View>
           <Image
             source={{
-              uri: props.uri,
+              uri: props.uri + "?" + new Date(),
             }}
             style={{
               resizeMode: "contain",

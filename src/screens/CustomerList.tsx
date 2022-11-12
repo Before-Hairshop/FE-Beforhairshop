@@ -73,7 +73,7 @@ export default function CustomerList() {
       }>
       <View>
         <Image
-          source={{ uri: item.frontImageUrl }}
+          source={{ uri: item.frontImageUrl + "?" + new Date() }}
           style={{
             width: scale(160),
             height: scale(160),
@@ -101,8 +101,8 @@ export default function CustomerList() {
               color: "#737373",
               marginTop: verticalScale(7),
             }}>
-            {item.zipAddress.length > 16
-              ? item.zipAddress.substring(0, 15) + "..."
+            {item.zipAddress.length > 14
+              ? item.zipAddress.substring(0, 13) + "..."
               : item.zipAddress}
           </Text>
           <Text

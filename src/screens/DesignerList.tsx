@@ -27,6 +27,7 @@ import ComplexityHeader from "../components/common/ComplexityHeader";
 import { getDesignerListThroughLocation } from "../api/getDesignerListThroughLocation";
 import { getDesignerListThroughName } from "../api/getDesignerListThroughName";
 import { useNavigation } from "@react-navigation/native";
+import SimpleHeader from "../components/common/SimpleHeader";
 
 const TagItem = (props: { value: string }) => (
   <View
@@ -85,7 +86,9 @@ export default function DesignerList() {
           });
         }}>
         <Image
-          source={{ uri: item.hairDesignerProfileDto.imageUrl }}
+          source={{
+            uri: item.hairDesignerProfileDto.imageUrl + "?" + new Date(),
+          }}
           style={{
             width: verticalScale(70),
             height: verticalScale(70),
@@ -335,7 +338,8 @@ export default function DesignerList() {
       <FlatList
         ListHeaderComponent={
           <>
-            <ComplexityHeader
+            <SimpleHeader title="헤어 디자이너 목록" goBack="Main" />
+            {/* <ComplexityHeader
               title="헤어 디자이너 목록"
               goBack="NewMain"
               button={
@@ -346,7 +350,7 @@ export default function DesignerList() {
                   <GoHomeIcon />
                 </TouchableOpacity>
               }
-            />
+            /> */}
             <View
               style={{
                 width: "100%",
