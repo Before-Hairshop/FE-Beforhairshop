@@ -64,7 +64,15 @@ export default function Location() {
           reload: true,
         });
       } else if (response.data.status == "OK") {
-        navigation.navigate("NewMain");
+        // navigation.navigate("NewMain");
+        navigation.reset({
+          routes: [
+            {
+              name: "NewMain",
+              params: { reload: true },
+            },
+          ],
+        });
       } else {
         Alert.alert("요청에 실패했습니다.");
       }

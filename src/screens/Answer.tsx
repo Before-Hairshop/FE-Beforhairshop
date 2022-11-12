@@ -8,6 +8,8 @@ import {
   Image,
   SafeAreaView,
   Alert,
+  Modal,
+  Pressable,
 } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -15,12 +17,14 @@ import { verticalScale, scale } from "../utils/scale";
 import { useState } from "react";
 import PlusIcon from "../assets/icons/plus.png";
 
-import { launchImageLibrary } from "react-native-image-picker";
+import { launchImageLibrary, launchCamera } from "react-native-image-picker";
 import SimpleHeader from "../components/common/SimpleHeader";
 import { postRecommendation } from "../api/postRecommendation";
 import { postRecommendationImg } from "../api/postRecommendationImg";
 import { resizeImage } from "../utils/resizeImage";
 import Spinner from "../components/common/Spinner";
+import CameraIcon from "../assets/icons/common/camera.png";
+import GalleryIcon from "../assets/icons/common/gallery.png";
 
 const baseImageURL = Image.resolveAssetSource(PlusIcon).uri;
 
@@ -35,6 +39,7 @@ export default function Answer({ route }) {
   ]);
   const [greetings, setGreetings] = useState("");
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   const navigation = useNavigation();
 
@@ -75,7 +80,15 @@ export default function Answer({ route }) {
             });
           } else if (res.data.status == "OK") {
             postRecommendationImg(res.data.result.id, data.imageUrl);
-            navigation.navigate("NewMain");
+            // navigation.navigate("NewMain");
+            navigation.reset({
+              routes: [
+                {
+                  name: "NewMain",
+                  params: { reload: true },
+                },
+              ],
+            });
           } else {
             Alert.alert("요청에 실패했습니다.");
           }
@@ -213,8 +226,11 @@ export default function Answer({ route }) {
         }}>
         <Image
           source={{
-            uri: suggestionList[props.suggestionIndex].imageUrl[props.itemIndex]
-              .uri,
+            uri:
+              suggestionList[props.suggestionIndex].imageUrl[props.itemIndex]
+                .uri +
+              "?" +
+              new Date(),
           }}
           style={{ width: "100%", aspectRatio: 1 }}
         />
@@ -224,29 +240,140 @@ export default function Answer({ route }) {
 
   const HairImageAddButton = props => {
     return (
-      <TouchableOpacity
-        style={styles.wantStyleImage}
-        onPress={async () => {
-          const result = await launchImageLibrary();
-          const resize_result = await resizeImage(result.assets[0].uri);
-          console.log(resize_result);
-          let newArray = [...suggestionList];
-          // const res = await fetch(result.assets[0].uri);
-          // const blob = await res.blob();
-          const res = await fetch(resize_result.uri);
-          const blob = await res.blob();
-          newArray[props.suggestionIndex].imageUrl.push({
-            // uri: result.assets[0].uri,
-            uri: resize_result.uri,
-            blob: blob,
-          });
-          setSuggestionList(newArray);
-        }}>
-        <Image
-          source={{ uri: baseImageURL }}
-          style={{ width: "100%", aspectRatio: 1 }}
-        />
-      </TouchableOpacity>
+      <>
+        <Modal visible={visible} transparent={true}>
+          <Pressable
+            style={{
+              backgroundColor: "rgba(12, 12, 12, 0.8)",
+              width: "100%",
+              height: "100%",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-evenly",
+            }}
+            onPress={() => {
+              setVisible(false);
+            }}>
+            <TouchableOpacity
+              style={{
+                width: "35%",
+                height: verticalScale(70),
+                borderRadius: 10,
+                backgroundColor: "#2e2e2e",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "row",
+              }}
+              onPress={async () => {
+                setVisible(false);
+                const result = await launchCamera({
+                  cameraType: "front",
+                  presentationStyle: "fullScreen",
+                  maxWidth: 1024,
+                  maxHeight: 1024,
+                });
+                const resize_result = await resizeImage(result.assets[0].uri);
+                console.log(resize_result);
+                let newArray = [...suggestionList];
+                // const res = await fetch(result.assets[0].uri);
+                // const blob = await res.blob();
+                const res = await fetch(resize_result.uri);
+                const blob = await res.blob();
+                newArray[props.suggestionIndex].imageUrl.push({
+                  // uri: result.assets[0].uri,
+                  uri: resize_result.uri,
+                  blob: blob,
+                });
+                setSuggestionList(newArray);
+              }}>
+              <Image
+                source={CameraIcon}
+                style={{ width: verticalScale(20), height: verticalScale(20) }}
+              />
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: verticalScale(14),
+                  fontWeight: "500",
+                  fontStyle: "normal",
+                  textAlign: "center",
+                  color: "#a0a0a0",
+                }}>
+                {"  "}
+                사진 촬영
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                width: "35%",
+                height: verticalScale(70),
+                borderRadius: 10,
+                backgroundColor: "#2e2e2e",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "row",
+              }}
+              onPress={async () => {
+                setVisible(false);
+                const result = await launchImageLibrary();
+                const resize_result = await resizeImage(result.assets[0].uri);
+                console.log(resize_result);
+                let newArray = [...suggestionList];
+                // const res = await fetch(result.assets[0].uri);
+                // const blob = await res.blob();
+                const res = await fetch(resize_result.uri);
+                const blob = await res.blob();
+                newArray[props.suggestionIndex].imageUrl.push({
+                  // uri: result.assets[0].uri,
+                  uri: resize_result.uri,
+                  blob: blob,
+                });
+                setSuggestionList(newArray);
+              }}>
+              <Image
+                source={GalleryIcon}
+                style={{ width: verticalScale(20), height: verticalScale(20) }}
+              />
+              <Text
+                style={{
+                  fontFamily: "Pretendard",
+                  fontSize: verticalScale(14),
+                  fontWeight: "500",
+                  fontStyle: "normal",
+                  textAlign: "center",
+                  color: "#a0a0a0",
+                }}>
+                {"  "}
+                앨범 선택
+              </Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Modal>
+        <TouchableOpacity
+          style={styles.wantStyleImage}
+          onPress={async () => {
+            setVisible(true);
+            // const result = await launchImageLibrary();
+            // const resize_result = await resizeImage(result.assets[0].uri);
+            // console.log(resize_result);
+            // let newArray = [...suggestionList];
+            // // const res = await fetch(result.assets[0].uri);
+            // // const blob = await res.blob();
+            // const res = await fetch(resize_result.uri);
+            // const blob = await res.blob();
+            // newArray[props.suggestionIndex].imageUrl.push({
+            //   // uri: result.assets[0].uri,
+            //   uri: resize_result.uri,
+            //   blob: blob,
+            // });
+            // setSuggestionList(newArray);
+          }}>
+          <Image
+            source={{ uri: baseImageURL }}
+            style={{ width: "100%", aspectRatio: 1 }}
+          />
+        </TouchableOpacity>
+      </>
     );
   };
 
@@ -334,7 +461,7 @@ export default function Answer({ route }) {
           </View>
         </View>
       </ScrollView>
-      <View style={{ alignItems: "center" }}>
+      <View style={{ alignItems: "center", paddingBottom: verticalScale(20) }}>
         <TouchableOpacity
           style={{
             width: "88.9%",

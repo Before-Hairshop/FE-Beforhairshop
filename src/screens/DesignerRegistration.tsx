@@ -223,7 +223,7 @@ export default function DesignerRegistration() {
       Alert.alert("자기소개를 입력해주세요");
       setLoading(false);
     } else if (menuInfo.length == 0) {
-      Alert.alert("가격 정보를 입력해주세요");
+      Alert.alert("가격 정보를 추가해주세요");
       setLoading(false);
     } else if (shopName == "") {
       Alert.alert("헤어샵 이름을 입력해주세요");
@@ -235,7 +235,7 @@ export default function DesignerRegistration() {
       Alert.alert("상세 주소를 입력해주세요");
       setLoading(false);
     } else if (schedule.length == 0) {
-      Alert.alert("근무 일정을 입력해주세요");
+      Alert.alert("근무 일정을 추가해주세요");
       setLoading(false);
     } else if (phoneNumber == "") {
       Alert.alert("전화번호를 입력해주세요");
@@ -266,7 +266,15 @@ export default function DesignerRegistration() {
         console.log(url);
         const response = await putS3Img(url, profileImage[0].blob);
         console.log(response);
-        navigation.navigate("NewMain");
+        // navigation.navigate("NewMain");
+        navigation.reset({
+          routes: [
+            {
+              name: "NewMain",
+              params: { reload: true },
+            },
+          ],
+        });
       } else {
         Alert.alert("프로필 등록에 실패했습니다.");
       }

@@ -176,7 +176,15 @@ export default function ReviewModify({ route }) {
       );
       console.log(res);
       if (result.data.status == "OK" && res.data.status == "OK") {
-        navigation.navigate("NewMain");
+        // navigation.navigate("NewMain");
+        navigation.reset({
+          routes: [
+            {
+              name: "NewMain",
+              params: { reload: true },
+            },
+          ],
+        });
       } else {
         Alert.alert("요청에 실패했습니다.");
       }
@@ -237,7 +245,7 @@ export default function ReviewModify({ route }) {
           <View style={{ width: "88.9%" }}>
             <View style={{ alignItems: "center", margin: verticalScale(10) }}>
               <ImageBackground
-                source={{ uri: route.params.designerImg }}
+                source={{ uri: route.params.designerImg + "?" + new Date() }}
                 style={{
                   width: scale(150),
                   aspectRatio: 1,

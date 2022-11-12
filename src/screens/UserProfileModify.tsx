@@ -181,7 +181,15 @@ export default function UserProfileModify() {
           reload: true,
         });
       } else if (result.data.status == "OK" && result2.data.status == "OK") {
-        navigation.navigate("NewMain");
+        // navigation.navigate("NewMain");
+        navigation.reset({
+          routes: [
+            {
+              name: "NewMain",
+              params: { reload: true },
+            },
+          ],
+        });
       } else {
         Alert.alert("프로필 수정에 실패했습니다.");
       }

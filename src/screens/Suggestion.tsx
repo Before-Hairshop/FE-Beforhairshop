@@ -70,7 +70,15 @@ export default function Suggestion({ route }) {
         Alert.alert(
           `${recommendData.designerName}님의 스타일 추천서를 수락하였습니다.`,
         );
-        navigation.navigate("NewMain");
+        // navigation.navigate("NewMain");
+        navigation.reset({
+          routes: [
+            {
+              name: "NewMain",
+              params: { reload: true },
+            },
+          ],
+        });
       } else {
         Alert.alert("요청에 실패했습니다.");
       }
@@ -89,7 +97,15 @@ export default function Suggestion({ route }) {
         Alert.alert(
           `${recommendData.designerName}님의 스타일 추천서를 거절하였습니다.`,
         );
-        navigation.navigate("NewMain");
+        // navigation.navigate("NewMain");
+        navigation.reset({
+          routes: [
+            {
+              name: "NewMain",
+              params: { reload: true },
+            },
+          ],
+        });
       } else {
         Alert.alert("요청에 실패했습니다.");
       }
@@ -291,7 +307,7 @@ export default function Suggestion({ route }) {
                         setOpenImgUri(item.imageUrl);
                       }}>
                       <Image
-                        source={{ uri: item.imageUrl }}
+                        source={{ uri: item.imageUrl + "?" + new Date() }}
                         style={{
                           aspectRatio: 1,
                           borderRadius: verticalScale(10),
@@ -375,7 +391,11 @@ export default function Suggestion({ route }) {
         designerFlag != undefined &&
         designerFlag == "0" && (
           <View
-            style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-evenly",
+              paddingBottom: verticalScale(20),
+            }}>
             <TouchableOpacity
               style={{
                 width: scale(156),

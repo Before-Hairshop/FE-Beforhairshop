@@ -30,6 +30,7 @@ import { postUserProfile } from "../api/postUserProfile";
 import { postUserProfileImg } from "../api/postUserProfileImg";
 import { putS3Img } from "../api/putS3Img";
 import { onlyPhoneNum } from "../utils/regularExpression";
+import ImageSelectModal from "../components/common/ImageSelectModal";
 
 const numHairStatus = 3;
 const numHairTendency = 5;
@@ -53,6 +54,7 @@ export default function UserProfile() {
   const [phoneNumber, setPhoneNumber] = useState(undefined);
   const [nickname, setNickname] = useState("");
   const [loading, setLoading] = useState(false);
+  const [imageModal, setImageModal] = useState(false);
 
   const hairStatus = ["많이 상했어요", "보통이에요", "매우 건강해요"];
   const hairTendency = ["악성 곱슬", "심한 곱슬", "반곱슬", "반직모", "직모"];
@@ -449,7 +451,7 @@ export default function UserProfile() {
           </View>
         </View>
       </ScrollView>
-      <View style={{ alignItems: "center" }}>
+      <View style={{ alignItems: "center", paddingBottom: verticalScale(20) }}>
         <TouchableOpacity
           style={{
             width: "88.9%",
@@ -460,7 +462,15 @@ export default function UserProfile() {
             justifyContent: "center",
           }}
           onPress={() => {
-            navigation.navigate("NewMain");
+            // navigation.navigate("NewMain");
+            navigation.reset({
+              routes: [
+                {
+                  name: "NewMain",
+                  params: { reload: true },
+                },
+              ],
+            });
           }}>
           <Text
             style={{

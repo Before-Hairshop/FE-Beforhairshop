@@ -84,7 +84,15 @@ export default function Loading({ route }) {
         navigation.navigate("ServiceTerms");
       } else {
         storeData("@DESIGNER_FLAG", String(result.data.result.designerFlag));
-        navigation.navigate("NewMain");
+        navigation.reset({
+          routes: [
+            {
+              name: "NewMain",
+              params: { reload: true },
+            },
+          ],
+        });
+        // navigation.navigate("NewMain");
       }
 
       // console.log(result.headers["set-cookie"]);
@@ -140,7 +148,15 @@ export default function Loading({ route }) {
       navigation.navigate("ServiceTerms");
     } else {
       storeData("@DESIGNER_FLAG", String(result.data.result.designerFlag));
-      navigation.navigate("NewMain");
+      navigation.reset({
+        routes: [
+          {
+            name: "NewMain",
+            params: { reload: true },
+          },
+        ],
+      });
+      // navigation.navigate("NewMain");
     }
 
     // // get current authentication state for user
@@ -190,7 +206,15 @@ export default function Loading({ route }) {
             "@DESIGNER_FLAG",
             String(result.data.result.designerFlag),
           );
-          navigation.navigate("NewMain");
+          navigation.reset({
+            routes: [
+              {
+                name: "NewMain",
+                params: { reload: true },
+              },
+            ],
+          });
+          // navigation.navigate("NewMain");
         }
       }
     } catch (error) {
