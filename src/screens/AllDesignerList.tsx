@@ -87,7 +87,7 @@ export default function AllDesignerList() {
         }}>
         <Image
           source={{
-            uri: item.hairDesignerProfileDto.imageUrl + "?" + new Date(),
+            uri: item.hairDesignerProfileDto.imageUrl,
           }}
           style={{
             width: verticalScale(70),

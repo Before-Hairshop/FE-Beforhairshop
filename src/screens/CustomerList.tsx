@@ -73,7 +73,7 @@ export default function CustomerList() {
       }>
       <View>
         <Image
-          source={{ uri: item.frontImageUrl + "?" + new Date() }}
+          source={{ uri: item.frontImageUrl }}
           style={{
             width: scale(160),
             height: scale(160),

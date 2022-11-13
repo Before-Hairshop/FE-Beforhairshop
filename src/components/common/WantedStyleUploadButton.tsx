@@ -39,13 +39,13 @@ export default function WantedStyleUploadButton(props) {
               flexDirection: "row",
             }}
             onPress={async () => {
-              setVisible(false);
               const result = await launchCamera({
                 cameraType: "front",
                 presentationStyle: "fullScreen",
                 maxWidth: 1024,
                 maxHeight: 1024,
               });
+              setVisible(false);
               const resize_result = await resizeImage(result.assets[0].uri);
               console.log(resize_result);
               let newArray = [...props.array];
@@ -88,8 +88,8 @@ export default function WantedStyleUploadButton(props) {
               flexDirection: "row",
             }}
             onPress={async () => {
-              setVisible(false);
               const result = await launchImageLibrary();
+              setVisible(false);
               const resize_result = await resizeImage(result.assets[0].uri);
               console.log(resize_result);
               let newArray = [...props.array];

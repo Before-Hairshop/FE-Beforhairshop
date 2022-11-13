@@ -26,6 +26,7 @@ import { postVirtualStylingImg } from "../api/postVirtualStylingImg";
 import { useNavigation } from "@react-navigation/native";
 import uuid from "react-native-uuid";
 import { postAIReference } from "../api/postAIReference";
+import Contour from "../components/common/Contour";
 
 const wait = (timeToDelay: number) => {
   return new Promise(resolve => setTimeout(resolve, timeToDelay));
@@ -137,83 +138,90 @@ export default function ProfileRegistration(props) {
             </TouchableOpacity>
           </View>
         </View>
-        <Image
-          source={
-            props.profileImage == null
-              ? DefaultPerson
-              : { uri: props.profileImage.uri + "?" + new Date() }
-          }
-          style={{ width: "100%", height: undefined, aspectRatio: 1 }}
-        />
-        <ScrollView>
-          <View style={{ alignItems: "center" }}>
+        <View style={{ flex: 1, backgroundColor: "#0c0c0c" }}>
+          <Image
+            resizeMode="contain"
+            source={
+              props.profileImage == null
+                ? DefaultPerson
+                : { uri: props.profileImage.uri }
+            }
+            style={{ width: "100%", height: "100%" }}
+          />
+        </View>
+        {/* <Contour /> */}
+        <View
+          style={{
+            height: verticalScale(150),
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <View
+            style={{
+              width: "88.9%",
+              // paddingTop: verticalScale(20),
+            }}>
             <View
               style={{
-                width: "88.9%",
-                paddingTop: verticalScale(20),
+                flexDirection: "row",
+                justifyContent: "space-between",
               }}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}>
-                <View style={{ width: "22%" }}>
-                  <View style={styles.rule_img_container}>
-                    <RuleFrontImg width="70%" height="70%" />
-                  </View>
-                  <View style={styles.rule_text_container}>
-                    <View style={{ justifyContent: "center" }}>
-                      <YesIcon />
-                    </View>
-                    <Text style={styles.rule_text}> 정면사진</Text>
-                  </View>
+              <View style={{ width: "22%" }}>
+                <View style={styles.rule_img_container}>
+                  <RuleFrontImg width="70%" height="70%" />
                 </View>
-                <View style={{ width: "22%" }}>
-                  <View style={styles.rule_img_container}>
-                    <Image
-                      source={RuleSideImg}
-                      style={{ width: "70%", height: "70%" }}
-                    />
+                <View style={styles.rule_text_container}>
+                  <View style={{ justifyContent: "center" }}>
+                    <YesIcon />
                   </View>
-                  <View style={styles.rule_text_container}>
-                    <View style={{ justifyContent: "center" }}>
-                      <NoIcon />
-                    </View>
-                    <Text style={styles.rule_text}> 측면</Text>
-                  </View>
+                  <Text style={styles.rule_text}> 정면사진</Text>
                 </View>
-                <View style={{ width: "22%" }}>
-                  <View style={styles.rule_img_container}>
-                    <Image
-                      source={RuleBackgroundImg}
-                      style={{ width: "70%", height: "70%" }}
-                    />
-                  </View>
-                  <View style={styles.rule_text_container}>
-                    <View style={{ justifyContent: "center" }}>
-                      <NoIcon />
-                    </View>
-                    <Text style={styles.rule_text}> 복잡한 배경</Text>
-                  </View>
+              </View>
+              <View style={{ width: "22%" }}>
+                <View style={styles.rule_img_container}>
+                  <Image
+                    source={RuleSideImg}
+                    style={{ width: "70%", height: "70%" }}
+                  />
                 </View>
-                <View style={{ width: "22%" }}>
-                  <View style={styles.rule_img_container}>
-                    <Image
-                      source={RuleMaskImg}
-                      style={{ width: "70%", height: "70%" }}
-                    />
+                <View style={styles.rule_text_container}>
+                  <View style={{ justifyContent: "center" }}>
+                    <NoIcon />
                   </View>
-                  <View style={styles.rule_text_container}>
-                    <View style={{ justifyContent: "center" }}>
-                      <NoIcon />
-                    </View>
-                    <Text style={styles.rule_text}> 마스크 착용</Text>
+                  <Text style={styles.rule_text}> 측면</Text>
+                </View>
+              </View>
+              <View style={{ width: "22%" }}>
+                <View style={styles.rule_img_container}>
+                  <Image
+                    source={RuleBackgroundImg}
+                    style={{ width: "70%", height: "70%" }}
+                  />
+                </View>
+                <View style={styles.rule_text_container}>
+                  <View style={{ justifyContent: "center" }}>
+                    <NoIcon />
                   </View>
+                  <Text style={styles.rule_text}> 복잡한 배경</Text>
+                </View>
+              </View>
+              <View style={{ width: "22%" }}>
+                <View style={styles.rule_img_container}>
+                  <Image
+                    source={RuleMaskImg}
+                    style={{ width: "70%", height: "70%" }}
+                  />
+                </View>
+                <View style={styles.rule_text_container}>
+                  <View style={{ justifyContent: "center" }}>
+                    <NoIcon />
+                  </View>
+                  <Text style={styles.rule_text}> 마스크 착용</Text>
                 </View>
               </View>
             </View>
           </View>
-        </ScrollView>
+        </View>
         <View style={{ alignItems: "center" }}>
           <View style={{ width: "88.9%" }}>
             <View

@@ -60,10 +60,10 @@ export default function NewVirtualStyling({ route }) {
 
   useEffect(() => {
     async function fetchData() {
-      if (route.params.id == 1 || route.params.id == 2) {
+      if (route.params.id == 0.1 || route.params.id == 0.2) {
         console.log("pre result");
         console.log(route.params);
-        const res = await getPreVirtualResult(route.params.id);
+        const res = await getPreVirtualResult(route.params.id * 10);
         console.log(res);
         if (res.data.result == undefined) {
           setLoading(false);
@@ -140,10 +140,8 @@ export default function NewVirtualStyling({ route }) {
           // }}
           source={
             selectedHairstyleIndex == -1
-              ? route.params.id == 1 || route.params.id == 2
-                ? route.params.uri
-                : { uri: route.params.uri + "?" + new Date() }
-              : { uri: resultImg[selectedHairstyleIndex] + "?" + new Date() }
+              ? { uri: route.params.uri }
+              : { uri: resultImg[selectedHairstyleIndex] }
           }
         />
       </View>

@@ -15,6 +15,7 @@ const SELECTED = "selected";
 const ADD = "add";
 
 export default function ProfileImage(props) {
+  // console.log(props);
   const ImageBackgroundContents = () => {
     // if (props.inferenceStatus == 2) {
     //   return (
@@ -138,12 +139,7 @@ export default function ProfileImage(props) {
             </View>
           ) : (
             <ImageBackground
-              source={
-                props.id == 1 || props.id == 2
-                  ? props.thumbnail
-                  : { uri: props.thumbnail + "?" + new Date() }
-              }
-              // source={{ uri: props.thumbnail }}
+              source={{ uri: props.thumbnail }}
               resizeMode="cover"
               style={[styles.image]}
               imageStyle={{ borderRadius: 15 }}>

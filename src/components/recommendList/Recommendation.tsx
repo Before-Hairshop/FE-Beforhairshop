@@ -145,8 +145,8 @@ export default function Recommendation(props) {
                         source={{
                           uri:
                             props.designerFlag == "1"
-                              ? props.data.customerImage + "?" + new Date()
-                              : props.data.designerImage + "?" + new Date(),
+                              ? props.data.customerImage
+                              : props.data.designerImage,
                         }}
                         style={{
                           width: scale(40),

@@ -24,7 +24,7 @@ export default function SwiperItem(props) {
         }}>
         <Image
           source={{
-            uri: props.data.frontImageUrl + "?" + new Date(),
+            uri: props.data.frontImageUrl,
           }}
           style={{
             width: verticalScale(110),

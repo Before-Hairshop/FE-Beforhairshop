@@ -27,8 +27,10 @@ export default function Location() {
     longitude: 126.97838810000002,
   });
   const [zipCode, setZipCode] = useState(undefined);
-  const [address, setAddress] = useState([]);
-  const [addressDetail, setAddressDetail] = useState([]);
+  const [address, setAddress] = useState(["잘못된 위치"]);
+  const [addressDetail, setAddressDetail] = useState([
+    "다른 지점을 선택해주세요",
+  ]);
 
   const navigation = useNavigation();
 

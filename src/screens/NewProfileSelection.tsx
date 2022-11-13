@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Alert,
+  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button } from "@rneui/themed";
@@ -103,7 +104,7 @@ export default function NewProfileSelection() {
       if (screenStatus == EDIT) {
         setSelectedImageId(id);
         setSelectedImageUri(uri);
-        if (id == 1 || id == 2) {
+        if (id == 0.1 || id == 0.2) {
           Alert.alert("기본 이미지는 삭제할 수 없습니다.");
         } else if (inferenceStatus == 1)
           [Alert.alert("변환중인 이미지는 삭제할 수 없습니다.")];
@@ -227,14 +228,14 @@ export default function NewProfileSelection() {
         console.log(res);
         let newArray = [];
         newArray.push({
-          id: 1,
-          uri: TestM,
+          id: 0.1,
+          uri: Image.resolveAssetSource(TestM).uri,
           status: BASE,
           inferenceStatus: 2,
         });
         newArray.push({
-          id: 2,
-          uri: TestW,
+          id: 0.2,
+          uri: Image.resolveAssetSource(TestW).uri,
           status: BASE,
           inferenceStatus: 2,
         });

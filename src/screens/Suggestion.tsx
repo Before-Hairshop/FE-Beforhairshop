@@ -307,7 +307,7 @@ export default function Suggestion({ route }) {
                         setOpenImgUri(item.imageUrl);
                       }}>
                       <Image
-                        source={{ uri: item.imageUrl + "?" + new Date() }}
+                        source={{ uri: item.imageUrl }}
                         style={{
                           aspectRatio: 1,
                           borderRadius: verticalScale(10),

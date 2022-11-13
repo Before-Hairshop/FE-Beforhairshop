@@ -113,7 +113,7 @@ const ReviewPhoto = props => (
           backgroundColor: "#d9d9d9",
           marginRight: scale(10),
         }}
-        source={{ uri: props.imageDtoList[0].imageUrl + "?" + new Date() }}
+        source={{ uri: props.imageDtoList[0].imageUrl }}
       />
     </Pressable>
     {props.imageDtoList.map((item, index) => {
@@ -132,7 +132,7 @@ const ReviewPhoto = props => (
                 borderRadius: 10,
                 backgroundColor: "#d9d9d9",
               }}
-              source={{ uri: item.imageUrl + "?" + new Date() }}
+              source={{ uri: item.imageUrl }}
             />
           </Pressable>
         );
@@ -659,10 +659,7 @@ export default function OnlyDesignerProfile({ route }) {
               profileData != undefined &&
               profileData.hairDesignerProfileDto.imageUrl != null
                 ? {
-                    uri:
-                      profileData.hairDesignerProfileDto.imageUrl +
-                      "?" +
-                      new Date(),
+                    uri: profileData.hairDesignerProfileDto.imageUrl,
                   }
                 : null
             }
