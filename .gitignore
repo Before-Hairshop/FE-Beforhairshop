@@ -61,3 +61,10 @@ buck-out/
 # Ruby / CocoaPods
 /ios/Pods/
 /vendor/bundle/
+
+# Config
+.env
+/ios/tmp.xcconfig
+/android/gradle.properties
+/android/app/google-services.json
+/ios/GoogleService-Info.plist

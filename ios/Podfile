@@ -19,9 +19,19 @@ target 'BH' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'NMapsMap','3.15.0'
+
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
+  $RNFirebaseAsStaticFramework = true
+
+  # use_frameworks!
+
   target 'BHTests' do
+    
     inherit! :complete
-    # Pods for testing
+
   end
 
   # Enables Flipper.
@@ -33,5 +43,16 @@ target 'BH' do
   post_install do |installer|
     react_native_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+            config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+      end
+end
+
+    installer.pods_project.build_configurations.each do |config|
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+end
   end
+  
 end
