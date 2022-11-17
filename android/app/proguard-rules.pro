@@ -69,3 +69,7 @@
 # svg
 
 -keep public class com.horcrux.svg.** {*;}
+
+# config
+
+-keep class com.bh.prod.BuildConfig { *; }

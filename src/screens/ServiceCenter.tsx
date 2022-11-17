@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useState } from "react";
@@ -17,20 +16,29 @@ import { scale, verticalScale } from "../utils/scale";
 import { UnderLineContent } from "../components/serviceCenter/UnderLineContent";
 import { postUserFeedback } from "../api/postUserFeedback";
 import { readData } from "../utils/asyncStorage";
+import Spinner from "../components/common/Spinner";
 
 export default function ServiceCenter() {
   const [feedback, setFeedback] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
 
   const sendFeedback = async () => {
+    setLoading(true);
     postUserFeedback(await readData("@MEMBER_ID"), feedback).then(res => {
       if (res.data.result == undefined) {
+        setLoading(false);
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (res.data.status == "OK") {
+        setLoading(false);
+        setFeedback("");
         Alert.alert("전송이 완료되었습니다. 감사합니다.");
       } else {
+        setLoading(false);
         Alert.alert("전송 실패");
       }
     });
@@ -92,7 +100,7 @@ export default function ServiceCenter() {
           </View>
         </View>
       </ScrollView>
-      <View style={{ alignItems: "center" }}>
+      <View style={{ alignItems: "center", paddingBottom: verticalScale(20) }}>
         <Pressable
           style={{
             width: "89%",
@@ -103,7 +111,11 @@ export default function ServiceCenter() {
             borderRadius: 10,
           }}
           onPress={() => {
-            sendFeedback();
+            if (feedback == "") {
+              Alert.alert("내용을 입력해주세요.");
+            } else {
+              sendFeedback();
+            }
           }}>
           <Text
             style={{
@@ -119,6 +131,7 @@ export default function ServiceCenter() {
           </Text>
         </Pressable>
       </View>
+      {loading && <Spinner />}
     </SafeAreaView>
   );
 }

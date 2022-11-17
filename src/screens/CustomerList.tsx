@@ -36,7 +36,9 @@ export default function CustomerList() {
       console.log(data);
       if (data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (data.status == "OK") {
         setCustomerList([...customerList, ...data.result]);
         setPageNum(pageNum + 1);
@@ -99,8 +101,8 @@ export default function CustomerList() {
               color: "#737373",
               marginTop: verticalScale(7),
             }}>
-            {item.zipAddress.length > 16
-              ? item.zipAddress.substring(0, 15) + "..."
+            {item.zipAddress.length > 14
+              ? item.zipAddress.substring(0, 13) + "..."
               : item.zipAddress}
           </Text>
           <Text

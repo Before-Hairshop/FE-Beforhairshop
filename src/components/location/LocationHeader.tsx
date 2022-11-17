@@ -16,15 +16,15 @@ export default function LocationHeader() {
 
   return (
     <View style={styles.frame}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.back_button}
         onPress={() => navigation.navigate("Main")}>
         <GoBackIcon />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <View style={styles.title_container}>
         <Text style={styles.title_text}>지도에서 위치 확인</Text>
       </View>
-      <View style={styles.blank_view} />
+      {/* <View style={styles.blank_view} /> */}
     </View>
   );
 }
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     marginTop: Platform.OS === "ios" ? verticalScale(40) : verticalScale(0),
     height: verticalScale(70),
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     paddingTop: verticalScale(15),
     paddingBottom: verticalScale(15),
     paddingLeft: verticalScale(8),

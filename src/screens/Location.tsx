@@ -27,8 +27,10 @@ export default function Location() {
     longitude: 126.97838810000002,
   });
   const [zipCode, setZipCode] = useState(undefined);
-  const [address, setAddress] = useState([]);
-  const [addressDetail, setAddressDetail] = useState([]);
+  const [address, setAddress] = useState(["잘못된 위치"]);
+  const [addressDetail, setAddressDetail] = useState([
+    "다른 지점을 선택해주세요",
+  ]);
 
   const navigation = useNavigation();
 
@@ -60,9 +62,19 @@ export default function Location() {
       console.log(response);
       if (response.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (response.data.status == "OK") {
-        navigation.navigate("NewMain");
+        // navigation.navigate("NewMain");
+        navigation.reset({
+          routes: [
+            {
+              name: "NewMain",
+              params: { reload: true },
+            },
+          ],
+        });
       } else {
         Alert.alert("요청에 실패했습니다.");
       }

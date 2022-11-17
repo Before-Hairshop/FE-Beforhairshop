@@ -12,6 +12,7 @@ import {
   TouchableWithoutFeedback,
   Animated,
   SafeAreaView,
+  Pressable,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import DefaultDesigner from "../assets/images/default_designer_profile.png";
@@ -41,6 +42,8 @@ import { getReviewList } from "../api/getReviewList";
 import { readData } from "../utils/asyncStorage";
 import { postRequest } from "../api/postRequest";
 import { deleteReview } from "../api/deleteReview";
+import ImageModal from "../components/common/ImageModal";
+import { WorkingDay } from "../components/designerProfile/WorkingDay";
 
 const workingdayDict = {};
 workingdayDict["MON"] = "월요일";
@@ -98,31 +101,29 @@ const ReviewPhoto = props => (
       marginBottom: verticalScale(20),
       flexDirection: "row",
     }}>
-    {/* <View
-      style={{
-        width: 120,
-        height: 120,
-        opacity: 0.15,
-        borderRadius: 10,
-        backgroundColor: "#d9d9d9",
-        marginRight: scale(10),
-      }}> */}
-    <Image
-      style={{
-        width: 120,
-        height: 120,
-        // opacity: 0.15,
-        borderRadius: 10,
-        backgroundColor: "#d9d9d9",
-        marginRight: scale(10),
-      }}
-      source={{ uri: props.imageDtoList[0].imageUrl }}
-    />
-    {/* </View> */}
+    <Pressable
+      onPress={() => {
+        props.setOpenImgUri(props.imageDtoList[0].imageUrl);
+      }}>
+      <Image
+        style={{
+          width: 120,
+          height: 120,
+          borderRadius: 10,
+          backgroundColor: "#d9d9d9",
+          marginRight: scale(10),
+        }}
+        source={{ uri: props.imageDtoList[0].imageUrl }}
+      />
+    </Pressable>
     {props.imageDtoList.map((item, index) => {
       if (index != 0) {
         return (
-          <View style={{ justifyContent: "flex-end", marginRight: scale(10) }}>
+          <Pressable
+            style={{ justifyContent: "flex-end", marginRight: scale(10) }}
+            onPress={() => {
+              props.setOpenImgUri(item.imageUrl);
+            }}>
             <Image
               style={{
                 width: 87.8,
@@ -133,43 +134,10 @@ const ReviewPhoto = props => (
               }}
               source={{ uri: item.imageUrl }}
             />
-          </View>
+          </Pressable>
         );
       }
     })}
-    {/* <View style={{ justifyContent: "flex-end", marginRight: scale(10) }}>
-      <View
-        style={{
-          width: 87.8,
-          height: 78.9,
-          opacity: 0.15,
-          borderRadius: 10,
-          backgroundColor: "#d9d9d9",
-        }}
-      />
-    </View>
-    <View style={{ justifyContent: "flex-end", marginRight: scale(10) }}>
-      <View
-        style={{
-          width: 87.8,
-          height: 78.9,
-          opacity: 0.15,
-          borderRadius: 10,
-          backgroundColor: "#d9d9d9",
-        }}
-      />
-    </View>
-    <View style={{ justifyContent: "flex-end" }}>
-      <View
-        style={{
-          width: 87.8,
-          height: 78.9,
-          opacity: 0.15,
-          borderRadius: 10,
-          backgroundColor: "#d9d9d9",
-        }}
-      />
-    </View> */}
   </ScrollView>
 );
 
@@ -206,6 +174,8 @@ export default function DesignerProfile({ route }) {
 
   const [isDesignerModalVisible, setIsDesignerModalVisible] = useState(false);
   const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+
+  const [openImgUri, setOpenImgUri] = useState(null);
 
   const navigation = useNavigation();
 
@@ -290,7 +260,9 @@ export default function DesignerProfile({ route }) {
       const response = await getDesignerProfileById(route.params.designerId);
       if (response.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (response.data.status != "OK") {
         Alert.alert("데이터를 불러오는데 실패했습니다.");
       }
@@ -437,7 +409,10 @@ export default function DesignerProfile({ route }) {
         </View>
       </View>
       {props.data.imageDtoList.length != 0 && (
-        <ReviewPhoto imageDtoList={props.data.imageDtoList} />
+        <ReviewPhoto
+          imageDtoList={props.data.imageDtoList}
+          setOpenImgUri={setOpenImgUri}
+        />
       )}
 
       <Text style={styles.review_contents}>{props.data.reviewDto.content}</Text>
@@ -497,7 +472,7 @@ export default function DesignerProfile({ route }) {
             console.log("add review");
           }
         }}
-        stickyHeaderIndices={[7]}
+        stickyHeaderIndices={[8]}
         scrollEventThrottle={400}>
         <Modal
           animationType={"slide"}
@@ -674,15 +649,28 @@ export default function DesignerProfile({ route }) {
             </Animated.View>
           </View>
         </Modal>
-        <Image
-          source={
-            profileData != undefined &&
-            profileData.hairDesignerProfileDto.imageUrl != null
-              ? { uri: profileData.hairDesignerProfileDto.imageUrl }
-              : null
-          }
-          style={styles.designer_img}
-        />
+        <ImageModal uri={openImgUri} setUri={setOpenImgUri} />
+        <Pressable
+          onPress={() => {
+            if (profileData != undefined) {
+              setOpenImgUri(profileData.hairDesignerProfileDto.imageUrl);
+            }
+          }}>
+          <Image
+            source={
+              profileData != undefined &&
+              profileData.hairDesignerProfileDto.imageUrl != null
+                ? {
+                    uri:
+                      profileData.hairDesignerProfileDto.imageUrl +
+                      "?" +
+                      new Date(),
+                  }
+                : null
+            }
+            style={styles.designer_img}
+          />
+        </Pressable>
         <View style={{ width: "100%", position: "absolute" }}>
           <Header contents={<HeaderContents />} />
         </View>
@@ -775,7 +763,9 @@ export default function DesignerProfile({ route }) {
                           Alert.alert(
                             "세션이 만료되었습니다. 다시 로그인 해주세요.",
                           );
-                          navigation.navigate("Loading");
+                          navigation.navigate("Loading", {
+                            reload: true,
+                          });
                         } else if (res.data.status == "OK") {
                           Alert.alert("추천서 요청이 완료되었습니다.");
                         } else if (res.data.status == "CONFLICT") {
@@ -1057,18 +1047,48 @@ export default function DesignerProfile({ route }) {
           </View>
           {profileData != undefined && (
             <>
-              {profileData.hairDesignerWorkingDayDtoList.map((data, index) => (
-                <View style={styles.office_hours}>
-                  <Text style={styles.working_day}>
-                    {workingdayDict[data.workingDay]}
-                  </Text>
-                  <Text
-                    style={styles.working_time}>{`PM ${data.startTime.substring(
-                    0,
-                    5,
-                  )} - PM ${data.endTime.substring(0, 5)}`}</Text>
-                </View>
-              ))}
+              <WorkingDay
+                week="월요일"
+                data={profileData.hairDesignerWorkingDayDtoList.find(
+                  element => element.workingDay == "MON",
+                )}
+              />
+              <WorkingDay
+                week="화요일"
+                data={profileData.hairDesignerWorkingDayDtoList.find(
+                  element => element.workingDay == "TUE",
+                )}
+              />
+              <WorkingDay
+                week="수요일"
+                data={profileData.hairDesignerWorkingDayDtoList.find(
+                  element => element.workingDay == "WED",
+                )}
+              />
+              <WorkingDay
+                week="목요일"
+                data={profileData.hairDesignerWorkingDayDtoList.find(
+                  element => element.workingDay == "THU",
+                )}
+              />
+              <WorkingDay
+                week="금요일"
+                data={profileData.hairDesignerWorkingDayDtoList.find(
+                  element => element.workingDay == "FRI",
+                )}
+              />
+              <WorkingDay
+                week="토요일"
+                data={profileData.hairDesignerWorkingDayDtoList.find(
+                  element => element.workingDay == "SAT",
+                )}
+              />
+              <WorkingDay
+                week="일요일"
+                data={profileData.hairDesignerWorkingDayDtoList.find(
+                  element => element.workingDay == "SUN",
+                )}
+              />
             </>
           )}
         </View>
@@ -1203,7 +1223,9 @@ export default function DesignerProfile({ route }) {
                           Alert.alert(
                             "세션이 만료되었습니다. 다시 로그인 해주세요.",
                           );
-                          navigation.navigate("Loading");
+                          navigation.navigate("Loading", {
+                            reload: true,
+                          });
                         } else if (res.data.status == "OK") {
                           setReviewData(
                             reviewData.filter(

@@ -7,6 +7,7 @@ import { scale, verticalScale } from "../utils/scale";
 import CheckIcon from "../assets/icons/check.svg";
 import { patchMemberType } from "../api/patchMemberType";
 import { storeData } from "../utils/asyncStorage";
+import Spinner from "../components/common/Spinner";
 
 const { width, height } = Dimensions.get("window");
 
@@ -15,10 +16,12 @@ const wait = timeToDelay =>
 
 export default function UserCheck() {
   const [isDesigner, setIsDesigner] = useState(undefined);
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
 
   const selectAnswer = async (value: React.SetStateAction<undefined>) => {
+    setLoading(true);
     await setIsDesigner(value);
     await wait(200);
     const result = await patchMemberType(value);
@@ -31,8 +34,10 @@ export default function UserCheck() {
         storeData("@DESIGNER_FLAG", "0");
         navigation.navigate("UserProfile");
       }
+      setLoading(false);
     } else {
       Alert.alert("요청에 실패했습니다.");
+      setLoading(false);
     }
   };
 
@@ -100,6 +105,7 @@ export default function UserCheck() {
           </Text>
         </View>
       </TouchableOpacity>
+      {loading && <Spinner />}
     </View>
   );
 }

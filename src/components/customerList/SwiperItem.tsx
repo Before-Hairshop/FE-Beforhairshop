@@ -61,7 +61,9 @@ export default function SwiperItem(props) {
               textAlign: "left",
               color: "#737373",
             }}>
-            {props.data.zipAddress}
+            {props.data.zipAddress.length > 16
+              ? props.data.zipAddress.substring(0, 15) + "..."
+              : props.data.zipAddress}
           </Text>
           <Text
             style={{

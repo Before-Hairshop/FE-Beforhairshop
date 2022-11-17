@@ -32,7 +32,9 @@ export default function Recommendation(props) {
       console.log(res);
       if (res.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (res.data.status == "OK") {
         console.log(props.recommendList);
         props.setRecommendList(
@@ -322,7 +324,7 @@ export default function Recommendation(props) {
                         alignItems: "center",
                         justifyContent: "center",
                         borderRadius: verticalScale(50),
-                        backgroundColor: "#FC2A5B",
+                        backgroundColor: "#13AE68",
                       }}
                       onPress={() => {
                         if (props.designerFlag == "1") {

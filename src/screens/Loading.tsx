@@ -4,17 +4,12 @@ import {
   View,
   Animated,
   TouchableOpacity,
-  Modal,
-  SafeAreaView,
   Platform,
   Image,
-  Alert,
 } from "react-native";
-import React, { createRef, useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { WebView, WebViewNavigation } from "react-native-webview";
-import CookieManager from "@react-native-cookies/cookies";
 
 import { scale, verticalScale } from "../utils/scale";
 import { getMemberInfo } from "../api/getMemberInfo";
@@ -23,7 +18,6 @@ import GoogleLoginIcon from "../components/loading/GoogleLoginIcon";
 import KakaoLoginIcon from "../components/loading/KakaoLoginIcon";
 import NaverLoginIcon from "../components/loading/NaverLoginIcon";
 import AppleLoginIcon from "../components/loading/AppleLoginIcon";
-import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASEURL } from "../api/baseUrl";
 import appleAuth, {
@@ -42,15 +36,7 @@ import { getMemberSession } from "../api/getMemberSession";
 import { postAppleLogin } from "../api/postAppleLogin";
 import AppLogo from "../assets/icons/BeforeHairshopLogo.png";
 import messaging from "@react-native-firebase/messaging";
-
-const socialLoginURI = {
-  google: `${BASEURL}/oauth2/authorization/google`,
-  kakao: `${BASEURL}/oauth2/authorization/kakao`,
-  naver: `${BASEURL}/oauth2/authorization/naver`,
-  logout: `${BASEURL}/api/v1/oauth/logout`,
-};
-
-const userAgent = "useragent";
+import Spinner from "../components/common/Spinner";
 
 const wait = (timeToDelay: number) => {
   return new Promise(resolve => setTimeout(resolve, timeToDelay));
@@ -58,33 +44,18 @@ const wait = (timeToDelay: number) => {
 
 const opacity = new Animated.Value(0);
 
-export default function Loading() {
-  const [socialLoginModalVisible, setSocialLoginModalVisible] = useState(false);
-  const [loginType, setLoginType] = useState("");
-  const [res, setRes] = useState<string>("");
-  const [pro, setPro] = useState<string>("");
+export default function Loading({ route }) {
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
-  const webViewRef = createRef<WebView>();
-  const isFocused = useIsFocused();
+  // const isFocused = useIsFocused();
 
   const signInWithKakao = async (): Promise<void> => {
     try {
-      // const token = await login();
-      // CookieManager.clearAll();
-      // const RCTNetworking = require("react-native/Libraries/Network/RCTNetworking");
-      // RCTNetworking.clearCookies(() => {
-      //   console.log("clear cookie ");
-      // });
-
       const token = await loginWithKakaoAccount();
-      // const token = await login();
-      // setRes(JSON.stringify(token));
-      // Alert.alert(token);
+      setLoading(true);
       console.log(token);
       const profile = await getKakaoProfile();
-      // setPro(JSON.stringify(profile));
-      // Alert.alert(profile);
       console.log(profile);
 
       const enabled = await messaging().hasPermission();
@@ -108,11 +79,20 @@ export default function Loading() {
       // setRes(res.concat(result.toString()));
       // Alert.alert(result);
       console.log(result);
+      setLoading(false);
       if (result.data.result.status == 0) {
         navigation.navigate("ServiceTerms");
       } else {
         storeData("@DESIGNER_FLAG", String(result.data.result.designerFlag));
-        navigation.navigate("NewMain");
+        navigation.reset({
+          routes: [
+            {
+              name: "NewMain",
+              params: { reload: true },
+            },
+          ],
+        });
+        // navigation.navigate("NewMain");
       }
 
       // console.log(result.headers["set-cookie"]);
@@ -134,6 +114,7 @@ export default function Loading() {
       // Note: it appears putting FULL_NAME first is important, see issue #293
       requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
     });
+    setLoading(true);
     console.log("appleAuthRequestResponse", appleAuthRequestResponse);
     console.log(
       appleAuthRequestResponse.user,
@@ -161,11 +142,21 @@ export default function Loading() {
     );
     console.log(result);
 
+    setLoading(false);
+
     if (result.data.result.status == 0) {
       navigation.navigate("ServiceTerms");
     } else {
       storeData("@DESIGNER_FLAG", String(result.data.result.designerFlag));
-      navigation.navigate("NewMain");
+      navigation.reset({
+        routes: [
+          {
+            name: "NewMain",
+            params: { reload: true },
+          },
+        ],
+      });
+      // navigation.navigate("NewMain");
     }
 
     // // get current authentication state for user
@@ -195,54 +186,8 @@ export default function Loading() {
     // }
   };
 
-  // async function onNavigationStateChange(navigationState: WebViewNavigation) {
-  //   console.log(navigationState);
-  //   if (
-  //     navigationState.url == `${BASEURL}/#` ||
-  //     navigationState.url == `${BASEURL}/` ||
-  //     navigationState.url == "http://dev.beforehairshop.com/#" ||
-  //     navigationState.url == "http://dev.beforehairshop.com/"
-  //   ) {
-  //     const cookies = await CookieManager.get(`${BASEURL}#`);
-  //     console.log(cookies);
-  //     storeData("@SESSION_ID", cookies.SESSION.value);
-  //     setSocialLoginModalVisible(false);
-  //     await wait(1000);
-  //     try {
-  //       console.log(cookies.SESSION.value);
-  //       axios
-  //         .get(`${BASEURL}/api/v1/members`, {
-  //           headers: {
-  //             Cookies: `SESSION=${cookies.SESSION.value}`,
-  //           },
-  //         })
-  //         .then(result => {
-  //           console.log(result);
-  //           if (result.data.status == "BAD_REQUEST") {
-  //             navigation.navigate("ServiceTerms");
-  //           } else {
-  //             storeData(
-  //               "@DESIGNER_FLAG",
-  //               String(result.data.result.designerFlag),
-  //             );
-  //             navigation.navigate("NewMain");
-  //           }
-  //         });
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-  // }
-
   const callAPI = async () => {
     try {
-      // if ((await readData("@SESSION_ID")) == null) {
-      //   Animated.timing(opacity, {
-      //     toValue: 1,
-      //     duration: 1000,
-      //     useNativeDriver: false,
-      //   }).start();
-      // } else {
       const result = await getMemberSession();
       console.log(result);
       if (result.data.status == "NOT_FOUND") {
@@ -261,15 +206,17 @@ export default function Loading() {
             "@DESIGNER_FLAG",
             String(result.data.result.designerFlag),
           );
-          navigation.navigate("NewMain");
+          navigation.reset({
+            routes: [
+              {
+                name: "NewMain",
+                params: { reload: true },
+              },
+            ],
+          });
+          // navigation.navigate("NewMain");
         }
-        // Animated.timing(opacity, {
-        //   toValue: 1,
-        //   duration: 1000,
-        //   useNativeDriver: false,
-        // }).start();
       }
-      // }
     } catch (error) {
       console.log(error);
     }
@@ -282,7 +229,7 @@ export default function Loading() {
       await callAPI();
     }
     waitForSecond();
-  }, [isFocused]);
+  }, [route]);
 
   return (
     <View style={styles.frame}>
@@ -302,8 +249,6 @@ export default function Loading() {
             style={{ width: verticalScale(250), height: verticalScale(250) }}
             source={AppLogo}
           />
-          {/* <Text style={{ color: "white" }}>{res}</Text>
-          <Text style={{ color: "white" }}>{pro}</Text> */}
           {/* <Text style={styles.mainText}>BEFORE</Text>
           <Text style={styles.mainText}>HAIRSHOP</Text> */}
         </Animated.View>
@@ -354,6 +299,7 @@ export default function Loading() {
           />
         </SafeAreaView>
       </Modal> */}
+      {loading && <Spinner />}
     </View>
   );
 }

@@ -35,6 +35,7 @@ import StarRating from "../components/common/StarRating";
 import ComplexityHeader from "../components/common/ComplexityHeader";
 import { postReview } from "../api/postReview";
 import { postReviewImg } from "../api/postReviewImg";
+import Spinner from "../components/common/Spinner";
 
 const BASEWIDTH = 375;
 const BASEPADDING = 20;
@@ -98,6 +99,7 @@ export default function Review({ route }) {
   const [tagInput, setTagInput] = useState("");
   const [hairTag, setHairTag] = useState([]);
   const [hairImage, setHairImage] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
 
@@ -134,6 +136,7 @@ export default function Review({ route }) {
   };
 
   async function saveReview() {
+    setLoading(true);
     console.log(starScore);
     console.log(hairRating);
     console.log(designerRating);
@@ -142,14 +145,19 @@ export default function Review({ route }) {
     console.log(hairImage);
     if (starScore == 0) {
       Alert.alert("별점을 등록해주세요");
+      setLoading(false);
     } else if (hairRating == -1) {
       Alert.alert("시술 만족도를 선택해주세요");
+      setLoading(false);
     } else if (designerRating == -1) {
       Alert.alert("디자이너 만족도를 선택해주세요");
+      setLoading(false);
     } else if (review == "") {
       Alert.alert("후기를 남겨주세요");
+      setLoading(false);
     } else if (hairTag.length == 0) {
       Alert.alert("시술 받은 스타일을 입력해주세요");
+      setLoading(false);
     } else {
       const result = await postReview(
         route.params.designerId,
@@ -162,18 +170,29 @@ export default function Review({ route }) {
       console.log(result);
       if (result.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (result.data.status == "OK") {
         const res = await postReviewImg(result.data.result.id, hairImage);
         console.log(res);
         if (res.data.status == "OK") {
-          navigation.navigate("NewMain");
+          // navigation.navigate("NewMain");
+          navigation.reset({
+            routes: [
+              {
+                name: "NewMain",
+                params: { reload: true },
+              },
+            ],
+          });
         } else {
           Alert.alert("요청에 실패했습니다.");
         }
       } else {
         Alert.alert("요청에 실패했습니다.");
       }
+      setLoading(false);
     }
   }
 
@@ -209,7 +228,7 @@ export default function Review({ route }) {
           <View style={{ width: "88.9%" }}>
             <View style={{ alignItems: "center", margin: verticalScale(10) }}>
               <ImageBackground
-                source={{ uri: route.params.designerImg }}
+                source={{ uri: route.params.designerImg + "?" + new Date() }}
                 style={{
                   width: scale(150),
                   aspectRatio: 1,
@@ -431,6 +450,7 @@ export default function Review({ route }) {
           메시지 보내기
         </Text>
       </TouchableOpacity> */}
+      {loading && <Spinner />}
     </SafeAreaView>
   );
 }

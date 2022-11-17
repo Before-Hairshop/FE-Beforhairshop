@@ -2,6 +2,7 @@ import {
   Alert,
   Image,
   Modal,
+  Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -23,6 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASEURL } from "../api/baseUrl";
 import { patchLogout } from "../api/patchLogout";
 import { deleteMember } from "../api/deleteMember";
+import LocationIcon from "../assets/icons/location.svg";
 
 export default function Mypage({ route }) {
   const [designerFlag, setDesignerFlag] = useState(undefined);
@@ -55,9 +57,13 @@ export default function Mypage({ route }) {
       console.log(res);
       if (res.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (res.data.status == "OK") {
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else {
         Alert.alert("로그아웃 실패");
       }
@@ -72,10 +78,14 @@ export default function Mypage({ route }) {
       console.log(res);
       if (res.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else if (res.data.status == "OK") {
         Alert.alert("회원탈퇴가 완료되었습니다.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       } else {
         Alert.alert("회원탈퇴 실패");
       }
@@ -93,6 +103,60 @@ export default function Mypage({ route }) {
     <SafeAreaView style={styles.frame}>
       <SimpleHeader title="마이페이지" goBack="Main" />
       <Contour style={{ opacity: 0.1 }} />
+      {route.params.data != undefined &&
+        designerFlag != undefined &&
+        designerFlag == "0" && (
+          <View
+            style={{
+              width: "100%",
+              height: verticalScale(30),
+              alignItems: "flex-end",
+              paddingRight: verticalScale(7),
+            }}>
+            <Pressable
+              style={{
+                height: "100%",
+                flexDirection: "row",
+              }}
+              onPress={() => {
+                navigation.navigate("Location");
+              }}>
+              <View style={{ height: "100%", justifyContent: "center" }}>
+                {route.params.data.zipAddress == null ? (
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(10),
+                      fontWeight: "600",
+                      letterSpacing: -0.5,
+                      textAlign: "center",
+                      color: "#ffffff",
+                    }}>
+                    등록된 위치가 없습니다
+                    {"   "}
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      fontFamily: "Pretendard",
+                      fontSize: scale(10),
+                      fontWeight: "600",
+                      letterSpacing: -0.5,
+                      textAlign: "center",
+                      color: "#ffffff",
+                    }}>
+                    {route.params.data.zipAddress.split(" ")[1]}{" "}
+                    {route.params.data.zipAddress.split(" ")[2]}
+                    {"   "}
+                  </Text>
+                )}
+              </View>
+              <View style={{ height: "100%", justifyContent: "center" }}>
+                <LocationIcon />
+              </View>
+            </Pressable>
+          </View>
+        )}
       {route.params.data != undefined && designerFlag != undefined ? (
         <TouchableOpacity
           style={{ height: verticalScale(120), alignItems: "center" }}
@@ -115,8 +179,8 @@ export default function Mypage({ route }) {
                 source={{
                   uri:
                     designerFlag == "1"
-                      ? route.params.data.imageUrl
-                      : route.params.data.frontImageUrl,
+                      ? route.params.data.imageUrl + "?" + new Date()
+                      : route.params.data.frontImageUrl + "?" + new Date(),
                 }}
                 style={{
                   width: scale(70),
@@ -296,20 +360,20 @@ export default function Mypage({ route }) {
         </View>
       )}
       <BigContour />
-      <MypageItem
+      {/* <MypageItem
         title="찜 목록"
         navigate="Main"
         action={() => {
           Alert.alert("준비중");
         }}
-      />
-      <MypageItem
+      /> */}
+      {/* <MypageItem
         title="공지사항"
         navigate="Main"
         action={() => {
           Alert.alert("준비중");
         }}
-      />
+      /> */}
       <MypageItem
         title="고객센터"
         navigate="Main"

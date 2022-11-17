@@ -198,18 +198,34 @@ export default function DesignerModify() {
     console.log(schedule);
     console.log(phoneNumber);
     console.log(profileImage);
-    if (
-      name != "" &&
-      description != "" &&
-      menuInfo.length != 0 &&
-      shopName != "" &&
-      location != "" &&
-      zipCode != "" &&
-      specificLocation != "" &&
-      schedule.length != 0 &&
-      phoneNumber != ""
-      // && profileImage[0].blob
-    ) {
+    if (profileImage[0] == "") {
+      Alert.alert("프로필 이미지를 첨부해주세요");
+      setLoading(false);
+    } else if (name == "") {
+      Alert.alert("디자이너 이름을 입력해주세요");
+      setLoading(false);
+    } else if (description == "") {
+      Alert.alert("자기소개를 입력해주세요");
+      setLoading(false);
+    } else if (menuInfo.length == 0) {
+      Alert.alert("가격 정보를 추가해주세요");
+      setLoading(false);
+    } else if (shopName == "") {
+      Alert.alert("헤어샵 이름을 입력해주세요");
+      setLoading(false);
+    } else if (location == "") {
+      Alert.alert("헤어샵 위치를 입력해주세요");
+      setLoading(false);
+    } else if (specificLocation == "") {
+      Alert.alert("상세 주소를 입력해주세요");
+      setLoading(false);
+    } else if (schedule.length == 0) {
+      Alert.alert("근무 일정을 추가해주세요");
+      setLoading(false);
+    } else if (phoneNumber == "") {
+      Alert.alert("전화번호를 입력해주세요");
+      setLoading(false);
+    } else {
       // 프로필 생성
       const result = await patchDesignerProfile(
         name,
@@ -226,7 +242,9 @@ export default function DesignerModify() {
       console.log(result);
       if (result.data.result == undefined) {
         Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        navigation.navigate("Loading");
+        navigation.navigate("Loading", {
+          reload: true,
+        });
       }
       if (profileImage[0].blob != undefined) {
         console.log(profileImage[0].blob);
@@ -234,14 +252,27 @@ export default function DesignerModify() {
         // console.log(result);
         if (response.status == 200) {
           console.log(result);
-          navigation.navigate("NewMain");
+          // navigation.navigate("NewMain");
+          navigation.reset({
+            routes: [
+              {
+                name: "NewMain",
+                params: { reload: true },
+              },
+            ],
+          });
         }
       } else if (result.data.status == "OK") {
-        navigation.navigate("NewMain");
+        // navigation.navigate("NewMain");
+        navigation.reset({
+          routes: [
+            {
+              name: "NewMain",
+              params: { reload: true },
+            },
+          ],
+        });
       }
-      setLoading(false);
-    } else {
-      Alert.alert("필수 항목을 모두 작성해주세요.");
       setLoading(false);
     }
   };
@@ -250,7 +281,9 @@ export default function DesignerModify() {
     const { data } = await getDesignerProfileById(await readData("@MEMBER_ID"));
     if (data.result == undefined) {
       Alert.alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-      navigation.navigate("Loading");
+      navigation.navigate("Loading", {
+        reload: true,
+      });
     } else if (data.status == "OK") {
       console.log(data.result);
       setName(data.result.hairDesignerProfileDto.name);
